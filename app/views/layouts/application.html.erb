@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Game</title>
+  <%= stylesheet_link_tag    "application" %>
+  <%= javascript_include_tag "application" %>
+  <%= csrf_meta_tags %>
+  <script>
+    $(document).ready(function() {
+      var refreshId = setInterval(function() {
+         $("#current_action_container").load('<%= current_actions_url %>');
+         $("#current_stats_container").load('<%= user_url(current_user) %>');
+      }, 10000);
+      $.ajaxSetup({ cache: false });
+    });
+  </script>
+</head>
+<body>
+  <div class="min_height">&nbsp;</div>
+  <div class="all">
+    <div class="clear_head">&nbsp;</div>
+    <div class="left">
+      <%= link_to "Desktop", game_index_path %>
+      <br /><br />
+      <%= link_to "Actions", actions_path %>
+      <br /><br />
+      <%= link_to "Jobs", jobs_path %>
+    </div>
+    <div class="right">
+      <%= render :partial => "actions/recent" %>
+    </div>
+    <div class="middle">
+      <table border="0" cellspacing="0" cellpadding="0" style="width: 88%;">
+        <tr>
+          <td style="width: 75%;">
+            <div id="current_action_container" class="current">
+              <%= render :partial => "actions/current" %>
+            </div>
+          </td>
+          <td>
+            <div id="current_stats_container" class="current">
+              <%= render :partial => "users/stats" %>
+            </div>
+          </td>
+        </tr>
+      </table>
+      <%= yield %>
+    </div>
+  </div>
+  <div class="footer">
+  </div>
+  <div class="header">
+    logo
+    <% if user_signed_in? %>
+      <div class="system">
+        <%= link_to "Logout", destroy_user_session_path, :method => :delete %>
+      </div>
+    <% end %>
+    <% if flash.present? %>
+      <div class="flash">
+        <% flash.each do |key, msg| -%>
+            <%= content_tag(:div, msg, :id => key) %>
+        <% end -%>
+      </div>
+    <% end %>
+  </div>
+</body>
+</html>

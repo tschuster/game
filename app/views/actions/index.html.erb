@@ -1,0 +1,11 @@
+<div class="action_box">
+  <h3>Actions</h3>
+  <p>
+    Perform actions to increase your skills. To perform actions you need to invest time or money.
+  </p>
+  <% if @current_action.present? %>
+    You cannot perform any actions at this moment.
+  <% else %>
+    <%= render :partial => "list" %>
+  <% end %>
+</div>

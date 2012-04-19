@@ -1,0 +1,15 @@
+<div class="recent_actions">
+  <h3>Recent Actions</h3>
+  <% if @recent_actions.present? %>
+  <table border="0" cellspacing="0" cellpadding="0">
+    <% @recent_actions.each do |action| %>
+    <tr>
+      <td><%= action.readable_type %></td>
+      <td style="text-align: right;"><%= time_ago_in_words(action.completed_at, true) %> ago</td>
+    </tr>
+    <% end %>
+  </table>
+  <% else %>
+    No recent Actions!
+  <% end %>
+</div>

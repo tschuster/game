@@ -1,0 +1,19 @@
+<div class="current_action">
+  <% if @current_action.present? %>
+    <% if @current_action.job.present? %>
+      <h3>Your current Job</h3>
+      <%= @current_action.job.description %><br />
+    <% else %>
+      <h3>Your current Action</h3>
+      <%= @current_action.readable_type %><br />
+    <% end %>
+    Time remaining: <%= humanize @current_action.time_remaining %><br />
+    <%= link_to "Cancel", action_path(@current_action), :method => :delete, :confirm => "Are you sure you want to cancel your action?" %>
+  <% else %>
+    <h3>Your current Action</h3>
+    <p>
+      You are not doing anything.
+    </p>
+    Don't waste your time! You can <%= link_to "perform actions", actions_path %> or <%= link_to "accept jobs", jobs_path %>.
+  <% end %>
+</div>

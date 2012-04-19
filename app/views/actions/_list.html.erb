@@ -1,0 +1,46 @@
+<table border="0" cellspacing="0" cellpadding="0" class="select_actions_table">
+  <tr>
+    <td rowspan="2"><%= link_to image_tag("botnet_evolve.png"), actions_path(:type_id => Action::TYPE_BOTNET_EVOLVE), :method => :post %></td>
+    <td><strong>Evolve your botnet</strong></td>
+    <td rowspan="2"><%= link_to "perform action", actions_path(:type_id => Action::TYPE_BOTNET_EVOLVE), :method => :post %></td>
+  </tr>
+  <tr>
+    <td>You distribute trojan horses and rootkits to increase your botnet strength by <%= CONFIG["botnet"]["evolve_ratio"] %>. Each level needs more time to accomplish.<br />Duration: <%= humanize(current_user.next_botnet_ratio_time) %></td>
+  </tr>
+  <tr>
+    <td rowspan="2"><%= link_to image_tag("botnet_buy.png"), actions_path(:type_id => Action::TYPE_BOTNET_BUY), :method => :post %></td>
+    <td><strong>Buy botnet</strong></td>
+    <td rowspan="2">
+      <% if current_user.money > CONFIG["botnet"]["buy_cost"].to_i %>
+        <%= link_to "perform action", actions_path(:type_id => Action::TYPE_BOTNET_BUY), :method => :post %>
+      <% else %>
+        <span class="deactivated">not enough money</span>
+      <% end %>
+    </td>
+  </tr>
+  <tr>
+    <td>You buy further clients to increase your botnet strength by <%= CONFIG["botnet"]["buy_ratio"] %> for <%= number_to_currency(CONFIG["botnet"]["buy_cost"].to_i) %>.<br />Cost: <%= number_to_currency(CONFIG["botnet"]["buy_cost"].to_i) %></td>
+  </tr>
+  <tr>
+    <td rowspan="2"><%= link_to image_tag("hacking_evolve.png"), actions_path(:type_id => Action::TYPE_HACKING_EVOLVE), :method => :post %></td>
+    <td><strong>Evolve hacking skill</strong></td>
+    <td rowspan="2"><%= link_to "perform action", actions_path(:type_id => Action::TYPE_HACKING_EVOLVE), :method => :post %></td>
+  </tr>
+  <tr>
+    <td>Increase your hacking strength by <%= CONFIG["hacking"]["evolve_ratio"] %>. Each level needs more time to accomplish.<br />Duration: <%= humanize(current_user.next_hacking_ratio_time) %></td>
+  </tr>
+  <tr>
+    <td rowspan="2"><%= link_to image_tag("hacking_buy.png"), actions_path(:type_id => Action::TYPE_HACKING_BUY), :method => :post %></td>
+    <td><strong>Buy hacking skill</strong></td>
+    <td rowspan="2">
+      <% if current_user.money > CONFIG["hacking"]["buy_cost"].to_i %>
+        <%= link_to "perform action", actions_path(:type_id => Action::TYPE_HACKING_BUY), :method => :post %>
+      <% else %>
+        <span class="deactivated">not enough money</span>
+      <% end %>
+    </td>
+  </tr>
+  <tr>
+    <td>You pay for more knowledge to increade your hacking skill <%= CONFIG["hacking"]["buy_ratio"] %> for <%= number_to_currency(CONFIG["hacking"]["buy_cost"].to_i) %>.<br />Cost: <%= number_to_currency(CONFIG["hacking"]["buy_cost"].to_i) %></td>
+  </tr>
+</table>

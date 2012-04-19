@@ -1,0 +1,28 @@
+<div class="cont">
+  <div class="world">
+    <%= image_tag("dot.png", :class => "dot_1", :id => "dot_1") %>
+    <%= image_tag("dot.png", :class => "dot_2", :id => "dot_2") %>
+    <div id="dot_1_box" class="dot_1_box">
+      Apple
+    </div>
+    <div id="dot_2_box" class="dot_2_box">
+      Apple
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function() {
+    $("#dot_1").mouseenter(function() {
+      $("#dot_1_box").show();
+    });
+    $("#dot_1_box").mouseleave(function() {
+      $("#dot_1_box").hide();
+    });
+    $("#dot_2").mouseenter(function() {
+      $("#dot_2_box").show();
+    });
+    $("#dot_2_box").mouseleave(function() {
+      $("#dot_2_box").hide();
+    });
+  });
+</script>
