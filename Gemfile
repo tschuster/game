@@ -3,6 +3,7 @@ source 'http://rubygems.org'
 gem 'rails', '3.2.3'
 gem 'mysql2'
 gem 'devise'
+gem 'rvm-capistrano'
 
 group :assets do
   gem 'sass-rails'
