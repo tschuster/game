@@ -3,8 +3,6 @@ source 'http://rubygems.org'
 gem 'rails', '3.2.3'
 gem 'mysql2'
 gem 'devise'
-gem 'rvm-capistrano'
-gem 'capistrano'
 
 group :assets do
   gem 'sass-rails'
@@ -13,6 +11,11 @@ group :assets do
 end
 
 gem 'jquery-rails'
+
+group :development do
+  gem 'rvm-capistrano'
+  gem 'capistrano'
+end
 
 group :production do
   #gem 'unicorn'
