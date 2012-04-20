@@ -19,7 +19,8 @@ end
 
 group :production do
   #gem 'unicorn'
-  gem 'passenger'
+  #gem 'passenger'
+  gem 'fcgi'
 end
 
 group :test do
