@@ -20,4 +20,8 @@ module ApplicationHelper
       end
     }.compact.reverse.join(' ')
   end
+
+  def active_class(controller)
+    ' class="active"'.html_safe if params[:controller] == controller
+  end
 end

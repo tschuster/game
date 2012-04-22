@@ -24,7 +24,7 @@ class ActionsController < ApplicationController
         @action.job.update_attributes(:completed => true, :success => false)
       end
       @action.destroy
-      message = 'Action was successfully canceled.'
+      message = "Action was successfully canceled."
     else
       message = "No Action to cancel"
     end

@@ -1,44 +1,18 @@
 .cont {
-  padding: 40px 10px 20px 10px;
-  margin: auto;
+  padding-top: 20px;
 
   .world {
     width: 1000px;
     height: 612px;
-    background: URL("world_1000.png") no-repeat;
-    padding: 0px;
+    margin-top: -612px;
 
     .dot_1 {
-      display: block;
-      position: absolute;
-      padding-left: 170px;
-      padding-top: 224px;
-    }
-    .dot_2 {
-      display: block;
-      position: absolute;
-      padding-left: 517px;
-      padding-top: 193px;
-    }
-    .dot_1_box {
-      display: none;
-      position: absolute;
       margin-left: 170px;
       margin-top: 224px;
-      width: 250px;
-      height: 200px;
-      background-color: white;
-      color: black;
     }
-    .dot_2_box {
-      display: none;
-      position: absolute;
+    .dot_2 {
       margin-left: 517px;
       margin-top: 193px;
-      width: 250px;
-      height: 200px;
-      background-color: white;
-      color: black;
     }
   }
 }

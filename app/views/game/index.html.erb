@@ -1,28 +1,18 @@
 <div class="cont">
+  <%= image_tag "world_1000.png" %>
   <div class="world">
-    <%= image_tag("dot.png", :class => "dot_1", :id => "dot_1") %>
-    <%= image_tag("dot.png", :class => "dot_2", :id => "dot_2") %>
-    <div id="dot_1_box" class="dot_1_box">
-      Apple
-    </div>
-    <div id="dot_2_box" class="dot_2_box">
-      Apple
-    </div>
+    <%= image_tag("dot.png", :class => "dot_1 dot", :id => "dot_1", :'data-content' => "Data Center", :title => "Apple") %>
+  </div>
+  <div class="world">
+    <%= image_tag("dot.png", :class => "dot_2 dot", :id => "dot_2", :'data-content' => "Data Center", :title => "Apple") %>
   </div>
 </div>
 <script>
   $(document).ready(function() {
-    $("#dot_1").mouseenter(function() {
-      $("#dot_1_box").show();
-    });
-    $("#dot_1_box").mouseleave(function() {
-      $("#dot_1_box").hide();
-    });
-    $("#dot_2").mouseenter(function() {
-      $("#dot_2_box").show();
-    });
-    $("#dot_2_box").mouseleave(function() {
-      $("#dot_2_box").hide();
+    $(".dot").popover({
+      placement: 'top',
+      title: "Apple",
+      delay: { hide: 800, show: 10 }
     });
   });
 </script>

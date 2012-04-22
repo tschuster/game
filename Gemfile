@@ -13,8 +13,8 @@ end
 gem 'jquery-rails'
 
 group :development do
-  gem 'rvm-capistrano'
   gem 'capistrano'
+  gem 'rvm-capistrano'
 end
 
 group :production do

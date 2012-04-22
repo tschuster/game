@@ -1,10 +1,9 @@
-<div class="jobs_box">
-  <h3>Jobs</h3>
-  <p>
-    Accept Jobs to receive money. The job's difficulty vary depending of the job's type. The more difficult a job is, the higher it will be rewarded, but it is also harder to complete. The higher your skills, the faster a job can be completed. You cannot accept a job while you are performing an action.
-  </p>
-  <% if @jobs.present? %>
-  <table border="0" cellspacing="0" cellpadding="0" class="jobs_table">
+<div class="hero-unit">
+  <h2>Jobs</h2>
+  <p>Accept Jobs to receive money. The job's difficulty vary depending on the job's type. The more difficult a job is, the higher it will be rewarded, but it is also harder to complete. The higher your skills, the faster a job can be completed. You cannot accept a job while you are performing an action.</p>
+</div>
+<% if @jobs.present? %>
+  <table border="0" cellspacing="0" cellpadding="0" class="table table-bordered">
     <tr>
       <th>&nbsp;</th>
       <th>Job Type</th>
@@ -38,4 +37,3 @@
 <% else %>
   There are currently no jobs available. Check back later!
 <% end %>
-</div>

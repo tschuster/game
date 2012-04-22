@@ -2,9 +2,16 @@
 <html>
 <head>
   <title>Game</title>
+  <meta charset="utf-8">
   <%= stylesheet_link_tag    "application" %>
   <%= javascript_include_tag "application" %>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <%= csrf_meta_tags %>
+  <style>
+    body {
+      padding-top: 60px;
+    }
+  </style>
   <script>
     $(document).ready(function() {
       var refreshId = setInterval(function() {
@@ -16,53 +23,61 @@
   </script>
 </head>
 <body>
-  <div class="min_height">&nbsp;</div>
-  <div class="all">
-    <div class="clear_head">&nbsp;</div>
-    <div class="left">
-      <%= link_to "Desktop", game_index_path %>
-      <br /><br />
-      <%= link_to "Actions", actions_path %>
-      <br /><br />
-      <%= link_to "Jobs", jobs_path %>
-    </div>
-    <div class="right">
-      <%= render :partial => "actions/recent" %>
-    </div>
-    <div class="middle">
-      <table border="0" cellspacing="0" cellpadding="0" style="width: 88%;">
-        <tr>
-          <td style="width: 75%;">
-            <div id="current_action_container" class="current">
-              <%= render :partial => "actions/current" %>
-            </div>
-          </td>
-          <td>
-            <div id="current_stats_container" class="current">
-              <%= render :partial => "users/stats" %>
-            </div>
-          </td>
-        </tr>
-      </table>
-      <%= yield %>
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </a>
+        <%= link_to "Game", game_index_path, :class => "brand" %>
+        <div class="nav-collapse">
+          <ul class="nav">
+            <li <%= active_class "game" %>><%= link_to "Desktop", game_index_path %></li>
+            <li <%= active_class "actions" %>><%= link_to "Actions", actions_path %></li>
+            <li <%= active_class "jobs" %>><%= link_to "Jobs", jobs_path %></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+        <ul class="nav pull-right">
+          <li><%= link_to "Logout", destroy_user_session_path, :method => :delete %></li>
+        </ul>
+      </div>
     </div>
   </div>
-  <div class="footer">
-  </div>
-  <div class="header">
-    logo
-    <% if user_signed_in? %>
-      <div class="system">
-        <%= link_to "Logout", destroy_user_session_path, :method => :delete %>
+  <div class="container">
+    <% flash.each do |key, msg| -%>
+      <% if key == :alert %>
+        <div class="alert alert-error">
+      <% else %>
+        <div class="alert alert-success">
+      <% end %>
+        <a class="close" data-dismiss="alert">×</a>
+        <%= msg %>
       </div>
-    <% end %>
-    <% if flash.present? %>
-      <div class="flash">
-        <% flash.each do |key, msg| -%>
-            <%= content_tag(:div, msg, :id => key) %>
-        <% end -%>
+    <% end -%>
+    <div class="row">
+      <div class="span3">
+        <div id="current_stats_container">
+          <%= render :partial => "users/stats" %>
+        </div>
       </div>
-    <% end %>
+      <div class="span6">
+        <div id="current_action_container">
+          <%= render :partial => "actions/current" %>
+        </div>
+      </div>
+      <div class="span3">
+        <div class="pull-right">
+        <%= render :partial => "actions/recent" %>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="span12">
+        <%= yield %>
+      </div>
+    </div>
   </div>
 </body>
 </html>

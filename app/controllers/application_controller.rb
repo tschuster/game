@@ -27,6 +27,6 @@ class ApplicationController < ActionController::Base
     end
 
     def set_recent_actions
-      @recent_actions = Action.where({:completed => true, :user_id => current_user.id}).order("completed_at DESC").limit(10) if current_user
+      @recent_actions = Action.where({:completed => true, :user_id => current_user.id}).order("completed_at DESC").limit(5) if current_user
     end
 end
