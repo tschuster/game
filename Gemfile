@@ -19,8 +19,8 @@ end
 
 group :production do
   #gem 'unicorn'
-  #gem 'passenger'
   gem 'fcgi'
+  gem 'passenger'
 end
 
 group :test do
