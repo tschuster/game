@@ -3,7 +3,6 @@ source 'http://rubygems.org'
 gem 'rails', '3.2.3'
 gem 'mysql2'
 gem 'devise'
-gem 'passenger'
 
 group :assets do
   gem 'sass-rails'
@@ -19,7 +18,7 @@ group :development do
 end
 
 group :production do
-  #gem 'unicorn'
+  gem 'mongrel', ">= 1.2.0pre2"
   gem 'fcgi'
 end
 
