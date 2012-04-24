@@ -4,9 +4,6 @@ Game::Application.routes.draw do
 
   resources :game, :only => :index
 
-  # Route zum Performer-Metal
-  match '/actions/perform' => Performer
-
   resources :users, :only => [ :show ]
 
   resources :jobs, :only => [ :index ] do
