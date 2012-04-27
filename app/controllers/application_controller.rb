@@ -24,6 +24,7 @@ class ApplicationController < ActionController::Base
 
     def set_current_action
       @current_action = Action.current_for_user(current_user).first if current_user
+      log request.env["HTTP_USER_AGENT"]
     end
 
     def set_recent_actions

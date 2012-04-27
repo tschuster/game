@@ -9,9 +9,10 @@
   <%= csrf_meta_tags %>
   <style>
     body {
-      padding-top: 60px;
+      padding-top: 55px;
     }
   </style>
+  <%= stylesheet_link_tag "bootstrap-responsive" %>
   <script>
     $(document).ready(function() {
       var refreshId = setInterval(function() {
@@ -38,37 +39,34 @@
             <li <%= active_class "actions" %>><%= link_to "Actions", actions_path %></li>
             <li <%= active_class "jobs" %>><%= link_to "Jobs", jobs_path %></li>
           </ul>
-        </div><!--/.nav-collapse -->
-        <ul class="nav pull-right">
-          <li><%= link_to "Logout", destroy_user_session_path, :method => :delete %></li>
-        </ul>
-        <ul class="nav pull-right">
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <%= current_user.email %>
-              <b class="caret"></b>
-            </a>
-            <ul class="dropdown-menu">
-              <div id="personal_stats" style="padding: 15px; min-width: 155px;">
-                <h3>Your current Stats</h3>
-                <table border="0" cellspacing="0" cellpadding="0" style="width: 100%;">
-                  <tr>
-                    <td>Botnet ratio:</td>
-                    <td style="text-align: right;"><%= current_user.botnet_ratio %></td>
-                  </tr>
-                  <tr>
-                    <td>Hacking skill:</td>
-                    <td style="text-align: right;"><%= current_user.hacking_ratio %></td>
-                  </tr>
-                  <tr>
-                    <td>Money:</td>
-                    <td style="text-align: right;"><%= number_to_currency(current_user.money) %></td>
-                  </tr>
-                </table>
-              </div>
-            </ul>
-          </li>
-        </ul>
+          <ul class="nav pull-right">
+            <li><%= link_to "Logout", destroy_user_session_path, :method => :delete %></li>
+            <li class="dropdown">
+              <%= link_to "#", :class => "dropdown-toggle", :'data-toggle' => "dropdown" do %>
+                <%= current_user.email %><b class="caret"></b>
+              <% end %>
+              <ul class="dropdown-menu">
+                <div id="personal_stats" style="padding: 15px; min-width: 155px;">
+                  <h3>Your current Stats</h3>
+                  <table border="0" cellspacing="0" cellpadding="0" style="width: 100%;">
+                    <tr>
+                      <td>Botnet ratio:</td>
+                      <td style="text-align: right;"><%= current_user.botnet_ratio %></td>
+                    </tr>
+                    <tr>
+                      <td>Hacking skill:</td>
+                      <td style="text-align: right;"><%= current_user.hacking_ratio %></td>
+                    </tr>
+                    <tr>
+                      <td>Money:</td>
+                      <td style="text-align: right;"><%= number_to_currency(current_user.money) %></td>
+                    </tr>
+                  </table>
+                </div>
+              </ul>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
