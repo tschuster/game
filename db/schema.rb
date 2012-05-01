@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111021152321) do
+ActiveRecord::Schema.define(:version => 20120501122906) do
 
   create_table "actions", :force => true do |t|
     t.integer  "type_id"
@@ -61,6 +61,8 @@ ActiveRecord::Schema.define(:version => 20111021152321) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "hacking_ratio",                         :default => 10
+    t.string   "nickname"
+    t.integer  "defense_ratio",                         :default => 10
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

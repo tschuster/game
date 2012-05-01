@@ -1,0 +1,22 @@
+<table border="0" class="table table-bordered" cellspacing="0" cellpadding="0">
+  <tr>
+    <th>Id</th>
+    <th>Nickname</th>
+    <th>Email</th>
+    <th>Botnet ratio</th>
+    <th>Defense ratio</th>
+    <th>Hacking ratio</th>
+    <th>Money</th>
+  </tr>
+<% @users.each do |user| %>
+  <tr>
+    <td><%= user.id %></td>
+    <td><%= user.nickname %></td>
+    <td><%= user.email %></td>
+    <td><%= user.botnet_ratio %></td>
+    <td><%= user.defense_ratio %></td>
+    <td><%= user.hacking_ratio %></td>
+    <td><%= number_to_currency(user.money) %></td>
+  </tr>
+<% end %>
+</table>

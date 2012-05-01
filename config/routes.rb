@@ -4,7 +4,7 @@ Game::Application.routes.draw do
 
   resources :game, :only => :index
 
-  resources :users, :only => [ :show ]
+  resources :users, :only => [ :show, :index ]
 
   resources :jobs, :only => [ :index ] do
     member do

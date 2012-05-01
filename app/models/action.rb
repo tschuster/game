@@ -26,29 +26,40 @@ class Action < ActiveRecord::Base
   TYPE_BOTNET_BUY     = 102
   TYPE_HACKING_EVOLVE = 103
   TYPE_HACKING_BUY    = 104
+  TYPE_DEFENSE_EVOLVE = 105
+  TYPE_DEFENSE_BUY    = 106
   TYPE_PERFORM_JOB    = 201
 
   def perform!
+
+    # eigenes Botnet erweitern
     if type_id == Action::TYPE_BOTNET_EVOLVE
-
-      # eigenes Botnet erweitern
       user.evolve_botnet
+
+    # Botnet-Erweiterung dazukaufen
     elsif type_id == Action::TYPE_BOTNET_BUY
-
-      # Botnet-Erweiterung dazukaufen
       user.buy_botnet
+
+    # eigene Verteidigung erweitern
+    elsif type_id == Action::TYPE_DEFENSE_EVOLVE
+      user.evolve_defense
+
+    # Verteidigung dazukaufen
+    elsif type_id == Action::TYPE_DEFENSE_BUY
+      user.buy_defense
+
+    # Hacking-Skill erweitern
     elsif type_id == Action::TYPE_HACKING_EVOLVE
-
-      # Hacking-Skill erweitern
       user.evolve_hacking
+
+    # Hacking-Skill dazukaufen
     elsif type_id == Action::TYPE_HACKING_BUY
-
-      # Hacking-Skill dazukaufen
       user.buy_hacking
-    elsif type_id == Action::TYPE_PERFORM_JOB
 
-      # Job ausführen
+    # Job ausführen
+    elsif type_id == Action::TYPE_PERFORM_JOB
       job.perform!
+
     else
       raise Action::InvalidTypeException.new("Typ '#{type_id.to_s}' ungültig")
     end
@@ -61,16 +72,22 @@ class Action < ActiveRecord::Base
 
   def readable_type
     case type_id
-      when Action::TYPE_BOTNET_EVOLVE
-        "Evolve Botnet"
-      when Action::TYPE_BOTNET_BUY
-        "Buy Botnet"
-      when Action::TYPE_HACKING_EVOLVE
-        "Evolve Hacking Skill"
-      when Action::TYPE_HACKING_BUY
-        "Buy Hacking Skill"
-      when Action::TYPE_PERFORM_JOB
-        "Performing Job"
+    when Action::TYPE_BOTNET_EVOLVE
+      "Evolve Botnet"
+    when Action::TYPE_BOTNET_BUY
+      "Buy Botnet"
+    when Action::TYPE_HACKING_EVOLVE
+      "Evolve Hacking Skill"
+    when Action::TYPE_HACKING_BUY
+      "Buy Hacking Skill"
+    when Action::TYPE_DEFENSE_EVOLVE
+      "Evolve Defense"
+    when Action::TYPE_DEFENSE_BUY
+      "Buy Defense"
+    when Action::TYPE_PERFORM_JOB
+      "Performing Job"
+    else
+      raise Action::InvalidTypeException.new("Typ '#{type_id.to_s}' ungültig")
     end
   end
 
@@ -90,6 +107,12 @@ class Action < ActiveRecord::Base
         will_be_completed_at = DateTime.now + current_user.next_botnet_ratio_time.seconds
 
       elsif action[:type_id].to_i == Action::TYPE_BOTNET_BUY
+        will_be_completed_at = DateTime.now
+
+      elsif action[:type_id].to_i == Action::TYPE_DEFENSE_EVOLVE
+        will_be_completed_at = DateTime.now + current_user.next_defense_ratio_time.seconds
+
+      elsif action[:type_id].to_i == Action::TYPE_DEFENSE_BUY
         will_be_completed_at = DateTime.now
 
       elsif action[:type_id].to_i == Action::TYPE_HACKING_EVOLVE

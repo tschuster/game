@@ -40,22 +40,25 @@
             <li <%= active_class "jobs" %>><%= link_to "Jobs", jobs_path %></li>
           </ul>
           <ul class="nav pull-right">
-            <li><%= link_to "Logout", destroy_user_session_path, :method => :delete %></li>
             <li class="dropdown">
               <%= link_to "#", :class => "dropdown-toggle", :'data-toggle' => "dropdown" do %>
-                <%= current_user.email %><b class="caret"></b>
+                <%= current_user.nickname %> <b class="caret"></b>
               <% end %>
               <ul class="dropdown-menu">
                 <div id="personal_stats" style="padding: 15px; min-width: 155px;">
                   <h3>Your current Stats</h3>
-                  <table border="0" cellspacing="0" cellpadding="0" style="width: 100%;">
+                  <table border="0" cellspacing="0" cellpadding="0" style="width: 100%; margin-top: 6px;">
+                    <tr>
+                      <td>Hacking skill:</td>
+                      <td style="text-align: right;"><%= current_user.hacking_ratio %></td>
+                    </tr>
                     <tr>
                       <td>Botnet ratio:</td>
                       <td style="text-align: right;"><%= current_user.botnet_ratio %></td>
                     </tr>
                     <tr>
-                      <td>Hacking skill:</td>
-                      <td style="text-align: right;"><%= current_user.hacking_ratio %></td>
+                      <td>Defense ratio:</td>
+                      <td style="text-align: right;"><%= current_user.defense_ratio %></td>
                     </tr>
                     <tr>
                       <td>Money:</td>
@@ -65,6 +68,7 @@
                 </div>
               </ul>
             </li>
+            <li><%= link_to "Logout", destroy_user_session_path, :method => :delete %></li>
           </ul>
         </div>
       </div>

@@ -24,10 +24,15 @@ class ApplicationController < ActionController::Base
 
     def set_current_action
       @current_action = Action.current_for_user(current_user).first if current_user
-      log request.env["HTTP_USER_AGENT"]
+      #log request.env["HTTP_USER_AGENT"]
     end
 
     def set_recent_actions
       @recent_actions = Action.where({:completed => true, :user_id => current_user.id}).order("completed_at DESC").limit(5) if current_user
+    end
+
+    def authenticate_admin!
+      log current_user.admin?
+      redirect_to(root_path) if current_user.blank? || !current_user.admin?
     end
 end
