@@ -51,6 +51,34 @@ class User < ActiveRecord::Base
     update_attributes(:money => [0, (money-CONFIG["defense"]["buy_cost"].to_i)].max, :defense_ratio => defense_ratio + CONFIG["defense"]["buy_ratio"].to_i)
   end
 
+  def attack(target)
+    return if target.blank?
+    if target.is_a?(User)
+      
+      result = rand(hacking_ratio + target.defense_ratio)
+      result = 1000
+      if result <= hacking_ratio
+
+        # attack succesfull
+        stolen_money = target.take_money!((400/chance_of_success_against(target).to_f*100).round)
+        receive_money!(stolen_money) if stolen_money > 0.0
+
+        # TODO: notifications
+      else
+
+        # attack failed
+        Action.create(
+          :type_id      => Action::TYPE_SYSTEM_CRASH,
+          :user_id      => id,
+          :completed_at => DateTime.now + 60.minutes,
+          :completed    => false
+        )
+      end
+    else
+      # TODO: implement!
+    end
+  end
+
   def next_botnet_ratio_time
     botnet_ratio * botnet_ratio / 4
   end
@@ -61,6 +89,11 @@ class User < ActiveRecord::Base
 
   def next_hacking_ratio_time
     hacking_ratio * hacking_ratio / 4
+  end
+
+  def time_to_attack(user)
+    return if chance_of_success_against(user) <= 0
+    600/chance_of_success_against(user)*100
   end
 
   def has_incomplete_actions?
@@ -75,7 +108,26 @@ class User < ActiveRecord::Base
     update_attribute(:money, money+value)
   end
 
+  def take_money!(value)
+    if value >= money
+      update_attribute(:money, 0)
+      money
+    else
+      update_attribute(:money, money-value)
+      value
+    end
+  end
+
   def admin?
     id == 1
+  end
+
+  def chance_of_success_against(user)
+
+    # Angreifer zu stark oder Gegner zu schwach
+    return 0 if (hacking_ratio * 0.7 > user.defense_ratio && user.defense_ratio < hacking_ratio * 1.3) || hacking_ratio + user.defense_ratio == 0
+
+    # Summe aller Werte bildet die Anteile des Angreifers und Verteidigers ab
+    (hacking_ratio.to_f / (hacking_ratio + user.defense_ratio).to_f * 100).to_i
   end
 end

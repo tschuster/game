@@ -3,12 +3,16 @@ class ActionsController < ApplicationController
   def index
   end
 
+  def operations
+    @attackable_users = User.where("id != ?", current_user.id).delete_if { |user| current_user.chance_of_success_against(user) <= 0.0 }
+  end
+
   def current
     render :layout => false
   end
 
   def create
-    @action = Action.new(:type_id => params[:type_id].to_i, :user_id => current_user.id)
+    @action = Action.new(:type_id => params[:type_id].to_i, :user_id => current_user.id, :target_id => params[:target_id])
 
     if Action.add_for_user(@action, current_user)
       redirect_to game_index_path, notice: 'You are performing an action'

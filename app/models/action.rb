@@ -2,6 +2,7 @@
 class Action < ActiveRecord::Base
   belongs_to :user
   belongs_to :job
+  belongs_to :target, :polymorphic => true
 
   # Exception-Klasse
   class InvalidTypeException < StandardError
@@ -29,6 +30,10 @@ class Action < ActiveRecord::Base
   TYPE_DEFENSE_EVOLVE = 105
   TYPE_DEFENSE_BUY    = 106
   TYPE_PERFORM_JOB    = 201
+  TYPE_ATTACK_USER    = 301
+  TYPE_ATTACK_COMPANY = 302
+  TYPE_ARREST         = 401
+  TYPE_SYSTEM_CRASH   = 402
 
   def perform!
 
@@ -60,6 +65,14 @@ class Action < ActiveRecord::Base
     elsif type_id == Action::TYPE_PERFORM_JOB
       job.perform!
 
+    # User angreifen
+    elsif type_id == Action::TYPE_ATTACK_USER
+      user.attack(target)
+
+    # Sperre aufheben
+    elsif type_id == Action::TYPE_SYSTEM_CRASH
+      # n/a
+
     else
       raise Action::InvalidTypeException.new("Typ '#{type_id.to_s}' ungültig")
     end
@@ -86,6 +99,10 @@ class Action < ActiveRecord::Base
       "Buy Defense"
     when Action::TYPE_PERFORM_JOB
       "Performing Job"
+    when Action::TYPE_ATTACK_USER
+      target.present? ? "Attacking #{target.nickname}" : "Attacking another Hacker"
+    when Action::TYPE_SYSTEM_CRASH
+      "Rebooting System"
     else
       raise Action::InvalidTypeException.new("Typ '#{type_id.to_s}' ungültig")
     end
@@ -100,37 +117,45 @@ class Action < ActiveRecord::Base
     # eine neue Action für einen User zur Abarbeitung anlegen
     def add_for_user(action, current_user)
       return if current_user.has_incomplete_actions?
-      will_be_completed_at = nil
+      target_type = nil
 
       # Validierungen
-      if action[:type_id].to_i == Action::TYPE_BOTNET_EVOLVE
-        will_be_completed_at = DateTime.now + current_user.next_botnet_ratio_time.seconds
+      will_be_completed_at = if action.type_id == Action::TYPE_BOTNET_EVOLVE
+        DateTime.now + current_user.next_botnet_ratio_time.seconds
 
-      elsif action[:type_id].to_i == Action::TYPE_BOTNET_BUY
-        will_be_completed_at = DateTime.now
+      elsif action.type_id == Action::TYPE_BOTNET_BUY
+        DateTime.now
 
-      elsif action[:type_id].to_i == Action::TYPE_DEFENSE_EVOLVE
-        will_be_completed_at = DateTime.now + current_user.next_defense_ratio_time.seconds
+      elsif action.type_id == Action::TYPE_DEFENSE_EVOLVE
+        DateTime.now + current_user.next_defense_ratio_time.seconds
 
-      elsif action[:type_id].to_i == Action::TYPE_DEFENSE_BUY
-        will_be_completed_at = DateTime.now
+      elsif action.type_id == Action::TYPE_DEFENSE_BUY
+        DateTime.now
 
-      elsif action[:type_id].to_i == Action::TYPE_HACKING_EVOLVE
-        will_be_completed_at = DateTime.now + current_user.next_hacking_ratio_time.seconds
+      elsif action.type_id == Action::TYPE_HACKING_EVOLVE
+        DateTime.now + current_user.next_hacking_ratio_time.seconds
 
-      elsif action[:type_id].to_i == Action::TYPE_HACKING_BUY
-        will_be_completed_at = DateTime.now
+      elsif action.type_id == Action::TYPE_HACKING_BUY
+        DateTime.now
 
-      elsif action[:type_id].to_i == Action::TYPE_PERFORM_JOB
-        will_be_completed_at = DateTime.now + Job.find(action[:job_id]).duration_for(current_user).seconds
+      elsif action.type_id == Action::TYPE_PERFORM_JOB
+        DateTime.now + Job.find(action[:job_id]).duration_for(current_user).seconds
+
+      elsif action.type_id == Action::TYPE_ATTACK_USER
+        target = User.where(:id => action.target_id).first
+        return if target.blank?
+        target_type = "User"
+        DateTime.now + current_user.time_to_attack(target).seconds
 
       else
-        raise Action::InvalidTypeException.new("Typ '#{type_id.to_s}' ungültig")
+        raise Action::InvalidTypeException.new("Typ '#{action.type_id}' ungültig")
       end
       result = Action.create(
-        :type_id      => action[:type_id].to_i,
-        :job_id       => action[:job_id],
+        :type_id      => action.type_id,
+        :job_id       => action.job_id,
         :user_id      => current_user.id,
+        :target_id    => action.target_id,
+        :target_type  => target_type,
         :completed_at => will_be_completed_at,
         :completed    => false
       )

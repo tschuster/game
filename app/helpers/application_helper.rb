@@ -21,7 +21,21 @@ module ApplicationHelper
     }.compact.reverse.join(' ')
   end
 
-  def active_class(controller)
-    ' class="active"'.html_safe if params[:controller] == controller
+  def active_class(controller, action = nil)
+    if action.present?
+      ' class="active"'.html_safe if params[:controller] == controller && params[:action] == action
+    else
+      ' class="active"'.html_safe if params[:controller] == controller
+    end
+  end
+
+  def progress_class_for(value)
+    if value <= 33
+      " progress-danger" 
+    elsif value <= 66
+      " progress-warning"
+    else
+      " progress-success"
+    end
   end
 end

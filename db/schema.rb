@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120501122906) do
+ActiveRecord::Schema.define(:version => 20120501200223) do
 
   create_table "actions", :force => true do |t|
     t.integer  "type_id"
@@ -21,6 +21,8 @@ ActiveRecord::Schema.define(:version => 20120501122906) do
     t.datetime "updated_at"
     t.datetime "completed_at"
     t.boolean  "completed",    :default => false
+    t.integer  "target_id"
+    t.string   "target_type"
   end
 
   create_table "jobs", :force => true do |t|

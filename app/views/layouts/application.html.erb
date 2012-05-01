@@ -36,8 +36,9 @@
         <div class="nav-collapse">
           <ul class="nav">
             <li <%= active_class "game" %>><%= link_to "Desktop", game_index_path %></li>
-            <li <%= active_class "actions" %>><%= link_to "Actions", actions_path %></li>
+            <li <%= active_class "actions", "index" %>><%= link_to "Actions", actions_path %></li>
             <li <%= active_class "jobs" %>><%= link_to "Jobs", jobs_path %></li>
+            <li <%= active_class "actions", "operations" %>><%= link_to "Operations", operations_path %></li>
           </ul>
           <ul class="nav pull-right">
             <li class="dropdown">

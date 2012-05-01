@@ -1,0 +1,12 @@
+<div class="hero-unit">
+  <h2>Operations</h2>
+  <p>You can start an operation to attack another hacker or a company. You need a high hacking skill to make it past the enemy's defenses. A successfull attack will grant you rewards as money or hardware. But beware! Failing an operation can lead to arrest by the authorities or malfunctions in your system.</p>
+</div>
+<h3>Other hackers you can attack</h3>
+<% if @attackable_users.present? %>
+  <%= render :partial => "operations_list" %>
+<% else %>
+  <p>
+    You are not strong enough to attack any other hacker. <%= link_to "Evolve your hacking skills first", actions_path %>.
+  </p>
+<% end %>

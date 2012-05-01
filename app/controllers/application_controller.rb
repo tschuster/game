@@ -32,7 +32,6 @@ class ApplicationController < ActionController::Base
     end
 
     def authenticate_admin!
-      log current_user.admin?
       redirect_to(root_path) if current_user.blank? || !current_user.admin?
     end
 end

@@ -19,6 +19,8 @@ Game::Application.routes.draw do
     end
   end
 
+  match 'operations' => 'actions#operations', :as => :operations
+
   root :to => 'game#index'
   match "/" => 'game#index'
 end
