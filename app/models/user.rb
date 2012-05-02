@@ -125,7 +125,7 @@ class User < ActiveRecord::Base
   def chance_of_success_against(user)
 
     # Angreifer zu stark oder Gegner zu schwach
-    return 0 if (hacking_ratio * 0.7 > user.defense_ratio && user.defense_ratio < hacking_ratio * 1.3) || hacking_ratio + user.defense_ratio == 0
+    return 0 if (hacking_ratio * 0.5 > user.defense_ratio && user.defense_ratio < hacking_ratio * 1.5) || hacking_ratio + user.defense_ratio == 0
 
     # Summe aller Werte bildet die Anteile des Angreifers und Verteidigers ab
     (hacking_ratio.to_f / (hacking_ratio + user.defense_ratio).to_f * 100).to_i
