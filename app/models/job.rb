@@ -38,7 +38,7 @@ class Job < ActiveRecord::Base
         { :type => Job::JOB_TYPE_SPAM, :title => "Spam delivery", :description => "The client wants you to deliver %{number} spam mails." }
       ]
 
-      job         = jobs[rand(jobs.size)]
+      job         = jobs[rand(jobs.size-1)]
       description = nil
       difficulty  = nil
       reward      = nil
