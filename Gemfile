@@ -3,6 +3,7 @@ source 'http://rubygems.org'
 gem 'rails', '3.2.3'
 gem 'mysql2'
 gem 'devise'
+gem 'symbolize' , :require => 'symbolize/active_record'
 
 group :assets do
   gem 'sass-rails'

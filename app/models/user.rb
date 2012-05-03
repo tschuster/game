@@ -1,6 +1,7 @@
 class User < ActiveRecord::Base
   has_many :actions
   has_many :jobs
+  has_many :notifications
 
   validates :nickname, :exclusion => { :in => ["admin", "administrator"] }, :uniqueness => { :case_sensitive => false}, :presence => true
 
@@ -56,14 +57,15 @@ class User < ActiveRecord::Base
     if target.is_a?(User)
       
       result = rand(hacking_ratio + target.defense_ratio)
-      result = 1000
       if result <= hacking_ratio
 
         # attack succesfull
         stolen_money = target.take_money!((400/chance_of_success_against(target).to_f*100).round)
         receive_money!(stolen_money) if stolen_money > 0.0
 
-        # TODO: notifications
+        # Notifications
+        Notification.create_for(:attack_success_victim, target, :value => stolen_money, :attacker => self)
+        Notification.create_for(:attack_success_attacker, self, :value => stolen_money, :victim => target)
       else
 
         # attack failed
@@ -73,6 +75,10 @@ class User < ActiveRecord::Base
           :completed_at => DateTime.now + 60.minutes,
           :completed    => false
         )
+
+        # Notifications
+        Notification.create_for(:attack_failed_victim, target, :attacker => self)
+        Notification.create_for(:attack_failed_attacker, self, :victim => target)
       end
     else
       # TODO: implement!
@@ -129,5 +135,9 @@ class User < ActiveRecord::Base
 
     # Summe aller Werte bildet die Anteile des Angreifers und Verteidigers ab
     (hacking_ratio.to_f / (hacking_ratio + user.defense_ratio).to_f * 100).to_i
+  end
+
+  def unread_notifications_count
+    notifications.unread.count
   end
 end

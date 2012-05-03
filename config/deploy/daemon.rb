@@ -4,4 +4,4 @@ namespace :daemon do
   end
 end
 
-#after "deploy:update_code", "daemon:restart"
+after "deploy:update_code", "daemon:restart"

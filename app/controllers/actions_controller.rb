@@ -28,11 +28,11 @@ class ActionsController < ApplicationController
         @action.job.update_attributes(:completed => true, :success => false)
       end
       @action.destroy
-      message = "Action was successfully canceled."
+      flash.notice = "Action was successfully canceled."
     else
-      message = "No Action to cancel"
+      flash.alert = "No Action to cancel"
     end
 
-    redirect_to game_index_path, notice: message
+    redirect_to game_index_path
   end
 end

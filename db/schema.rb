@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120501200223) do
+ActiveRecord::Schema.define(:version => 20120503201628) do
 
   create_table "actions", :force => true do |t|
     t.integer  "type_id"
@@ -38,6 +38,16 @@ ActiveRecord::Schema.define(:version => 20120501200223) do
     t.datetime "completed_at"
     t.boolean  "completed",    :default => false
     t.boolean  "success"
+  end
+
+  create_table "notifications", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "from_user_id"
+    t.string   "class"
+    t.string   "message"
+    t.boolean  "new",          :default => true
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
   end
 
   create_table "targets", :force => true do |t|

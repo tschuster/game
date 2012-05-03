@@ -6,6 +6,12 @@ Game::Application.routes.draw do
 
   resources :users, :only => [ :show, :index ]
 
+  resources :notifications, :only => [ :index ] do
+    collection do
+      put :read
+    end
+  end
+
   resources :jobs, :only => [ :index ] do
     member do
       get 'accept'
