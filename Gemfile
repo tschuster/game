@@ -18,7 +18,7 @@ group :development do
 end
 
 group :production do
-  gem 'mongrel', ">= 1.2.0pre2"
+  gem 'unicorn'
   gem 'fcgi'
 end
 
