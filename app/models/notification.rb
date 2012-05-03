@@ -24,7 +24,7 @@ class Notification < ActiveRecord::Base
       when :attack_failed_victim
         "<p>You have been attacked by #{options[:attacker].nickname} but your firewall kept you safe!</p>"
       when :attack_failed_attacker
-        "<p>You failed to attack #{options[:victim].nickname}!</p> Your systems are damagded and rebooting."
+        "<p>You failed to attack #{options[:victim].nickname}!</p> Your systems are damadged and rebooting."
       when :news
         options[:message]
       end
