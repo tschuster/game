@@ -11,5 +11,4 @@ namespace :unicorn do
   end
 end
 
-# before 'deploy:update_code', 'resque:stop_workers'
 after  'deploy:update_code', 'unicorn:restart'
