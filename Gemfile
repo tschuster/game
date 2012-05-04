@@ -20,7 +20,6 @@ end
 
 group :production do
   gem 'unicorn'
-  gem 'fcgi'
 end
 
 group :test do
