@@ -1,3 +1,4 @@
+ENV['RAILS_RELATIVE_URL_ROOT'] = "/game"
 Game::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
@@ -7,7 +8,7 @@ Game::Application.configure do
   # Full error reports are disabled and caching is turned on
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
-  config.action_controller.relative_url_root = "game"
+  #config.action_controller.relative_url_root = ""
 
   # Disable Rails's static asset server (Apache or nginx will already do this)
   config.serve_static_assets = false
@@ -58,6 +59,4 @@ Game::Application.configure do
 
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
-
-  config.domain = "http://weasel.pegasus.uberspace.de/game/"
 end
