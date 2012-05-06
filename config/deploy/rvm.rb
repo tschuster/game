@@ -3,5 +3,5 @@ namespace :rvm do
     run "rvm rvmrc trust #{release_path}"
   end
 end
-
-before "deploy:finalize_update", "rvm:trust_rvmrc"
+ 
+before "deploy:setup", "rvm:trust_rvmrc"

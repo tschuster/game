@@ -4,4 +4,4 @@ namespace :daemon do
   end
 end
 
-before "deploy:cleanup", "daemon:restart"
+#before "deploy:cleanup", "daemon:restart"
