@@ -31,5 +31,5 @@ Game::Application.routes.draw do
     match "/" => 'game#index'
   end
 
-  match "/" => 'game#index'
+  root :to => 'game#index'
 end

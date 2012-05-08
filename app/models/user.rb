@@ -80,6 +80,7 @@ class User < ActiveRecord::Base
         Notification.create_for(:attack_failed_victim, target, :attacker => self)
         Notification.create_for(:attack_failed_attacker, self, :victim => target)
       end
+      Notification.create_for_all!(:attack, :attacker => self, :victim => target)
     else
       # TODO: implement!
     end
