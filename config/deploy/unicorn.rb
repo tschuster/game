@@ -11,4 +11,4 @@ namespace :unicorn do
   end
 end
 
-after  'deploy:update_code', 'unicorn:restart'
+after  'deploy:create_symlink', 'unicorn:restart'

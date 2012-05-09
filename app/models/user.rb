@@ -18,6 +18,11 @@ class User < ActiveRecord::Base
     action.perform! if action.present?
   end
 
+  # stoppt alle aktuellen Actions
+  def cancel_actions!
+    actions.incomplete.update_all(:completed => true)
+  end
+
   # eigenes Botnet erweitern
   def evolve_botnet
     update_attribute(:botnet_ratio, botnet_ratio + CONFIG["botnet"]["evolve_ratio"].to_i)
@@ -51,20 +56,42 @@ class User < ActiveRecord::Base
     update_attributes(:money => [0, (money-CONFIG["defense"]["buy_cost"].to_i)].max, :defense_ratio => defense_ratio + CONFIG["defense"]["buy_ratio"].to_i)
   end
 
-  def attack(target)
+  def attack(target, type = :hack)
     return if target.blank?
     if target.is_a?(User)
-      
-      result = rand(hacking_ratio + target.defense_ratio)
-      if result <= hacking_ratio
 
-        # attack succesfull
-        stolen_money = target.take_money!((400/chance_of_success_against(target).to_f*100).round)
-        receive_money!(stolen_money) if stolen_money > 0.0
+      if type == :hack
+        result = rand(hacking_ratio + target.defense_ratio)
+        success = result <= hacking_ratio
+      elsif type == :ddos
+        result = rand(botnet_ratio + target.defense_ratio)
+        success = result <= botnet_ratio
+      end
+      if success
 
-        # Notifications
-        Notification.create_for(:attack_success_victim, target, :value => stolen_money, :attacker => self)
-        Notification.create_for(:attack_success_attacker, self, :value => stolen_money, :victim => target)
+        # Angriff erfolgreich
+        if type == :hack
+          stolen_money = target.take_money!((400/chance_of_success_against(target, :hack).to_f*100).round)
+          receive_money!(stolen_money) if stolen_money > 0.0
+
+          # Notifications
+          Notification.create_for(:attack_success_victim, target, :value => stolen_money, :attacker => self)
+          Notification.create_for(:attack_success_attacker, self, :value => stolen_money, :victim => target)
+        elsif type == :ddos
+
+          # Actions hart canceln
+          target.cancel_actions!
+          Action.create(
+            :type_id      => Action::TYPE_DDOS_CRASH,
+            :user_id      => target.id,
+            :completed_at => DateTime.now + 60.minutes,
+            :completed    => false
+          )
+
+          # Notifications
+          Notification.create_for(:ddos_success_victim, target, :attacker => self)
+          Notification.create_for(:ddos_success_attacker, self, :victim => target)
+        end
       else
 
         # attack failed
@@ -76,8 +103,13 @@ class User < ActiveRecord::Base
         )
 
         # Notifications
-        Notification.create_for(:attack_failed_victim, target, :attacker => self)
-        Notification.create_for(:attack_failed_attacker, self, :victim => target)
+        if type == :hack
+          Notification.create_for(:attack_failed_victim, target, :attacker => self)
+          Notification.create_for(:attack_failed_attacker, self, :victim => target)
+        elsif type == :ddos
+          Notification.create_for(:ddos_failed_victim, target, :attacker => self)
+          Notification.create_for(:ddos_failed_attacker, self, :victim => target)
+        end
       end
       Notification.create_for_all!(:attack, :attacker => self, :victim => target)
     else
@@ -97,9 +129,9 @@ class User < ActiveRecord::Base
     hacking_ratio * hacking_ratio / 4
   end
 
-  def time_to_attack(user)
-    return if chance_of_success_against(user) <= 0
-    600/chance_of_success_against(user)*100
+  def time_to_attack(user, type = :hack)
+    return if chance_of_success_against(user, type) <= 0
+    600/chance_of_success_against(user, type)*100
   end
 
   def has_incomplete_actions?
@@ -129,13 +161,21 @@ class User < ActiveRecord::Base
     id == 1
   end
 
-  def chance_of_success_against(user)
+  def chance_of_success_against(user, type = :hack)
 
     # Gegner zu stark?
-    return 0 if user.defense_ratio > hacking_ratio * 1.5 || hacking_ratio + user.defense_ratio == 0
+    if type == :hack
+      return 0 if user.defense_ratio > hacking_ratio * 1.5 || hacking_ratio + user.defense_ratio == 0
 
-    # Summe aller Werte bildet die Anteile des Angreifers und Verteidigers ab
-    (hacking_ratio.to_f / (hacking_ratio + user.defense_ratio).to_f * 100).to_i
+      # Summe aller Werte bildet die Anteile des Angreifers und Verteidigers ab
+      (hacking_ratio.to_f / (hacking_ratio + user.defense_ratio).to_f * 100).to_i
+
+    elsif type == :ddos
+      return 0 if user.defense_ratio > botnet_ratio * 1.5 || botnet_ratio + user.defense_ratio == 0
+
+      # Summe aller Werte bildet die Anteile des Angreifers und Verteidigers ab
+      (botnet_ratio.to_f / (botnet_ratio + user.defense_ratio).to_f * 100).to_i
+    end
   end
 
   def unread_notifications_count

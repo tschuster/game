@@ -34,9 +34,9 @@ class Action < ActiveRecord::Base
   TYPE_ATTACK_COMPANY = 302
   TYPE_ARREST         = 401
   TYPE_SYSTEM_CRASH   = 402
+  TYPE_DDOS_CRASH     = 403
 
   def perform!
-
     # eigenes Botnet erweitern
     if type_id == Action::TYPE_BOTNET_EVOLVE
       user.evolve_botnet
@@ -67,7 +67,11 @@ class Action < ActiveRecord::Base
 
     # User angreifen
     elsif type_id == Action::TYPE_ATTACK_USER
-      user.attack(target)
+      user.attack(target, :hack)
+
+    # User dDoS angreifen
+    elsif type_id == Action::TYPE_DDOS_CRASH
+      user.attack(target, :ddos)
 
     # Sperre aufheben
     elsif type_id == Action::TYPE_SYSTEM_CRASH
@@ -100,7 +104,9 @@ class Action < ActiveRecord::Base
     when Action::TYPE_PERFORM_JOB
       "Performing Job"
     when Action::TYPE_ATTACK_USER
-      target.present? ? "Attacking #{target.nickname}" : "Attacking another Hacker"
+      "Performing Hacking-Attack on #{target.present? ? target.nickname : "another Hacker"}"
+    when Action::TYPE_DDOS_CRASH
+      "Performing dDoS-Attack on #{target.present? ? target.nickname : "another Hacker"}"
     when Action::TYPE_SYSTEM_CRASH
       "Rebooting System"
     else
@@ -145,7 +151,13 @@ class Action < ActiveRecord::Base
         target = User.where(:id => action.target_id).first
         return if target.blank?
         target_type = "User"
-        DateTime.now + current_user.time_to_attack(target).seconds
+        DateTime.now + current_user.time_to_attack(target, :hack).seconds
+
+      elsif action.type_id == Action::TYPE_DDOS_CRASH
+        target = User.where(:id => action.target_id).first
+        return if target.blank?
+        target_type = "User"
+        DateTime.now + current_user.time_to_attack(target, :ddos).seconds
 
       else
         raise Action::InvalidTypeException.new("Typ '#{action.type_id}' ungültig")

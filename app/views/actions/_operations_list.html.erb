@@ -8,18 +8,35 @@
 <% @attackable_users.each do |user| %>
   <tr>
     <td><%= user.nickname %></td>
-    <td><%= humanize(current_user.time_to_attack(user)) %></td>
     <td>
-      <div class="progress<%= progress_class_for(current_user.chance_of_success_against(user)) %>" style="margin-bottom: 0px; width: 300px; float: left;">
-        <div class="bar" style="width: <%= current_user.chance_of_success_against(user) %>%;"></div>
+      <%= humanize(current_user.time_to_attack(user, :hack)) if current_user.time_to_attack(user, :hack).to_i > 0 %>
+      <br /><br />
+      <%= humanize(current_user.time_to_attack(user, :ddos)) if current_user.time_to_attack(user, :ddos).to_i > 0 %></td>
+    <td>
+      <div class="progress<%= progress_class_for(current_user.chance_of_success_against(user, :hack)) %>" style="margin-bottom: 0px; width: 300px; float: left;">
+        <div class="bar" style="width: <%= current_user.chance_of_success_against(user, :hack) %>%;"></div>
       </div>
-      <span style="display: block; float: right;"><%= current_user.chance_of_success_against(user) %>%</span>
+      <span style="display: block; float: right;"><%= current_user.chance_of_success_against(user, :hack) %>%</span><br /><br />
+      <div class="progress<%= progress_class_for(current_user.chance_of_success_against(user, :ddos)) %>" style="margin-bottom: 0px; width: 300px; float: left;">
+        <div class="bar" style="width: <%= current_user.chance_of_success_against(user, :ddos) %>%;"></div>
+      </div>
+      <span style="display: block; float: right;"><%= current_user.chance_of_success_against(user, :ddos) %>%</span>
     </td>
     <td>
       <% if current_user.has_incomplete_actions? %>
         <span class="btn btn-primary disabled">Action pending</span>
       <% else %>
-        <%= link_to "attack", actions_path(:type_id => Action::TYPE_ATTACK_USER, :target_id => user.id), :class => "btn btn-primary", :method => :post %>
+        <% if current_user.chance_of_success_against(user, :hack) > 0 %>
+          <%= link_to "Hack", actions_path(:type_id => Action::TYPE_ATTACK_USER, :target_id => user.id), :class => "btn btn-primary", :method => :post, :style => "margin-bottom: 6px;" %>
+        <% else %>
+          <span class="btn disabled" style="margin-bottom: 6px;">You are to weak</span>
+        <% end %>
+        <br />
+        <% if current_user.chance_of_success_against(user, :ddos) > 0 %>
+          <%= link_to "dDos-Attack", actions_path(:type_id => Action::TYPE_DDOS_CRASH, :target_id => user.id), :class => "btn btn-primary", :method => :post %>
+        <% else %>
+          <span class="btn disabled" style="margin-bottom: 6px;">You are to weak</span>
+        <% end %>
       <% end %>
     </td>
   </tr>

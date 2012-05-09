@@ -2,7 +2,7 @@ include ActionView::Helpers::NumberHelper
 class Notification < ActiveRecord::Base
   belongs_to :user
 
-  symbolize :klass, :in => [:news, :attack_success_victim, :attack_success_attacker, :attack_failed_victim, :attack_failed_attacker, :attack], :scopes => true
+  symbolize :klass, :in => [:news, :attack_success_victim, :attack_success_attacker, :attack_failed_victim, :attack_failed_attacker, :attack, :ddos_success_victim, :ddos_success_attacker, :ddos_failed_victim, :ddos_failed_attacker], :scopes => true
 
   scope :latest_10, {
     :order => "created_at DESC",
@@ -16,13 +16,19 @@ class Notification < ActiveRecord::Base
       
       message = case klass
       when :attack_success_victim
-        "<p>You have been attacked by #{options[:attacker].nickname}!</p>#{number_to_currency(options[:value])} have been stolen."
+        "<p>You have been hacked by #{options[:attacker].nickname}!</p>#{number_to_currency(options[:value])} have been stolen."
       when :attack_success_attacker
-        "<p>You have successfully attacked #{options[:victim].nickname}!</p> You have stolen #{number_to_currency(options[:value])}."
+        "<p>You have successfully hacked #{options[:victim].nickname}!</p> You have stolen #{number_to_currency(options[:value])}."
       when :attack_failed_victim
-        "<p>You have been attacked by #{options[:attacker].nickname} but your firewall kept you safe!</p>"
-      when :attack_failed_attacker
-        "<p>You failed to attack #{options[:victim].nickname}!</p> Your systems are damadged and rebooting."
+        "<p>You have been hacked by #{options[:attacker].nickname} but your firewall kept you safe!</p>"
+      when :attack_failed_attacker, :ddos_failed_attacker
+        "<p>You failed to hack #{options[:victim].nickname}!</p> Your systems are damadged and rebooting."
+      when :ddos_success_victim
+        "<p>You have been dDoS-attacked by #{options[:attacker].nickname}!</p>Your systems are damadged and rebooting. Your current action has been canceled."
+      when :ddos_success_attacker
+        "<p>You have successfully attacked #{options[:victim].nickname} with a dDoS-attack!</p>"
+      when :ddos_failed_victim
+        "<p>You have been dDoS-attacked by #{options[:attacker].nickname} but your firewall kept you safe!</p>"
       when :news
         options[:message]
       end
