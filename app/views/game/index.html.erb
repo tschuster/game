@@ -26,8 +26,8 @@
   </tr>
   <% @notifications.each do |notification| %>
     <tr>
-      <td style="<%= "font-weight: bold;" if notification.is_new %>"><%= ll(notification.created_at, :format => :long) %></td>
-      <td style="<%= "font-weight: bold;" if notification.is_new %>"><%= notification.message.html_safe %></td>
+      <td <%= style_for notification %>><%= ll(notification.created_at, :format => :long) %></td>
+      <td <%= style_for notification %>><%= notification.message.html_safe %></td>
     </tr>
   <% end %>
 </table>

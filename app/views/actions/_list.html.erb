@@ -14,7 +14,7 @@
       You pay for more knowledge to increade your hacking skill by <%= CONFIG["hacking"]["buy_ratio"] %> for <%= number_to_currency(CONFIG["hacking"]["buy_cost"].to_i) %>.<br />Cost: <%= number_to_currency(CONFIG["hacking"]["buy_cost"].to_i) %>
     </td>
     <td>
-      <% if current_user.money > CONFIG["hacking"]["buy_cost"].to_i %>
+      <% if current_user.money >= CONFIG["hacking"]["buy_cost"].to_i %>
         <%= link_to "perform action", actions_path(:type_id => Action::TYPE_HACKING_BUY), :method => :post %>
       <% else %>
         <span class="deactivated">not enough money</span>
@@ -36,7 +36,7 @@
       You buy further clients to increase your botnet strength by <%= CONFIG["botnet"]["buy_ratio"] %> for <%= number_to_currency(CONFIG["botnet"]["buy_cost"].to_i) %>.<br />Cost: <%= number_to_currency(CONFIG["botnet"]["buy_cost"].to_i) %>
     </td>
     <td>
-      <% if current_user.money > CONFIG["botnet"]["buy_cost"].to_i %>
+      <% if current_user.money >= CONFIG["botnet"]["buy_cost"].to_i %>
         <%= link_to "perform action", actions_path(:type_id => Action::TYPE_BOTNET_BUY), :method => :post %>
       <% else %>
         <span class="deactivated">not enough money</span>
@@ -58,7 +58,7 @@
       You pay for better firewall hardware to increade your defense ratio by <%= CONFIG["defense"]["buy_ratio"] %> for <%= number_to_currency(CONFIG["defense"]["buy_cost"].to_i) %>.<br />Cost: <%= number_to_currency(CONFIG["defense"]["buy_cost"].to_i) %>
     </td>
     <td>
-      <% if current_user.money > CONFIG["defense"]["buy_cost"].to_i %>
+      <% if current_user.money >= CONFIG["defense"]["buy_cost"].to_i %>
         <%= link_to "perform action", actions_path(:type_id => Action::TYPE_DEFENSE_BUY), :method => :post %>
       <% else %>
         <span class="deactivated">not enough money</span>

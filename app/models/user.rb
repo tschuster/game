@@ -7,11 +7,10 @@ class User < ActiveRecord::Base
 
   # Include default devise modules. Others available are:
   # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
+  devise :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :nickname, :email, :password, :password_confirmation, :remember_me, :money, :botnet_ratio, :hacking_ratio
+  attr_accessible :nickname, :email, :password, :password_confirmation, :remember_me, :money, :botnet_ratio, :hacking_ratio, :defense_ratio
 
   # führt die gewählte Aktion des Users aus
   def perform_next_action!
@@ -117,8 +116,9 @@ class User < ActiveRecord::Base
 
   def take_money!(value)
     if value >= money
+      result_money = money
       update_attribute(:money, 0)
-      money
+      result_money
     else
       update_attribute(:money, money-value)
       value
