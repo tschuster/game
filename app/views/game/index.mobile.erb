@@ -1,0 +1,19 @@
+<%= render :partial => "actions/current" %>
+<br /><br />
+<h3>News<%= " (#{current_user.unread_notifications_count})" if current_user.unread_notifications_count > 0 %></h3>
+<table border="0" class="table table-bordered" cellspacing="0" cellpadding="0">
+  <tr>
+    <th style="white-space: nowrap;">Received at</th>
+    <th>Headline 
+      <% if current_user.unread_notifications_count <= 0 %>
+        <%= link_to('<i class="icon-ok"></i>'.html_safe, read_notifications_path, :method => :put, :class => "btn btn-mini pull-right", :title => "Mark as read") %>
+      <% end %>
+      </th>
+  </tr>
+  <% @notifications.each do |notification| %>
+    <tr>
+      <td <%= style_for notification %>><%= ll(notification.created_at, :format => :short) %></td>
+      <td <%= style_for notification %>><%= notification.message.html_safe %></td>
+    </tr>
+  <% end %>
+</table>

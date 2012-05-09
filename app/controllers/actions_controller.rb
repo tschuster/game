@@ -1,4 +1,5 @@
 class ActionsController < ApplicationController
+  respond_to :html, :mobile
 
   def index
   end

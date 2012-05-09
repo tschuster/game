@@ -1,0 +1,6 @@
+<p>Perform actions to increase your skills. You need to invest time or money to perform actions.</p>
+<% if @current_action.present? %>
+  <%= render :partial => "actions/current" %>
+<% else %>
+  <%= render :partial => "list" %>
+<% end %>

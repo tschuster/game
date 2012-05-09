@@ -4,7 +4,11 @@ Game::Application.routes.draw do
 
     resources :game, :only => :index
 
-    resources :users, :only => [ :show, :index ]
+    resources :users, :only => [ :show, :index ] do
+      collection do
+        get :stats
+      end
+    end
 
     resources :notifications, :only => [ :index ] do
       collection do

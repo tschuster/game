@@ -11,7 +11,7 @@ module ApplicationHelper
     Rails.logger.info("="*60)
   end
 
-  def humanize secs
+  def humanize(secs)
     return "0 seconds" if secs <= 0
     [[60, :seconds], [60, :minutes], [24, :hours], [1000, :days]].map{ |count, name|
       if secs > 0
@@ -19,6 +19,10 @@ module ApplicationHelper
         "#{n.to_i} #{name}"
       end
     }.compact.reverse.join(' ')
+  end
+
+  def short_time(secs)
+    (Time.mktime(0)+secs).strftime("%H:%M:%S")
   end
 
   def active_class(controller, action = nil)
@@ -36,6 +40,16 @@ module ApplicationHelper
       " progress-warning"
     else
       " progress-success"
+    end
+  end
+
+  def color_for(value)
+    if value <= 33
+      "color: #DD514C;" 
+    elsif value <= 66
+      "color: #FAA732;"
+    else
+      "color: #5EB95E;"
     end
   end
 end

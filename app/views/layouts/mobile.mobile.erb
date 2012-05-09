@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Game</title>
+  <meta charset="utf-8">
+  <%= stylesheet_link_tag    "application" %>
+  <%= javascript_include_tag "application" %>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <%= csrf_meta_tags %>
+  <style>
+    body {
+      padding-top: 55px;
+    }
+  </style>
+  <%= stylesheet_link_tag "bootstrap-responsive" %>
+  <script>
+    $(document).ready(function() {
+      var refreshId = setInterval(function() {
+         $("#current_action_container").load('<%= current_actions_url %>');
+         $("#current_stats_container").load('<%= user_url(current_user) %>');
+      }, 10000);
+      $.ajaxSetup({ cache: false });
+    });
+  </script>
+</head>
+<body>
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <%= link_to "Game#{current_user.unread_notifications_count > 0 ? " (#{current_user.unread_notifications_count})" : nil}", game_index_path, :class => "brand" %></li>
+        <%= link_to "Logout", destroy_user_session_path, :method => :delete, :class => "btn btn-navbar", :style => "color: white;" %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <% flash.each do |key, msg| -%>
+      <% if key == :alert %>
+        <div class="alert alert-error">
+      <% else %>
+        <div class="alert alert-success">
+      <% end %>
+        <%= msg %>
+      </div>
+      <script>
+        $(document).ready(function() {
+          $(".alert").delay(2000).fadeOut('slow');
+        });
+      </script>
+    <% end -%>
+    
+    <ul class="nav nav-pills">
+      <li <%= active_class "users", "stats" %>>
+        <%= link_to "Stats", stats_users_path %>
+      </li>
+      <li <%= active_class "actions", "index" %>>
+        <%= link_to "Actions", actions_path %>
+      </li>
+      <li <%= active_class "actions", "operations" %>>
+        <%= link_to "Operations", operations_path %>
+      </li>
+      <li <%= active_class "jobs" %>>
+        <%= link_to "Jobs", jobs_path %>
+      </li>
+    </ul>
+    
+    <div class="row">
+      <div class="span12">
+        <%= yield %>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
