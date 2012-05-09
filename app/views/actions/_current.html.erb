@@ -4,6 +4,10 @@
         <h3>System rebooting</h3>
         You failed your last attack and the target's defenses have crashed your system. You cannot perform any actions while you are rebooting your system...<br />
         Time remaining: <%= humanize @current_action.time_remaining %><br />
+      <% elsif @current_action.type_id == Action::TYPE_DDOS_CRASH %>
+        <h3>System rebooting</h3>
+        You were attacked with a dDoS-Attack. You cannot perform any actions while you are rebooting your system...<br />
+        Time remaining: <%= humanize @current_action.time_remaining %><br />
       <% else %>
         <% if @current_action.job.present? %>
           <h3>Your current Job</h3>
@@ -13,8 +17,8 @@
           <%= @current_action.readable_type %><br />
         <% end %>
       Time remaining: <%= humanize @current_action.time_remaining %><br />
-      <%= link_to "Cancel", action_path(@current_action), :method => :delete, :confirm => "Are you sure you want to cancel your action?" %>
     <% end %>
+    <%= link_to("Cancel", action_path(@current_action), :method => :delete, :confirm => "Are you sure you want to cancel your action?") if @current_action.can_be_canceled? %>
   <% else %>
     <h3>Your current Action</h3>
     <p>
