@@ -46,6 +46,8 @@ class Notification < ActiveRecord::Base
       message = case klass
       when :attack
         "#{options[:victim].nickname} was attacked by #{options[:attacker].nickname}!"
+      when :news
+        options[:message]
       end
 
       User.all.each do |user|
