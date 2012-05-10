@@ -13,15 +13,6 @@
     }
   </style>
   <%= stylesheet_link_tag "bootstrap-responsive" %>
-  <script>
-    $(document).ready(function() {
-      var refreshId = setInterval(function() {
-         $("#current_action_container").load('<%= current_actions_url %>');
-         $("#current_stats_container").load('<%= user_url(current_user) %>');
-      }, 10000);
-      $.ajaxSetup({ cache: false });
-    });
-  </script>
 </head>
 <body>
   <div class="navbar navbar-fixed-top">

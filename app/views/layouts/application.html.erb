@@ -85,6 +85,11 @@
         <a class="close" data-dismiss="alert">×</a>
         <%= msg %>
       </div>
+      <script>
+        $(document).ready(function() {
+          $(".alert").delay(2000).fadeOut('slow');
+        });
+      </script>
     <% end -%>
     <div class="row">
       <div class="span3">

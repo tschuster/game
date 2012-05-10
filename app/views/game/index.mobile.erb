@@ -5,7 +5,7 @@
   <tr>
     <th style="white-space: nowrap;">Received at</th>
     <th>Headline 
-      <% if current_user.unread_notifications_count <= 0 %>
+      <% if current_user.unread_notifications_count > 0 %>
         <%= link_to('<i class="icon-ok"></i>'.html_safe, read_notifications_path, :method => :put, :class => "btn btn-mini pull-right", :title => "Mark as read") %>
       <% end %>
       </th>
