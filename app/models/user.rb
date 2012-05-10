@@ -2,6 +2,7 @@ class User < ActiveRecord::Base
   has_many :actions
   has_many :jobs
   has_many :notifications
+  has_many :equipments
 
   validates :nickname, :exclusion => { :in => ["admin", "administrator"] }, :uniqueness => { :case_sensitive => false}, :presence => true
 
@@ -16,6 +17,30 @@ class User < ActiveRecord::Base
   def perform_next_action!
     action = Action.find(:first, :conditions => {:completed => false})
     action.perform! if action.present?
+  end
+
+  def hacking_ratio
+    super + equipments.active.pluck(:hacking_bonus).sum
+  end
+
+  def hacking_ratio_without_bonus
+    hacking_ratio - equipments.active.pluck(:hacking_bonus).sum
+  end
+
+  def botnet_ratio
+    super + equipments.active.pluck(:botnet_bonus).sum
+  end
+
+  def botnet_ratio_without_bonus
+    botnet_ratio - equipments.active.pluck(:botnet_bonus).sum
+  end
+
+  def defense_ratio
+    super + equipments.active.pluck(:defense_bonus).sum
+  end
+
+  def defense_ratio_without_bonus
+    defense_ratio - equipments.active.pluck(:defense_bonus).sum
   end
 
   # stoppt alle aktuellen Actions
@@ -54,6 +79,29 @@ class User < ActiveRecord::Base
   def buy_defense
     return if money < CONFIG["defense"]["buy_cost"].to_i
     update_attributes(:money => [0, (money-CONFIG["defense"]["buy_cost"].to_i)].max, :defense_ratio => defense_ratio + CONFIG["defense"]["buy_ratio"].to_i)
+  end
+
+  def has_purchased?(equipment)
+    equipments.pluck(:item_id).include?(equipment.item_id)
+  end
+
+  def can_purchase?(equipment)
+    money >= equipment.price
+  end
+
+  def purchase!(equipment)
+    return unless can_purchase?(equipment)
+    return if has_purchased?(equipment)
+
+    User.transaction do
+      begin
+        take_money!(equipment.price)
+        equipment.purchase_and_equip_by!(self)
+      rescue Exception => e
+        Rails.logger.info(e.message)
+        raise ActiveRecord::Rollback
+      end
+    end
   end
 
   def attack(target, type = :hack)
@@ -143,10 +191,12 @@ class User < ActiveRecord::Base
   end
 
   def receive_money!(value)
+    reload
     update_attribute(:money, money+value)
   end
 
   def take_money!(value)
+    reload
     if value >= money
       result_money = money
       update_attribute(:money, 0)

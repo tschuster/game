@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120503201628) do
+ActiveRecord::Schema.define(:version => 20120510110346) do
 
   create_table "actions", :force => true do |t|
     t.integer  "type_id"
@@ -23,6 +23,20 @@ ActiveRecord::Schema.define(:version => 20120503201628) do
     t.boolean  "completed",    :default => false
     t.integer  "target_id"
     t.string   "target_type"
+  end
+
+  create_table "equipment", :force => true do |t|
+    t.integer  "user_id"
+    t.string   "klass"
+    t.string   "item_id"
+    t.string   "title"
+    t.integer  "hacking_bonus", :default => 0
+    t.integer  "botnet_bonus",  :default => 0
+    t.integer  "defense_bonus", :default => 0
+    t.integer  "price",         :default => 0
+    t.boolean  "active",        :default => false
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
   end
 
   create_table "jobs", :force => true do |t|
@@ -43,9 +57,9 @@ ActiveRecord::Schema.define(:version => 20120503201628) do
   create_table "notifications", :force => true do |t|
     t.integer  "user_id"
     t.integer  "from_user_id"
-    t.string   "class"
-    t.string   "message"
-    t.boolean  "new",          :default => true
+    t.string   "klass"
+    t.text     "message"
+    t.boolean  "is_new",       :default => true
     t.datetime "created_at",                     :null => false
     t.datetime "updated_at",                     :null => false
   end
@@ -77,7 +91,7 @@ ActiveRecord::Schema.define(:version => 20120503201628) do
     t.integer  "defense_ratio",                         :default => 10
   end
 
-  add_index "users", ["email"], :name => "index_users_on_email", :unique => true
+  add_index "users", ["nickname"], :name => "index_users_on_nickname", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
 
 end

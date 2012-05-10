@@ -2,8 +2,10 @@ class Job < ActiveRecord::Base
   belongs_to :target
   belongs_to :user
   has_one :action
+
   class ImplementationMissingException < StandardError
   end
+
   JOB_TYPE_DDOS = 1
   JOB_TYPE_SPAM = 2
 

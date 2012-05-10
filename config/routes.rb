@@ -16,6 +16,12 @@ Game::Application.routes.draw do
       end
     end
 
+    resources :equipments, :only => [ :index, :update ] do
+      collection do
+        post :buy
+      end
+    end
+
     resources :jobs, :only => [ :index ] do
       member do
         get 'accept'

@@ -1,0 +1,19 @@
+<p>You can purchase equipment to boost your attributes here. You can only use one equipment of each type at the same time.</p>
+<div class="row">
+  <div class="span12">
+    <h3>Your stats</h3>
+    <%= render :partial => "users/stats" %>
+    <h3>Your equipment</h3>
+    <% if @equipments.present? %>
+      <%= render :partial => "list", :locals => { :equipments => @equipments, :mine => true } %>
+    <% else %>
+      Nothing purchased yet.<br /><br />
+    <% end %>
+  </div>
+</div>
+<div class="row">
+  <div class="span12">
+    <h3>Equipment available</h3>
+    <%= render :partial => "list", :locals => { :equipments => @available_equipments, :mine => false } %>
+  </div>
+</div>

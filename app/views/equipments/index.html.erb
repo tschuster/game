@@ -1,0 +1,14 @@
+<div class="hero-unit">
+  <h2>Equipment-Shop</h2>
+  <p>You can purchase equipment to boost your attributes here. You can only use one equipment of each type at the same time.</p>
+</div>
+<div class="row">
+  <div class="span6">
+    <h2>Equipment available for purchase</h2>
+    <%= render :partial => "list", :locals => { :equipments => @available_equipments, :mine => false } %>
+  </div>
+  <div class="span6">
+    <h2>Your equipment</h2>
+    <%= render :partial => "list", :locals => { :equipments => @equipments, :mine => true } %>
+  </div>
+</div>
