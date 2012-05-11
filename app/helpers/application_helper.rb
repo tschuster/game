@@ -22,7 +22,7 @@ module ApplicationHelper
   end
 
   def short_time(secs)
-    (Time.mktime(0)+secs).strftime("%H:%M:%S")
+    (Time.mktime(0)+secs).strftime("#{secs/86400}:%H:%M:%S")
   end
 
   def active_class(controller, action = nil)
