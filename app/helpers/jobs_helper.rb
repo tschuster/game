@@ -5,7 +5,9 @@ module JobsHelper
         "ddos_attack"
       when Job::JOB_TYPE_SPAM
         "spam"
+      when Job::JOB_TYPE_VIRUS
+        "virus"
     end
-    image_tag("#{source}.png")
+    image_tag("#{source}.png", :'no-pix' => true)
   end
 end

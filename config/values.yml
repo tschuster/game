@@ -1,12 +1,12 @@
 botnet:
   evolve_ratio: 5
-  buy_cost: 500
-  buy_ratio: 25
+  buy_cost: 250
+  buy_ratio: 10
 hacking:
   evolve_ratio: 5
   buy_cost: 250
-  buy_ratio: 15
+  buy_ratio: 10
 defense:
   evolve_ratio: 5
   buy_cost: 250
-  buy_ratio: 15
+  buy_ratio: 10

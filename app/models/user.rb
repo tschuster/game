@@ -211,17 +211,38 @@ class User < ActiveRecord::Base
     id == 1
   end
 
+  def to_strong_for(user, type = :hack)
+    case type
+    when :hack
+      user.defense_ratio < hacking_ratio * 0.3
+    when :ddos
+      user.defense_ratio < botnet_ratio * 0.3
+    end
+  end
+
+  def to_weak_for(user, type = :hack)
+    case type
+    when :hack
+      user.defense_ratio > hacking_ratio * 1.5
+    when :ddos
+      user.defense_ratio > botnet_ratio * 1.5
+    end
+  end
+
   def chance_of_success_against(user, type = :hack)
 
-    # Gegner zu stark?
+    # Gegner zu stark? oder zu schwach?
+    return 0 if to_strong_for(user, type)
+    return 0 if to_weak_for(user, type)
+
     if type == :hack
-      return 0 if user.defense_ratio > hacking_ratio * 1.5 || hacking_ratio + user.defense_ratio == 0
+      return 0 if hacking_ratio + user.defense_ratio == 0
 
       # Summe aller Werte bildet die Anteile des Angreifers und Verteidigers ab
       (hacking_ratio.to_f / (hacking_ratio + user.defense_ratio).to_f * 100).to_i
 
     elsif type == :ddos
-      return 0 if user.defense_ratio > botnet_ratio * 1.5 || botnet_ratio + user.defense_ratio == 0
+      return if botnet_ratio + user.defense_ratio == 0
 
       # Summe aller Werte bildet die Anteile des Angreifers und Verteidigers ab
       (botnet_ratio.to_f / (botnet_ratio + user.defense_ratio).to_f * 100).to_i

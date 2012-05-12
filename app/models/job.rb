@@ -6,17 +6,20 @@ class Job < ActiveRecord::Base
   class ImplementationMissingException < StandardError
   end
 
-  JOB_TYPE_DDOS = 1
-  JOB_TYPE_SPAM = 2
+  JOB_TYPE_DDOS  = 1
+  JOB_TYPE_SPAM  = 2
+  JOB_TYPE_VIRUS = 3
 
   scope :incomplete, :conditions => { :completed => false }
 
   def duration_for(current_user)
     case type_id
       when Job::JOB_TYPE_SPAM
-        (difficulty/current_user.botnet_ratio).to_i*100
+        (difficulty*6000/current_user.botnet_ratio).to_i
       when Job::JOB_TYPE_DDOS
-        (difficulty/current_user.botnet_ratio).to_i*100
+        (difficulty/current_user.botnet_ratio).to_i*400
+      when Job::JOB_TYPE_VIRUS
+        (difficulty*6000/current_user.hacking_ratio).to_i
     else
       raise Job::ImplementationMissingException.new("Type-id = #{type_id}")
     end
@@ -37,28 +40,31 @@ class Job < ActiveRecord::Base
     def generate!
       jobs = [ 
         { :type => Job::JOB_TYPE_DDOS, :title => "dDoS Attack", :description => "The client wants you to take out the servers of %{company}." },
-        { :type => Job::JOB_TYPE_SPAM, :title => "Spam delivery", :description => "The client wants you to deliver %{number} spam mails." }
+        { :type => Job::JOB_TYPE_SPAM, :title => "Spam delivery", :description => "The client wants you to deliver spam mails." },
+        { :type => Job::JOB_TYPE_VIRUS, :title => "Virus Development", :description => "The client wants you to develop a virus." }
       ]
 
-      job         = jobs[rand(jobs.size-1)]
+      job         = jobs.sample
       description = nil
       difficulty  = nil
       reward      = nil
       target      = nil
 
       if job[:type] == Job::JOB_TYPE_SPAM
-        spam_counts = %w{1000000 2500000 5000000 10000000 50000000 200000000 500000000 150000000}
-        spam_count  = spam_counts[rand(spam_counts.size)]
-        difficulty  = spam_count.to_i/50000
-        reward      = spam_count.to_i/50000
-        description = job[:description].gsub("%{number}", spam_count)
+        difficulty  = 100 + rand(100)
+        reward      = difficulty
+        description = job[:description]
 
       elsif job[:type] == Job::JOB_TYPE_DDOS
         target      = Target.find(:first, :offset => rand(Target.count))
         difficulty  = target.difficulty
-        reward      = target.difficulty
+        reward      = target.difficulty/10
         description = job[:description].gsub("%{company}", target.name)
 
+      elsif job[:type] == Job::JOB_TYPE_VIRUS
+        difficulty  = 100 + rand(100)
+        reward      = difficulty
+        description = job[:description]
       else
         raise Job::ImplementationMissingException.new
       end
