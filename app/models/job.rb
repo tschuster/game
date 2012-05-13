@@ -32,7 +32,7 @@ class Job < ActiveRecord::Base
   end
 
   def perform!
-Rails.logger.info("======> Job Model: performing job #{id} for user #{user.id}/#{user.nickname}")
+Rails.logger.info("======> Job Model: performing action #{action.id} job #{id} for user #{user.id}/#{user.nickname}")
     user.receive_money!(reward)
     update_attributes(:completed => true, :success => true, :completed_at => DateTime.now)
   end
