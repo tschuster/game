@@ -27,9 +27,9 @@
       <td class="amount"><%= number_to_currency(job.reward, :format => "%n %u") %></td>
       <td>
       <% if current_user.has_incomplete_actions? %>
-        <span class="deactivated">Action pending</span>
+        <span class="btn deactivated">Action pending</span>
       <% else %>
-        <%= link_to "accept", accept_job_path(job.id) %></td>
+        <%= link_to "accept", accept_job_path(job.id), :class => "btn btn-primary" %></td>
       <% end %>
     </tr>
     <% end %>

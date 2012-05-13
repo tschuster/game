@@ -15,7 +15,7 @@ class ActionsController < ApplicationController
 
   def create
     @action = Action.new(:type_id => params[:type_id].to_i, :user_id => current_user.id, :target_id => params[:target_id])
-
+Rails.logger.info("======> ActionsController: adding action for user #{current_user.id}/#{current_user.nickname}")
     if Action.add_for_user(@action, current_user)
       redirect_to game_index_path, notice: 'You are performing an action'
     else

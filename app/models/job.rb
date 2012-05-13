@@ -25,13 +25,14 @@ class Job < ActiveRecord::Base
     end
   end
 
-  def accept_by(current_user)
-    update_attribute(:user_id, current_user.id)
-    action = Action.new(:type_id => Action::TYPE_PERFORM_JOB, :user_id => current_user.id, :job_id => id)
-    Action.add_for_user(action, current_user)
+  def accept_by(user)
+    update_attribute(:user_id, user.id)
+    action = Action.new(:type_id => Action::TYPE_PERFORM_JOB, :user_id => user.id, :job_id => id)
+    Action.add_for_user(action, user)
   end
 
   def perform!
+Rails.logger.info("======> Job Model: performing job #{id} for user #{user.id}/#{user.nickname}")
     user.receive_money!(reward)
     update_attributes(:completed => true, :success => true, :completed_at => DateTime.now)
   end

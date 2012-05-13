@@ -38,6 +38,7 @@ class Action < ActiveRecord::Base
   TYPE_DDOS_CRASH       = 403
 
   def perform!
+Rails.logger.info("======> Action Model: performing action #{type_id} for user #{user.id}/#{user.nickname}")
     # eigenes Botnet erweitern
     if type_id == Action::TYPE_BOTNET_EVOLVE
       user.evolve_botnet
@@ -64,6 +65,7 @@ class Action < ActiveRecord::Base
 
     # Job ausführen
     elsif type_id == Action::TYPE_PERFORM_JOB
+Rails.logger.info("======> Action Model: performing job #{job.id} for user #{user.id}/#{user.nickname}")
       job.perform!
 
     # User angreifen
@@ -128,51 +130,52 @@ class Action < ActiveRecord::Base
   class << self
 
     # eine neue Action für einen User zur Abarbeitung anlegen
-    def add_for_user(action, current_user)
-      return if current_user.has_incomplete_actions?
+    def add_for_user(action, user)
+      return if user.has_incomplete_actions?
       target_type = nil
 
       # Validierungen
       will_be_completed_at = if action.type_id == Action::TYPE_BOTNET_EVOLVE
-        DateTime.now + current_user.next_botnet_ratio_time.seconds
+        DateTime.now + user.next_botnet_ratio_time.seconds
 
       elsif action.type_id == Action::TYPE_BOTNET_BUY
         DateTime.now
 
       elsif action.type_id == Action::TYPE_DEFENSE_EVOLVE
-        DateTime.now + current_user.next_defense_ratio_time.seconds
+        DateTime.now + user.next_defense_ratio_time.seconds
 
       elsif action.type_id == Action::TYPE_DEFENSE_BUY
         DateTime.now
 
       elsif action.type_id == Action::TYPE_HACKING_EVOLVE
-        DateTime.now + current_user.next_hacking_ratio_time.seconds
+        DateTime.now + user.next_hacking_ratio_time.seconds
 
       elsif action.type_id == Action::TYPE_HACKING_BUY
         DateTime.now
 
       elsif action.type_id == Action::TYPE_PERFORM_JOB
-        DateTime.now + Job.find(action[:job_id]).duration_for(current_user).seconds
+        DateTime.now + Job.find(action[:job_id]).duration_for(user).seconds
 
       elsif action.type_id == Action::TYPE_ATTACK_USER
         target = User.where(:id => action.target_id).first
         return if target.blank?
         target_type = "User"
-        DateTime.now + current_user.time_to_attack(target, :hack).seconds
+        DateTime.now + user.time_to_attack(target, :hack).seconds
 
       elsif action.type_id == Action::TYPE_ATTACK_USER_DDOS
         target = User.where(:id => action.target_id).first
         return if target.blank?
         target_type = "User"
-        DateTime.now + current_user.time_to_attack(target, :ddos).seconds
+        DateTime.now + user.time_to_attack(target, :ddos).seconds
 
       else
         raise Action::InvalidTypeException.new("Typ '#{action.type_id}' ungültig")
       end
+Rails.logger.info("======> Action Model: creating action #{action.type_id} for user #{user.id}/#{user.nickname}")
       result = Action.create(
         :type_id      => action.type_id,
         :job_id       => action.job_id,
-        :user_id      => current_user.id,
+        :user_id      => user.id,
         :target_id    => action.target_id,
         :target_type  => target_type,
         :completed_at => will_be_completed_at,
