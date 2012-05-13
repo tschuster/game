@@ -38,7 +38,7 @@ class Action < ActiveRecord::Base
   TYPE_DDOS_CRASH       = 403
 
   def perform!
-Rails.logger.info("======> Action Model: performing action #{id} for user #{user.id}/#{user.nickname}")
+
     # eigenes Botnet erweitern
     if type_id == Action::TYPE_BOTNET_EVOLVE
       user.evolve_botnet
@@ -65,7 +65,6 @@ Rails.logger.info("======> Action Model: performing action #{id} for user #{user
 
     # Job ausführen
     elsif type_id == Action::TYPE_PERFORM_JOB
-Rails.logger.info("======> Action Model: performing  action #{id} job #{job.id} for user #{user.id}/#{user.nickname}")
       job.perform!
 
     # User angreifen
@@ -171,7 +170,7 @@ Rails.logger.info("======> Action Model: performing  action #{id} job #{job.id} 
       else
         raise Action::InvalidTypeException.new("Typ '#{action.type_id}' ungültig")
       end
-Rails.logger.info("======> Action Model: creating action #{action.type_id} for user #{user.id}/#{user.nickname}")
+
       result = Action.create(
         :type_id      => action.type_id,
         :job_id       => action.job_id,

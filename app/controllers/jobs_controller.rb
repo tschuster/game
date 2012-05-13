@@ -8,13 +8,17 @@ class JobsController < ApplicationController
   end
 
   def accept
-    @job.accept_by(current_user)
+    if @job.user.present? || @job.completed
+      flash.alert = "This job cannot be accepted"
+    else
+      @job.accept_by(current_user)
+    end
     redirect_to game_index_path, :notice => "You have accepted a job!"
   end
 
   protected
     def set_jobs
-      @jobs = Job.incomplete
+      @jobs = Job.incomplete.unaccepted
     end
 
     def set_job

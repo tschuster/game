@@ -12,6 +12,8 @@ class Job < ActiveRecord::Base
 
   scope :incomplete, :conditions => { :completed => false }
 
+  scope :unaccepted, where(:user_id => nil)
+
   def duration_for(current_user)
     case type_id
       when Job::JOB_TYPE_SPAM
@@ -26,13 +28,14 @@ class Job < ActiveRecord::Base
   end
 
   def accept_by(user)
+    return if completed
+
     update_attribute(:user_id, user.id)
     action = Action.new(:type_id => Action::TYPE_PERFORM_JOB, :user_id => user.id, :job_id => id)
     Action.add_for_user(action, user)
   end
 
   def perform!
-Rails.logger.info("======> Job Model: performing action #{action.id} job #{id} for user #{user.id}/#{user.nickname}")
     user.receive_money!(reward)
     update_attributes(:completed => true, :success => true, :completed_at => DateTime.now)
   end
