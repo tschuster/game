@@ -3,6 +3,7 @@ class User < ActiveRecord::Base
   has_many :jobs
   has_many :notifications
   has_many :equipments
+  has_many :companies
 
   validates :nickname, :exclusion => { :in => ["admin", "administrator"] }, :uniqueness => { :case_sensitive => false}, :presence => true
 
@@ -161,7 +162,33 @@ class User < ActiveRecord::Base
       end
       Notification.create_for_all!(:attack, :attacker => self, :victim => target)
     else
-      # TODO: implement!
+      result = rand(hacking_ratio + target.defense_ratio)
+      success = result <= hacking_ratio
+
+      if success
+
+        # Angriff erfolgreich
+        Notification.create_for(:attack_company_success_previous_owner, target.user, :victim => target, :attacker => self) if target.user.present?
+        target.get_controlled_by!(self)
+
+        # Notifications
+        Notification.create_for(:attack_company_success_attacker, self, :victim => target, :value => target.money_per_hour)
+      else
+
+        # attack failed
+        target.defend_against(self)
+        Action.create(
+          :type_id      => Action::TYPE_SYSTEM_CRASH,
+          :user_id      => id,
+          :completed_at => DateTime.now + 60.minutes,
+          :completed    => false
+        )
+
+        # Notification
+        Notification.create_for(:attack_company_failed_attacker, self, :victim => target)
+        Notification.create_for(:attack_company_failed_owner, target.user, :victim => target, :attacker => self) if target.user.present?
+      end
+      Notification.create_for_all!(:attack_company, :attacker => self, :victim => target, :success => success)
     end
   end
 
@@ -177,9 +204,22 @@ class User < ActiveRecord::Base
     hacking_ratio * hacking_ratio / 4
   end
 
-  def time_to_attack(user, type = :hack)
-    return if chance_of_success_against(user, type) <= 0
-    600/chance_of_success_against(user, type)*100
+  def time_to_attack(target, type = :hack)
+    return unless can_attack?(target, type)
+    600/chance_of_success_against(target, type)*100
+  end
+
+  def can_attack?(target, type = :hack)
+    return false if to_strong_for(target, type) || to_weak_for(target, type)
+    if target.is_a?(User)
+      chance_of_success_against(target, type) > 0
+    else
+      !controls?(target) || chance_of_success_against(target, type) > 0
+    end
+  end
+
+  def controls?(company)
+    company.user_id == id
   end
 
   def has_incomplete_actions?
@@ -211,41 +251,41 @@ class User < ActiveRecord::Base
     id == 1
   end
 
-  def to_strong_for(user, type = :hack)
+  def to_strong_for(target, type = :hack)
     case type
     when :hack
-      user.defense_ratio < hacking_ratio * 0.3
+      target.defense_ratio < hacking_ratio * 0.3
     when :ddos
-      user.defense_ratio < botnet_ratio * 0.3
+      target.defense_ratio < botnet_ratio * 0.3
     end
   end
 
-  def to_weak_for(user, type = :hack)
+  def to_weak_for(target, type = :hack)
     case type
     when :hack
-      user.defense_ratio > hacking_ratio * 1.5
+      target.defense_ratio > hacking_ratio * 1.5
     when :ddos
-      user.defense_ratio > botnet_ratio * 1.5
+      target.defense_ratio > botnet_ratio * 1.5
     end
   end
 
-  def chance_of_success_against(user, type = :hack)
+  def chance_of_success_against(target, type = :hack)
 
     # Gegner zu stark? oder zu schwach?
-    return 0 if to_strong_for(user, type)
-    return 0 if to_weak_for(user, type)
+    return 0 if to_strong_for(target, type)
+    return 0 if to_weak_for(target, type)
 
     if type == :hack
-      return 0 if hacking_ratio + user.defense_ratio == 0
+      return 0 if hacking_ratio + target.defense_ratio == 0
 
       # Summe aller Werte bildet die Anteile des Angreifers und Verteidigers ab
-      (hacking_ratio.to_f / (hacking_ratio + user.defense_ratio).to_f * 100).to_i
+      (hacking_ratio.to_f / (hacking_ratio + target.defense_ratio).to_f * 100).to_i
 
     elsif type == :ddos
-      return if botnet_ratio + user.defense_ratio == 0
+      return if botnet_ratio + target.defense_ratio == 0
 
       # Summe aller Werte bildet die Anteile des Angreifers und Verteidigers ab
-      (botnet_ratio.to_f / (botnet_ratio + user.defense_ratio).to_f * 100).to_i
+      (botnet_ratio.to_f / (botnet_ratio + target.defense_ratio).to_f * 100).to_i
     end
   end
 

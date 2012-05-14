@@ -1,5 +1,4 @@
 class Job < ActiveRecord::Base
-  belongs_to :target
   belongs_to :user
   has_one :action
 
@@ -42,6 +41,13 @@ class Job < ActiveRecord::Base
 
   class << self
     def generate!
+      targets = [
+        { :name => "IBM", :ratio => 2500 },
+        { :name => "Apple", :ratio => 4000 },
+        { :name => "Microsoft", :ratio => 3800 },
+        { :name => "Sony", :ratio => 600 }
+      ]
+
       jobs = [ 
         { :type => Job::JOB_TYPE_DDOS, :title => "dDoS Attack", :description => "The client wants you to take out the servers of %{company}." },
         { :type => Job::JOB_TYPE_SPAM, :title => "Spam delivery", :description => "The client wants you to deliver spam mails." },
@@ -52,7 +58,6 @@ class Job < ActiveRecord::Base
       description = nil
       difficulty  = nil
       reward      = nil
-      target      = nil
 
       if job[:type] == Job::JOB_TYPE_SPAM
         difficulty  = 100 + rand(100)
@@ -60,10 +65,10 @@ class Job < ActiveRecord::Base
         description = job[:description]
 
       elsif job[:type] == Job::JOB_TYPE_DDOS
-        target      = Target.find(:first, :offset => rand(Target.count))
-        difficulty  = target.difficulty
-        reward      = target.difficulty/10
-        description = job[:description].gsub("%{company}", target.name)
+        target      = targets.sample
+        difficulty  = target[:ratio]
+        reward      = target[:ratio]/10
+        description = job[:description].gsub("%{company}", target[:name])
 
       elsif job[:type] == Job::JOB_TYPE_VIRUS
         difficulty  = 100 + rand(100)
@@ -78,8 +83,7 @@ class Job < ActiveRecord::Base
         :description => description,
         :type_id => job[:type],
         :difficulty => difficulty,
-        :reward => reward,
-        :target => target
+        :reward => reward
       )
       new_job
     end

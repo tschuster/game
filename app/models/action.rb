@@ -67,8 +67,8 @@ class Action < ActiveRecord::Base
     elsif type_id == Action::TYPE_PERFORM_JOB
       job.perform!
 
-    # User angreifen
-    elsif type_id == Action::TYPE_ATTACK_USER
+    # User oder Firma angreifen
+    elsif type_id == Action::TYPE_ATTACK_USER || type_id == Action::TYPE_ATTACK_COMPANY
       user.attack(target, :hack)
 
     # User dDoS angreifen
@@ -107,6 +107,8 @@ class Action < ActiveRecord::Base
       "Performing Job"
     when Action::TYPE_ATTACK_USER
       "Performing Hacking-Attack on #{target.present? ? target.nickname : "another Hacker"}"
+    when Action::TYPE_ATTACK_COMPANY
+      "Performing Hacking-Attack on #{target.present? ? target.name : "a company"}"
     when Action::TYPE_ATTACK_USER_DDOS
       "Performing dDoS-Attack on #{target.present? ? target.nickname : "another Hacker"}"
     when Action::TYPE_DDOS_CRASH
@@ -159,6 +161,12 @@ class Action < ActiveRecord::Base
         target = User.where(:id => action.target_id).first
         return if target.blank?
         target_type = "User"
+        DateTime.now + user.time_to_attack(target, :hack).seconds
+
+      elsif action.type_id == Action::TYPE_ATTACK_COMPANY
+        target = Company.where(:id => action.target_id).first
+        return if target.blank?
+        target_type = "Company"
         DateTime.now + user.time_to_attack(target, :hack).seconds
 
       elsif action.type_id == Action::TYPE_ATTACK_USER_DDOS

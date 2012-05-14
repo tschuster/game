@@ -6,6 +6,9 @@ namespace :jobs do
         puts "performing action #{action.id}"
         action.perform!
       end
+      Company.where("user_id IS NOT NULL").each do |company|
+        company.payout!
+      end
       sleep(10)
     end
   end

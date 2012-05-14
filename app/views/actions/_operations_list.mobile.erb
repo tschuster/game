@@ -23,13 +23,25 @@
         <% if current_user.chance_of_success_against(user, :hack) > 0 %>
           <%= link_to "Hack", actions_path(:type_id => Action::TYPE_ATTACK_USER, :target_id => user.id), :class => "btn btn-primary", :method => :post, :style => "margin-bottom: 6px;" %>
         <% else %>
-          <span class="btn disabled" style="margin-bottom: 6px;">to weak</span>
+          <span class="btn disabled" style="font-size: 9px; white-space: nowrap; margin-bottom: 6px;">
+            <% if current_user.to_strong_for(user, :hack) %>
+              Too strong
+            <% else %>
+              Too weak
+            <% end %>
+          </span>
         <% end %>
         <br />
         <% if current_user.chance_of_success_against(user, :ddos) > 0 %>
           <%= link_to "dDos", actions_path(:type_id => Action::TYPE_ATTACK_USER_DDOS, :target_id => user.id), :class => "btn btn-primary", :method => :post %>
         <% else %>
-          <span class="btn disabled" style="margin-bottom: 6px;">You are to weak</span>
+          <span class="btn disabled" style="font-size: 9px; white-space: nowrap; margin-bottom: 6px;">
+            <% if current_user.to_strong_for(user, :hack) %>
+              Too strong
+            <% else %>
+              Too weak
+            <% end %>
+          </span>
         <% end %>
       <% end %>
     </td>
@@ -40,13 +52,25 @@
     <td><%= user.nickname %></td>
     <td>&nbsp;</td>
     <td>
-      <div class="progress" style="margin-bottom: 0px; width: 300px; float: left;">
-        <div class="bar" style="width: 0%;"></div>
-      </div>
-      <span style="display: block; float: right;">0%</span>
+      <span style="<%= color_for(current_user.chance_of_success_against(user, :hack)) %>">0%</span><br /><br />
+      <span style="<%= color_for(current_user.chance_of_success_against(user, :hack)) %>">0%</span>
     </td>
     <td>
-      <span class="btn disabled">You are to weak</span>
+      <span class="btn disabled" style="font-size: 9px; white-space: nowrap; margin-bottom: 6px;">
+        <% if current_user.to_strong_for(user, :hack) %>
+          Too strong
+        <% else %>
+          Too weak
+        <% end %>
+      </span>
+      <br />
+      <span class="btn disabled" style="font-size: 9px; white-space: nowrap;">
+        <% if current_user.to_strong_for(user, :ddos) %>
+          Too strong
+        <% else %>
+          Too weak
+        <% end %>
+      </span>
     </td>
   </tr>
 <% end %>

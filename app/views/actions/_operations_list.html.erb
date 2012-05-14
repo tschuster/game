@@ -33,9 +33,9 @@
         <% else %>
           <span class="btn disabled" style="margin-bottom: 6px;">
             <% if current_user.to_strong_for(user, :hack) %>
-              You are to strong
+              You are too strong
             <% else %>
-              You are to weak
+              You are too weak
             <% end %>
           </span>
         <% end %>
@@ -45,9 +45,9 @@
         <% else %>
           <span class="btn disabled" style="margin-bottom: 6px;">
             <% if current_user.to_strong_for(user, :ddos) %>
-              You are to strong
+              You are too strong
             <% else %>
-              You are to weak
+              You are too weak
             <% end %>
           </span>
         <% end %>
@@ -72,17 +72,17 @@
     <td>
       <span class="btn disabled" style="margin-bottom: 6px;">
         <% if current_user.to_strong_for(user, :hack) %>
-          You are to strong
+          You are too strong
         <% else %>
-          You are to weak
+          You are too weak
         <% end %>
       </span>
       <br />
       <span class="btn disabled" style="margin-bottom: 6px;">
         <% if current_user.to_strong_for(user, :ddos) %>
-          You are to strong
+          You are too strong
         <% else %>
-          You are to weak
+          You are too weak
         <% end %>
       </span>
     </td>

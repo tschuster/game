@@ -7,6 +7,7 @@ class ActionsController < ApplicationController
   def operations
     @attackable_users = User.where("id != ?", current_user.id).delete_if { |user| current_user.chance_of_success_against(user, :hack) <= 0.0 && current_user.chance_of_success_against(user, :ddos) <= 0.0 }
     @not_attackable_users = User.where("id != ?", current_user.id).where("id NOT IN (?)", @attackable_users.map(&:id))
+    @companies = Company.all
   end
 
   def current
@@ -27,7 +28,7 @@ class ActionsController < ApplicationController
     @action = Action.where(:id => params[:id], :user_id => current_user.id, :completed => false).first
     if @action.present?
       if @action.job.present?
-        @action.job.update_attributes(:completed => true, :success => false)
+        @action.job.update_attributes(:completed => false, :success => nil, :user_id => nil)
       end
       @action.destroy
       flash.notice = "Action was successfully canceled."
