@@ -2,8 +2,4 @@
   <h2>Actions</h2>
   <p>Perform actions to increase your skills. You need to invest time or money to perform actions.</p>
 </div>
-<% if @current_action.present? %>
-  You cannot perform any actions at this moment.
-<% else %>
-  <%= render :partial => "list" %>
-<% end %>
+<%= render :partial => "list" %>

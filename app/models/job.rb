@@ -32,6 +32,12 @@ class Job < ActiveRecord::Base
     update_attribute(:user_id, user.id)
     action = Action.new(:type_id => Action::TYPE_PERFORM_JOB, :user_id => user.id, :job_id => id)
     Action.add_for_user(action, user)
+
+    if Job.unaccepted.incomplete.count <= 5
+      6.times do
+        Job.generate!
+      end
+    end
   end
 
   def perform!

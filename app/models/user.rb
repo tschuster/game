@@ -14,12 +14,6 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
   attr_accessible :nickname, :email, :password, :password_confirmation, :remember_me, :money, :botnet_ratio, :hacking_ratio, :defense_ratio
 
-  # führt die gewählte Aktion des Users aus
-  def perform_next_action!
-    action = Action.find(:first, :conditions => {:completed => false})
-    action.perform! if action.present?
-  end
-
   def hacking_ratio
     super + equipments.active.pluck(:hacking_bonus).sum
   end
