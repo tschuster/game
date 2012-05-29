@@ -69,10 +69,10 @@ class Job < ActiveRecord::Base
             botnet_ratio_required  = 10
           elsif cplx == 2
             hacking_ratio_required = 0
-            botnet_ratio_required  = (User.average_botnet_ratio*0.9).to_i
+            botnet_ratio_required  = (User.average_botnet_ratio*1.3).to_i
           elsif cplx == 5
             hacking_ratio_required = 0
-            botnet_ratio_required  = (User.best_botnet_ratio*0.9).to_i
+            botnet_ratio_required  = (User.best_botnet_ratio*1.2).to_i
           end
 
           difficulty = cplx*100 + rand(cplx*100)
