@@ -6,7 +6,7 @@ class NotificationsController < ApplicationController
 
   def read
     current_user.notifications.unread.update_all(:is_new => false)
-    redirect_to "http://weasel.pegasus.uberspace.de/game/game"
+    redirect_to "http://derschuster.de/game"
   end
 
   protected

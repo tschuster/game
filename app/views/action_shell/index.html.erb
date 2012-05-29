@@ -1,0 +1,26 @@
+<% @history.each do |cmd| %>
+
+  <% if cmd.starts_with?("#r") %>
+    <%= cmd.sub("#r", "").gsub("=br=", "<br>").html_safe %>
+  <% else %>
+    $ <%= cmd %>
+  <% end %>
+  <br />
+<% end %>
+<div id="command_prompt"></div>
+<%= form_tag compute_action_shell_index_path, :method => :put, :id => "command_form" do %>
+  <%= hidden_field_tag :command, :id => "command" %>
+<% end %>
+<script>
+  $(document).ready(function() {
+    $('#command_prompt').terminal(function(command, term) {
+      $("#command").val(command);
+      $("#command_form").submit();
+    }, { 
+      prompt: '$ ',
+      name: 'command_prompt',
+      greetings: "",
+      exit: false
+    });
+  });
+</script>

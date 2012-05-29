@@ -17,6 +17,8 @@ class ApplicationController < ActionController::Base
     def layout_by_resource
       if devise_controller?
         nil
+      elsif action_shell?
+        "shell"
       else
         "application"
       end
@@ -55,5 +57,9 @@ class ApplicationController < ActionController::Base
     # Overwriting the sign_in redirect path method
     def after_sign_in_path_for(resource)
       game_index_path
+    end
+
+    def action_shell?
+      params[:controller] == "action_shell"
     end
 end

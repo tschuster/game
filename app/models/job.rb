@@ -7,19 +7,21 @@ class Job < ActiveRecord::Base
 
   JOB_TYPE_DDOS  = 1
   JOB_TYPE_SPAM  = 2
-  JOB_TYPE_VIRUS = 3
+  JOB_TYPE_DEFACEMENT = 3
 
   scope :incomplete, :conditions => { :completed => false }
-
   scope :unaccepted, where(:user_id => nil)
+  scope :simple, where(:complexity => 1).order("type_id ASC")
+  scope :complex, where(:complexity => 2).order("type_id ASC")
+  scope :challenging, where(:complexity => 5).order("type_id ASC")
 
   def duration_for(current_user)
     case type_id
       when Job::JOB_TYPE_SPAM
         (difficulty*6000/current_user.botnet_ratio).to_i
       when Job::JOB_TYPE_DDOS
-        (difficulty/current_user.botnet_ratio).to_i*400
-      when Job::JOB_TYPE_VIRUS
+        (difficulty*6000/current_user.botnet_ratio).to_i
+      when Job::JOB_TYPE_DEFACEMENT
         (difficulty*6000/current_user.hacking_ratio).to_i
     else
       raise Job::ImplementationMissingException.new("Type-id = #{type_id}")
@@ -33,11 +35,7 @@ class Job < ActiveRecord::Base
     action = Action.new(:type_id => Action::TYPE_PERFORM_JOB, :user_id => user.id, :job_id => id)
     Action.add_for_user(action, user)
 
-    if Job.unaccepted.incomplete.count <= 5
-      6.times do
-        Job.generate!
-      end
-    end
+    Job.generate!
   end
 
   def perform!
@@ -46,52 +44,78 @@ class Job < ActiveRecord::Base
   end
 
   class << self
+
+    def acceptable
+      incomplete.unaccepted
+    end
+
+    def should_generate?
+      Job.acceptable.where(:complexity => 1, :type_id => Job::JOB_TYPE_DDOS).count < 1 ||
+      Job.acceptable.where(:complexity => 1, :type_id => Job::JOB_TYPE_DEFACEMENT).count < 1 ||
+      Job.acceptable.where(:complexity => 2, :type_id => Job::JOB_TYPE_DDOS).count < 1 ||
+      Job.acceptable.where(:complexity => 2, :type_id => Job::JOB_TYPE_DEFACEMENT).count < 1 ||
+      Job.acceptable.where(:complexity => 5, :type_id => Job::JOB_TYPE_DDOS).count < 1 ||
+      Job.acceptable.where(:complexity => 5, :type_id => Job::JOB_TYPE_DEFACEMENT).count < 1
+    end
+
     def generate!
-      targets = [
-        { :name => "IBM", :ratio => 2500 },
-        { :name => "Apple", :ratio => 4000 },
-        { :name => "Microsoft", :ratio => 3800 },
-        { :name => "Sony", :ratio => 600 }
-      ]
+      return unless should_generate?
 
-      jobs = [ 
-        { :type => Job::JOB_TYPE_DDOS, :title => "dDoS Attack", :description => "The client wants you to take out the servers of %{company}." },
-        { :type => Job::JOB_TYPE_SPAM, :title => "Spam delivery", :description => "The client wants you to deliver spam mails." },
-        { :type => Job::JOB_TYPE_VIRUS, :title => "Virus Development", :description => "The client wants you to develop a virus." }
-      ]
+      [1, 2, 5].each do |cplx|
+        (3 - Job.acceptable.where(:complexity => cplx, :type_id => Job::JOB_TYPE_DDOS).count).times do
 
-      job         = jobs.sample
-      description = nil
-      difficulty  = nil
-      reward      = nil
+          if cplx == 1
+            hacking_ratio_required = 0
+            botnet_ratio_required  = 10
+          elsif cplx == 2
+            hacking_ratio_required = 0
+            botnet_ratio_required  = (User.average_botnet_ratio*0.9).to_i
+          elsif cplx == 5
+            hacking_ratio_required = 0
+            botnet_ratio_required  = (User.best_botnet_ratio*0.9).to_i
+          end
 
-      if job[:type] == Job::JOB_TYPE_SPAM
-        difficulty  = 100 + rand(100)
-        reward      = difficulty
-        description = job[:description]
+          difficulty = cplx*100 + rand(cplx*100)
 
-      elsif job[:type] == Job::JOB_TYPE_DDOS
-        target      = targets.sample
-        difficulty  = target[:ratio]
-        reward      = target[:ratio]/10
-        description = job[:description].gsub("%{company}", target[:name])
+          Job.create(
+            :title                  => "dDoS Attack",
+            :description            => "The client wants you to take out the servers of a company.",
+            :type_id                => Job::JOB_TYPE_DDOS,
+            :difficulty             => difficulty,
+            :reward                 => difficulty,
+            :hacking_ratio_required => hacking_ratio_required,
+            :botnet_ratio_required  => botnet_ratio_required,
+            :complexity             => cplx
+          )
+        end
 
-      elsif job[:type] == Job::JOB_TYPE_VIRUS
-        difficulty  = 100 + rand(100)
-        reward      = difficulty
-        description = job[:description]
-      else
-        raise Job::ImplementationMissingException.new
+        (3 - Job.acceptable.where(:complexity => cplx, :type_id => Job::JOB_TYPE_DEFACEMENT).count).times do
+
+          if cplx == 1
+            hacking_ratio_required = 10
+            botnet_ratio_required  = 0
+          elsif cplx == 2
+            hacking_ratio_required = (User.average_hacking_ratio*0.9).to_i
+            botnet_ratio_required  = 0
+          elsif cplx == 5
+            hacking_ratio_required = (User.best_hacking_ratio*0.9).to_i
+            botnet_ratio_required  = 0
+          end
+
+          difficulty = cplx*100 + rand(cplx*100)
+
+          Job.create(
+            :title                  => "Defacement",
+            :description            => "The client wants you to vandalize a website.",
+            :type_id                => Job::JOB_TYPE_DEFACEMENT,
+            :difficulty             => difficulty,
+            :reward                 => difficulty,
+            :hacking_ratio_required => hacking_ratio_required,
+            :botnet_ratio_required  => botnet_ratio_required,
+            :complexity             => cplx
+          )
+        end
       end
-
-      new_job = Job.create(
-        :title => job[:title],
-        :description => description,
-        :type_id => job[:type],
-        :difficulty => difficulty,
-        :reward => reward
-      )
-      new_job
     end
   end
 end

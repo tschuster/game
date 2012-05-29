@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120514184150) do
+ActiveRecord::Schema.define(:version => 20120524110849) do
 
   create_table "actions", :force => true do |t|
     t.integer  "type_id"
@@ -59,8 +59,11 @@ ActiveRecord::Schema.define(:version => 20120514184150) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "completed_at"
-    t.boolean  "completed",    :default => false
+    t.boolean  "completed",              :default => false
     t.boolean  "success"
+    t.integer  "complexity",             :default => 1
+    t.integer  "hacking_ratio_required", :default => 0
+    t.integer  "botnet_ratio_required",  :default => 0
   end
 
   create_table "notifications", :force => true do |t|

@@ -4,7 +4,7 @@
       <% if @current_action.present? %>
         <%= image_tag("hacking_evolve.png", :'no_pix' => true) %>
       <% else %>
-        <%= link_to image_tag("hacking_evolve.png", :'no_pix' => true), actions_path(:type_id => Action::TYPE_HACKING_EVOLVE), :method => :post, :class => "btn btn-primary" %>
+        <%= link_to image_tag("hacking_evolve.png", :'no_pix' => true), actions_path(:type_id => Action::TYPE_HACKING_EVOLVE), :method => :post %>
       <% end %>  
     </td>
     <td>
@@ -48,7 +48,7 @@
       <% if @current_action.present? %>
         <%= image_tag("botnet_evolve.png", :'no_pix' => true) %>
       <% else %>
-        <%= link_to image_tag("botnet_evolve.png"), actions_path(:type_id => Action::TYPE_BOTNET_EVOLVE), :method => :post %>
+        <%= link_to image_tag("botnet_evolve.png", :'no_pix' => true), actions_path(:type_id => Action::TYPE_BOTNET_EVOLVE), :method => :post %>
       <% end %>
     </td>
     <td>

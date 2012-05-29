@@ -1,8 +1,8 @@
 class User < ActiveRecord::Base
-  has_many :actions
-  has_many :jobs
-  has_many :notifications
-  has_many :equipments
+  has_many :actions, :dependent => :destroy
+  has_many :jobs, :dependent => :destroy
+  has_many :notifications, :dependent => :destroy
+  has_many :equipments, :dependent => :destroy
   has_many :companies
 
   validates :nickname, :exclusion => { :in => ["admin", "administrator"] }, :uniqueness => { :case_sensitive => false}, :presence => true
@@ -13,6 +13,8 @@ class User < ActiveRecord::Base
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :nickname, :email, :password, :password_confirmation, :remember_me, :money, :botnet_ratio, :hacking_ratio, :defense_ratio
+
+  before_destroy :clear_company
 
   def hacking_ratio
     super + equipments.active.pluck(:hacking_bonus).sum
@@ -285,5 +287,27 @@ class User < ActiveRecord::Base
 
   def unread_notifications_count
     notifications.unread.count
+  end
+
+  def clear_company
+    company.update_attribute(:user_id, nil) if company.present?
+  end
+
+  class << self
+    def average_botnet_ratio
+      User.pluck(:botnet_ratio).sum/User.count
+    end
+
+    def best_botnet_ratio
+      User.order("botnet_ratio DESC").first.botnet_ratio
+    end
+
+    def average_hacking_ratio
+      User.pluck(:hacking_ratio).sum/User.count
+    end
+
+    def best_hacking_ratio
+      User.order("hacking_ratio DESC").first.hacking_ratio
+    end
   end
 end

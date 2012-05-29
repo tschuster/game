@@ -1,0 +1,18 @@
+<table border="0" cellspacing="0" cellpadding="0" class="table table-condensed">
+  <tr>
+    <th>Type</th>
+    <th>Dur.</th>
+    <th>Req.</th>
+    <th style="text-align: right;">Reward</th>
+    <th>&nbsp;</th>
+  </tr>
+  <% jobs.each do |job| %>
+    <tr>
+      <td style="font-size: 9px;"><%= job.title %></td>
+      <td style="font-size: 9px;"><%= short_time(job.duration_for(current_user)) %></td>
+      <td style="font-size: 9px;"><%= job_requirement_mobile(job) %></td>
+      <td class="amount" style="font-size: 9px;"><%= number_to_currency(job.reward, :format => "%n %u") %></td>
+      <td style="font-size: 9px;"><%= accept_button_mobile(job) %></td>
+    </tr>
+  <% end %>
+</table>

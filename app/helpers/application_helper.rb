@@ -45,7 +45,7 @@ module ApplicationHelper
 
   def color_for(value)
     if value <= 33
-      "color: #DD514C;" 
+      "color: #DD514C;"
     elsif value <= 66
       "color: #FAA732;"
     else

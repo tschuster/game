@@ -1,26 +1,32 @@
 <h3>Jobs</h3>
 <p>Accept Jobs to receive money. The job's difficulty vary depending on the job's type. The more difficult a job is, the higher it will be rewarded, but it is also harder to complete. The higher your skills, the faster a job can be completed. You cannot accept a job while you are performing an action.</p>
-<% if @jobs.present? %>
-  <table border="0" class="table table-condensed" cellspacing="0" cellpadding="0">
-    <tr>
-      <th>Job Type</th>
-      <th>Duration</th>
-      <th style="text-align: right;">Reward</th>
-      <th>&nbsp;</th>
-    </tr>
-  <% @jobs.each do |job| %>
-      <td><%= job.title %></td>
-      <td><%= short_time(job.duration_for(current_user)) %></td>
-      <td class="amount"><%= number_to_currency(job.reward, :format => "%n %u") %></td>
-      <td>
-      <% if current_user.has_incomplete_actions? %>
-        <span class="deactivated">Action pending</span>
+<div class="tabbable">
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#simple_jobs" data-toggle="tab">Simple</a></li>
+    <li><a href="#complex_jobs" data-toggle="tab">Complex</a></li>
+    <li><a href="#challenging_jobs" data-toggle="tab">Challenging</a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="simple_jobs">
+      <% if @simple_jobs.present? %>
+        <%= render :partial => "list", :locals => { :jobs => @simple_jobs } %>
       <% else %>
-        <%= link_to "accept", accept_job_path(job.id), :class => "btn btn-primary" %></td>
+        There are currently no jobs available. Check back later!
       <% end %>
-    </tr>
-    <% end %>
-  </table>
-<% else %>
-  There are currently no jobs available. Check back later!
-<% end %>
+    </div>
+    <div class="tab-pane" id="complex_jobs">
+      <% if @complex_jobs.present? %>
+        <%= render :partial => "list", :locals => { :jobs => @complex_jobs } %>
+      <% else %>
+        There are currently no jobs available. Check back later!
+      <% end %>
+    </div>
+    <div class="tab-pane" id="challenging_jobs">
+      <% if @challenging_jobs.present? %>
+        <%= render :partial => "list", :locals => { :jobs => @challenging_jobs } %>
+      <% else %>
+        There are currently no jobs available. Check back later!
+      <% end %>
+    </div>
+  </div>
+</div>

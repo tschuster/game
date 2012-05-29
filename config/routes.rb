@@ -1,8 +1,14 @@
 Game::Application.routes.draw do
   scope "/game" do
+
     devise_for :users
 
     resources :game, :only => :index
+    resources :action_shell, :only => [:index] do
+      collection do
+        put :compute
+      end
+    end
 
     resources :users, :only => [ :show, :index ] do
       collection do

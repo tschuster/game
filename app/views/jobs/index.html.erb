@@ -2,38 +2,33 @@
   <h2>Jobs</h2>
   <p>Accept Jobs to receive money. The job's difficulty vary depending on the job's type. The more difficult a job is, the higher it will be rewarded, but it is also harder to complete. The higher your skills, the faster a job can be completed. You cannot accept a job while you are performing an action.</p>
 </div>
-<% if @jobs.present? %>
-  <table border="0" cellspacing="0" cellpadding="0" class="table table-bordered">
-    <tr>
-      <th>&nbsp;</th>
-      <th>Job Type</th>
-      <th>Description</th>
-      <th>Duration</th>
-      <th style="text-align: right;">Reward</th>
-      <th>&nbsp;</th>
-    </tr>
-    <% @jobs.each do |job| %>
-    <tr>
-      <td>
-        <% if current_user.has_incomplete_actions? %>
-          <%= job_image_tag(job) %>
-        <% else %>
-          <%= link_to(job_image_tag(job), accept_job_path(job.id)) %>
-        <% end %>
-      </td>
-      <td><%= job.title %></td>
-      <td><%= job.description %></td>
-      <td><%= humanize(job.duration_for(current_user)) %></td>
-      <td class="amount"><%= number_to_currency(job.reward, :format => "%n %u") %></td>
-      <td>
-      <% if current_user.has_incomplete_actions? %>
-        <span class="btn deactivated">Action pending</span>
+<div class="tabbable">
+  <ul class="nav nav-tabs">
+    <li class="active"><a href="#simple_jobs" data-toggle="tab">Simple Jobs</a></li>
+    <li><a href="#complex_jobs" data-toggle="tab">Complex Jobs</a></li>
+    <li><a href="#challenging_jobs" data-toggle="tab">Challenging Jobs</a></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="simple_jobs">
+      <% if @simple_jobs.present? %>
+        <%= render :partial => "list", :locals => { :jobs => @simple_jobs } %>
       <% else %>
-        <%= link_to "accept", accept_job_path(job.id), :class => "btn btn-primary" %></td>
+        There are currently no jobs available. Check back later!
       <% end %>
-    </tr>
-    <% end %>
-  </table>
-<% else %>
-  There are currently no jobs available. Check back later!
-<% end %>
+    </div>
+    <div class="tab-pane" id="complex_jobs">
+      <% if @complex_jobs.present? %>
+        <%= render :partial => "list", :locals => { :jobs => @complex_jobs } %>
+      <% else %>
+        There are currently no jobs available. Check back later!
+      <% end %>
+    </div>
+    <div class="tab-pane" id="challenging_jobs">
+      <% if @challenging_jobs.present? %>
+        <%= render :partial => "list", :locals => { :jobs => @challenging_jobs } %>
+      <% else %>
+        There are currently no jobs available. Check back later!
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -18,7 +18,9 @@ class JobsController < ApplicationController
 
   protected
     def set_jobs
-      @jobs = Job.incomplete.unaccepted
+      @simple_jobs = Job.acceptable.simple
+      @complex_jobs = Job.acceptable.complex
+      @challenging_jobs = Job.acceptable.challenging
     end
 
     def set_job
