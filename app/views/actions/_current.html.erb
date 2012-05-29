@@ -1,24 +1,29 @@
 <div class="current_action">
   <% if @current_action.present? %>
-      <% if @current_action.type_id == Action::TYPE_SYSTEM_CRASH %>
+    <script>
+      $(document).ready(function() {
+       $("#remaining").countdown({layout: '{d<}{dn} {dl} and {d>}{hn} {hl}, {mn} {ml}, {sn} {sl}', until: new Date(<%= @current_action.completed_at.to_i*1000 %>)}); 
+      });
+    </script>
+    <% if @current_action.type_id == Action::TYPE_SYSTEM_CRASH %>
         <h3>System rebooting</h3>
-        You failed your last attack and the target's defenses have crashed your system. You cannot perform any actions while you are rebooting your system...<br />
-        Time remaining: <%= humanize @current_action.time_remaining %><br />
-      <% elsif @current_action.type_id == Action::TYPE_DDOS_CRASH %>
-        <h3>System rebooting</h3>
-        You were attacked with a dDoS-Attack. You cannot perform any actions while you are rebooting your system...<br />
-        Time remaining: <%= humanize @current_action.time_remaining %><br />
+      You failed your last attack and the target's defenses have crashed your system. You cannot perform any actions while you are rebooting your system...<br />
+      Time remaining: <div id="remaining"></div>
+    <% elsif @current_action.type_id == Action::TYPE_DDOS_CRASH %>
+      <h3>System rebooting</h3>
+      You were attacked with a dDoS-Attack. You cannot perform any actions while you are rebooting your system...<br />
+      Time remaining: <div id="remaining"></div>
+    <% else %>
+      <% if @current_action.job.present? %>
+        <h3>Your current Job</h3>
+        <%= @current_action.job.description %><br />
       <% else %>
-        <% if @current_action.job.present? %>
-          <h3>Your current Job</h3>
-          <%= @current_action.job.description %><br />
-        <% else %>
-          <h3>Your current Action</h3>
-          <%= @current_action.readable_type %><br />
-        <% end %>
-      Time remaining: <%= humanize @current_action.time_remaining %><br />
+        <h3>Your current Action</h3>
+        <%= @current_action.readable_type %><br />
+      <% end %>
+      Time remaining: <div id="remaining"></div>
     <% end %>
-    <%= link_to("Cancel", action_path(@current_action), :method => :delete, :confirm => "Are you sure you want to cancel your action?") if @current_action.can_be_canceled? %>
+    <%= link_to("Cancel", action_path(@current_action), :method => :delete, :class => "btn", :confirm => "Are you sure you want to cancel your action?") if @current_action.can_be_canceled? %>
   <% else %>
     <h3>Your current Action</h3>
     <p>
