@@ -9,7 +9,7 @@ class ActionShellController < ApplicationController
 
   def compute
     if params[:command].to_s.downcase.squish == "exit"
-      redirect_to game_index_path, :notice => "Shell session ended"
+      redirect_to game_index_path, :notice => "ActionShell session ended"
     else
       @shell.perform! params[:command].to_s.squish
       render :index

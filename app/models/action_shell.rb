@@ -14,7 +14,7 @@ class ActionShell
       command = parsed_command.slice!(0)
       @history << "#{@current_dir} #{@current_user.nickname}$ #{command_string}"
       if command.present?
-        @result = self.respond_to?(command.downcase!) ? self.send(command, parsed_command) : "unrecognized command '#{command}'"
+        @result = self.respond_to?(command.downcase) ? self.send(command.downcase, parsed_command) : "unrecognized command '#{command}'"
         @history << @result if @result.present?
       end
     else
@@ -138,7 +138,8 @@ class ActionShell
       ["help", "display this help text"],
       ["ls", "list contents of current directory"],
       ["cd <dir>", "change directory to <dir>"],
-      ["version", "show version information"]
+      ["version", "show version information"],
+      ["exit", "close ActionShell session and return to desktop"]
     ])
   end
 end

@@ -40,9 +40,7 @@
             <li <%= active_class "jobs" %>><%= link_to "Jobs", jobs_path %></li>
             <li <%= active_class "actions", "operations" %>><%= link_to "Operations", operations_path %></li>
             <li <%= active_class "equipments" %>><%= link_to "Equipment", equipments_path %></li>
-<% if current_user.admin? %>
             <li <%= active_class "action_shell" %>><%= link_to "Action Shell", action_shell_index_path, :id => "shell_starter" %></li>
-<% end %>
           </ul>
           <ul class="nav pull-right">
             <li class="dropdown">
