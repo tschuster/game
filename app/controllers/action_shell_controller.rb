@@ -1,63 +1,43 @@
 # encoding: utf-8
 class ActionShellController < ApplicationController
-  before_filter :set_history
-
-  @version = "0.1"
+  before_filter :set_shell_from_session
+  after_filter :set_session_from_shell
 
   def index
-    @command = "init"
-    perform!
-    set_session
+    @shell.perform! "init"
   end
 
   def compute
-    
-    @command = params[:command].to_s.squish
-    perform!
-
-    @history << @command
-    set_session
-    render :index
+    if params[:command].to_s.downcase.squish == "exit"
+      redirect_to game_index_path, :notice => "Shell session ended"
+    else
+      @shell.perform! params[:command].to_s.squish
+      render :index
+    end
   end
 
   protected
-    def perform!
-      if @command != "init"
-        case @command
-        when "version"
-          @result = "ActionShell v#{@version}"  
-        when "help"
-          @result = "=br=ActionShell supports the following commands:=br==br=" <<
-          "help:      displays this help text=br=" <<
-          "ls:        list contents of current folder=br=" <<
-          "cd &lt;name&gt;: change directory to &lt;name&gt;"
-        when ""
-          @result = nil
-        else
-          @result = "unrecognized command '#{@command}'"
-        end
+
+    def set_session_from_shell
+      session[:action_shell] = { 
+        :history => @shell.history, 
+        :result => @shell.result, 
+        :current_dir => @shell.current_dir, 
+        :file_system => @shell.file_system 
+      }
+    end
+
+    def set_shell_from_session
+      if session[:action_shell].present?
+        @shell = ActionShell.new(
+          :history      => session[:action_shell][:history].compact,
+          :current_dir  => session[:action_shell][:current_dir],
+          :file_system  => session[:action_shell][:file_system],
+          :current_user => current_user
+        )
       else
-        init!
+        @shell = ActionShell.new(:current_user => current_user)
+        session[:action_shell] = {}
       end
-    end
-
-    def init!
-      @history = ["#rInitializing ActionShell v#{@version}...=br==br=Type 'help' for help=br="]
-      @result = nil
-    end
-
-    def set_history
-      @history = if session[:action_shell].present? && session[:action_shell][:history].present?
-        session[:action_shell][:history].compact
-      else
-        []
-      end
-    end
-
-    def set_session
-      if @result.present?
-        @history = (@history << "#r#{@result}").compact
-      end
-      session[:action_shell] = { :history => @history, :result => @result }
     end
 end

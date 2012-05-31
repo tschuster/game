@@ -1,14 +1,9 @@
-<% @history.each do |cmd| %>
-
-  <% if cmd.starts_with?("#r") %>
-    <%= cmd.sub("#r", "").gsub("=br=", "<br>").html_safe %>
-  <% else %>
-    $ <%= cmd %>
-  <% end %>
-  <br />
+<%#= debug session[:action_shell] %>
+<% @shell.history.each do |cmd| %>
+  <%= cmd.html_safe %><br />
 <% end %>
 <div id="command_prompt"></div>
-<%= form_tag compute_action_shell_index_path, :method => :put, :id => "command_form" do %>
+<%= form_tag compute_action_shell_index_path(:anchor => "bottom"), :method => :put, :id => "command_form" do %>
   <%= hidden_field_tag :command, :id => "command" %>
 <% end %>
 <script>
@@ -17,10 +12,11 @@
       $("#command").val(command);
       $("#command_form").submit();
     }, { 
-      prompt: '$ ',
+      prompt: '<%= @shell.current_dir %> <%= current_user.nickname %>$ ',
       name: 'command_prompt',
       greetings: "",
       exit: false
     });
   });
 </script>
+<a name="bottom" id="bottom"></a>
