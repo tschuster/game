@@ -4,8 +4,8 @@ class Company < ActiveRecord::Base
   def get_controlled_by!(user)
     reload
     user_id = user.id
-    update_attribute(:defense_ratio, [(user.hacking_ratio*1.2).to_i, (self.defense_ratio*1.2).to_i].max)
     save
+    update_attribute(:defense_ratio, [(user.hacking_ratio*1.2).to_i, (self.defense_ratio*1.2).to_i].max)
   end
 
   def defend_against(user)
