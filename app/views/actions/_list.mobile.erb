@@ -5,7 +5,11 @@
       Increase your hacking strength by <%= CONFIG["hacking"]["evolve_ratio"] %>. Each level needs more time to accomplish.<br />Duration: <%= humanize(current_user.next_hacking_ratio_time) %>
     </td>
     <td style="vertical-align: middle;">
-      <%= link_to "perform action", actions_path(:type_id => Action::TYPE_HACKING_EVOLVE), :method => :post, :class => "btn btn-primary" %>
+      <% if @current_action.present? %>
+        <span class="btn deactivated">Action pending</span>
+      <% else %>
+        <%= link_to "perform action", actions_path(:type_id => Action::TYPE_HACKING_EVOLVE), :method => :post, :class => "btn btn-primary" %>
+      <% end %>
     </td>
   </tr>
   <tr>
@@ -14,7 +18,9 @@
       You pay for more knowledge to increade your hacking skill by <%= CONFIG["hacking"]["buy_ratio"] %> for <%= number_to_currency(CONFIG["hacking"]["buy_cost"].to_i) %>.<br />Cost: <%= number_to_currency(CONFIG["hacking"]["buy_cost"].to_i) %>
     </td>
     <td style="vertical-align: middle;">
-      <% if current_user.money >= CONFIG["hacking"]["buy_cost"].to_i %>
+      <% if @current_action.present? %>
+        <span class="btn deactivated">Action pending</span>
+      <% elsif current_user.money >= CONFIG["hacking"]["buy_cost"].to_i %>
         <%= link_to "perform action", actions_path(:type_id => Action::TYPE_HACKING_BUY), :method => :post, :class => "btn btn-primary" %>
       <% else %>
         <span class="deactivated">not enough money</span>
@@ -27,7 +33,11 @@
       You distribute trojan horses and rootkits to increase your botnet strength by <%= CONFIG["botnet"]["evolve_ratio"] %>. Each level needs more time to accomplish.<br />Duration: <%= humanize(current_user.next_botnet_ratio_time) %>
     </td>
     <td style="vertical-align: middle;">
-      <%= link_to "perform action", actions_path(:type_id => Action::TYPE_BOTNET_EVOLVE), :method => :post, :class => "btn btn-primary" %>
+      <% if @current_action.present? %>
+        <span class="btn deactivated">Action pending</span>
+      <% else %>
+        <%= link_to "perform action", actions_path(:type_id => Action::TYPE_BOTNET_EVOLVE), :method => :post, :class => "btn btn-primary" %>
+      <% end %>
     </td>
   </tr>
   <tr>
@@ -36,7 +46,9 @@
       You buy further clients to increase your botnet strength by <%= CONFIG["botnet"]["buy_ratio"] %> for <%= number_to_currency(CONFIG["botnet"]["buy_cost"].to_i) %>.<br />Cost: <%= number_to_currency(CONFIG["botnet"]["buy_cost"].to_i) %>
     </td>
     <td style="vertical-align: middle;">
-      <% if current_user.money >= CONFIG["botnet"]["buy_cost"].to_i %>
+      <% if @current_action.present? %>
+        <span class="btn deactivated">Action pending</span>
+      <% elsif current_user.money >= CONFIG["botnet"]["buy_cost"].to_i %>
         <%= link_to "perform action", actions_path(:type_id => Action::TYPE_BOTNET_BUY), :method => :post, :class => "btn btn-primary" %>
       <% else %>
         <span class="deactivated">not enough money</span>
@@ -49,16 +61,22 @@
       Increase your defense ratio by <%= CONFIG["defense"]["evolve_ratio"] %>. Each level needs more time to accomplish.<br />Duration: <%= humanize(current_user.next_defense_ratio_time) %>
     </td>
     <td style="vertical-align: middle;">
-      <%= link_to "perform action", actions_path(:type_id => Action::TYPE_DEFENSE_EVOLVE), :method => :post, :class => "btn btn-primary" %>
+      <% if @current_action.present? %>
+        <span class="btn deactivated">Action pending</span>
+      <% else %>
+        <%= link_to "perform action", actions_path(:type_id => Action::TYPE_DEFENSE_EVOLVE), :method => :post, :class => "btn btn-primary" %>
+      <% end %>
     </td>
   </tr>
   <tr>
     <td>
-      <h3>Buy defense ratio</h3>
+      <h4>Buy defense ratio</h4>
       You pay for better firewall hardware to increade your defense ratio by <%= CONFIG["defense"]["buy_ratio"] %> for <%= number_to_currency(CONFIG["defense"]["buy_cost"].to_i) %>.<br />Cost: <%= number_to_currency(CONFIG["defense"]["buy_cost"].to_i) %>
     </td>
     <td style="vertical-align: middle;">
-      <% if current_user.money >= CONFIG["defense"]["buy_cost"].to_i %>
+      <% if @current_action.present? %>
+        <span class="btn deactivated">Action pending</span>
+      <% elsif current_user.money >= CONFIG["defense"]["buy_cost"].to_i %>
         <%= link_to "perform action", actions_path(:type_id => Action::TYPE_DEFENSE_BUY), :method => :post, :class => "btn btn-primary" %>
       <% else %>
         <span class="deactivated">not enough money</span>

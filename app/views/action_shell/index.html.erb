@@ -1,22 +1,7 @@
 <%#= debug session[:action_shell] %>
-<% @shell.history.each do |cmd| %>
-  <%= cmd.html_safe %><br />
-<% end %>
-<div id="command_prompt"></div>
-<%= form_tag compute_action_shell_index_path(:anchor => "bottom"), :method => :put, :id => "command_form" do %>
-  <%= hidden_field_tag :command, :id => "command" %>
-<% end %>
-<script>
-  $(document).ready(function() {
-    $('#command_prompt').terminal(function(command, term) {
-      $("#command").val(command);
-      $("#command_form").submit();
-    }, { 
-      prompt: '<%= @shell.current_dir %> <%= current_user.nickname %>$ ',
-      name: 'command_prompt',
-      greetings: "",
-      exit: false
-    });
-  });
-</script>
-<a name="bottom" id="bottom"></a>
+<div id="results_container">
+  <% if @shell.history.present? %>
+    <%= @shell.history.html_safe %><br />
+  <% end %>
+</div>
+<%= render :partial => "form" %>

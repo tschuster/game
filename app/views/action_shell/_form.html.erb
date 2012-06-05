@@ -1,0 +1,23 @@
+<div id="command_prompt"></div>
+<%= form_tag compute_action_shell_index_path(:anchor => "bottom"), :remote => true, :method => :put, :id => "command_form" do %>
+  <%= hidden_field_tag :command, :id => "command" %>
+<% end %>
+<script>
+  $(document).ready(function() {
+    $('#command_prompt').terminal(function(command, term) {
+      $("#command").val(command);
+      $("#command_form").submit();
+      term.clear();
+      location.href = "#bottom"
+    }, { 
+      prompt: '<%= @shell.current_dir %> <%= current_user.nickname %>$ ',
+      name: 'command_prompt',
+      greetings: "",
+      exit: false
+    });
+    $('#command_form').bind('ajax:success', function(evt, data, status, xhr){
+      $("#results_container").append(xhr.responseText);
+    });
+  });
+</script>
+<a name="bottom" id="bottom"></a>

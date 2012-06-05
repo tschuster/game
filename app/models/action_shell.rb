@@ -6,16 +6,16 @@ class ActionShell
     @current_dir  = options[:current_dir]
     @file_system  = options[:file_system]
     @current_user = options[:current_user]
+    @clients      = options[:clients]
   end
 
   def perform!(command_string)
     if command_string != "init"
       parsed_command = command_string.split(" ")
       command = parsed_command.slice!(0)
-      @history << "#{@current_dir} #{@current_user.nickname}$ #{command_string}"
+      @history = "#{@current_dir} #{@current_user.nickname}$ #{command_string}"
       if command.present?
         @result = self.respond_to?(command.downcase) ? self.send(command.downcase, parsed_command) : "unrecognized command '#{command}'"
-        @history << @result if @result.present?
       end
     else
       init!
@@ -23,17 +23,14 @@ class ActionShell
   end
 
   def init!
-    @history = [consolize("Initializing #{version}...=br==br=Type 'help' for help=br=")]
+    @history = consolize("Initializing #{version}...=br==br=Type 'help' for help=br=")
     @result = nil
     build_file_system!
+    build_clients!
   end
 
   def history
     @history
-  end
-
-  def history=(h)
-    @history = h
   end
 
   def current_dir
@@ -46,6 +43,10 @@ class ActionShell
 
   def result
     @result
+  end
+
+  def clients
+    @clients
   end
 
   def consolize(object, options = {})
@@ -98,6 +99,17 @@ class ActionShell
     (@file_system.keys.delete_if { |path| @file_system[path] == :dir || !path.starts_with?(@current_dir) || path.gsub(@current_dir, "").include?("/") }).sort
   end
 
+  def build_clients!
+    @clients = {}
+    User.all.each do |u|
+      next if u.id == @current_user.try(:id)
+
+      random_ip = "#{rand(253)+1}.#{rand(256)}.#{rand(256)}.#{rand(253)+1}"
+      @clients[u.nickname] = { :nickname => u.nickname, :id => u.id, :ip => random_ip, :type => :user }
+      @clients[random_ip]  = { :nickname => u.nickname, :id => u.id, :ip => random_ip, :type => :ip }
+    end
+  end
+
   ################################################################################################################################
   # Shell-Commands
 
@@ -130,7 +142,7 @@ class ActionShell
   end
 
   def version(p=nil)
-    "ActionShell v0.2"
+    "ActionShell v0.3 build 2012-06-06"
   end
 
   def help(p=nil)
@@ -139,7 +151,24 @@ class ActionShell
       ["ls", "list contents of current directory"],
       ["cd <dir>", "change directory to <dir>"],
       ["version", "show version information"],
-      ["exit", "close ActionShell session and return to desktop"]
+      ["exit", "close ActionShell session and return to desktop"],
+      ["ping <name|ip>", "ping a client via name to resolve the ip, or via ip to resolve the name"]
     ])
+  end
+
+  def ping(ip_or_nickname = nil)
+    return "name or ip must be given" if ip_or_nickname.blank?
+    ip_or_nickname = ip_or_nickname.first
+    Rails.logger.info(ip_or_nickname.to_yaml)
+    result = @clients[ip_or_nickname]
+    if result.present?
+      if result[:type] == :ip
+        "resolving #{result[:ip]}: #{result[:nickname]}"
+      else
+        "resolving #{result[:nickname]}: #{result[:ip]}"
+      end
+    else
+      "client unknown: #{ip_or_nickname}"
+    end
   end
 end

@@ -1,0 +1,9 @@
+<% if @shell.history.present? %>
+  <%= @shell.history.html_safe %><br />
+<% end %>
+<% if @shell.result.present? %>
+  <%= @shell.result.html_safe %><br />
+<% end %>
+<script>
+  location.href = "#bottom";
+</script>
