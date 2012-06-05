@@ -9,7 +9,8 @@ class ActionShellController < ApplicationController
 
   def compute
     if params[:command].to_s.downcase.squish == "exit"
-      redirect_to game_index_path, :notice => "ActionShell session ended"
+      flash[:notice] = "ActionShell session ended"
+      render :js => "$('#results_container').hide();document.location.href = '#{game_index_path}';"
     else
       @shell.perform! params[:command].to_s.squish
       render :layout => false
