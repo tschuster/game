@@ -1,16 +1,19 @@
 <div id="command_prompt"></div>
 <%= form_tag compute_action_shell_index_path(:anchor => "bottom"), :remote => true, :method => :put, :id => "command_form" do %>
-  <%= hidden_field_tag :command, :id => "command" %>
+  <%= hidden_field_tag :command, "", :id => "command" %>
+  <%= hidden_field_tag :delegate, "", :id => "delegate" %>
 <% end %>
 <script>
   $(document).ready(function() {
     $('#command_prompt').terminal(function(command, term) {
       $("#command").val(command);
       $("#command_form").submit();
+      $("#delegate").val('');
       term.clear();
+      term.set_prompt('<%= @shell.command_prompt %>');
       location.href = "#bottom"
     }, { 
-      prompt: '<%= @shell.current_dir %> <%= current_user.nickname %>$ ',
+      prompt: '<%= @shell.command_prompt %>',
       name: 'command_prompt',
       greetings: "",
       exit: false
