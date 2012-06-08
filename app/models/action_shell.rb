@@ -1,3 +1,4 @@
+include ActionView::Helpers::NumberHelper
 # encoding: utf-8
 class ActionShell
 
@@ -29,7 +30,6 @@ class ActionShell
           @result = self.respond_to?(command.downcase) ? self.send(command.downcase, parsed_command) : "unrecognized command '#{command}'"
         end
       end
-      @result << "<script>$('.prompt').html('#{command_prompt}');</script>".html_safe if @result.present?
     else
       init!
     end
@@ -124,24 +124,48 @@ class ActionShell
 
   def build_file_system!
     @file_system = { 
-      "home/"                     => :dir,
-      "home/file_1.txt"           => :file,
-      "home/file_2.txt"           => :file,
-      "home/folder_1/"            => :dir,
-      "home/folder_1/file_3.csv"  => :file,
-      "home/folder_2/"            => :dir,
-      "home/folder_2/folder_3/"   => :dir,
-      "home/trash/"               => :dir
+      "home/"                     => VirtualFolder.new(:name => "home/"),
+      "home/account/"             => VirtualFolder.new(:name => "home/account/"),
+      "home/account/balance.txt"  => VirtualFile.new(:name => "balance", :type => "txt", :contents => consolize(number_to_currency(@current_user.try(:money), :format => "%u %n"))),
+      "home/equipment/"           => VirtualFolder.new(:name => "home/equipment/")
     }
+    if @current_user.present?
+      @current_user.equipments.active.each do |equipment|
+        looping_file = VirtualFile.new(:name => equipment.title.gsub(" ", "_"), :type => "eqmt", :contents => 
+          consolize([
+            ["Title:", equipment.title],
+            ["Hacking skill bonus:", "+#{equipment.hacking_bonus}"],
+            ["Botnet bonus:", "+#{equipment.botnet_bonus}"],
+            ["Defense bonus:", "+#{equipment.defense_bonus}"]
+          ])
+        )
+        file_system["home/equipment/#{equipment.title.gsub(" ", "_")}.eqmt"] = looping_file
+      end
+    end
     @current_dir = @file_system.first.first
   end
 
   def available_sub_folders
-    (@file_system.keys.delete_if { |path| @file_system[path] == :file || !path.starts_with?(@current_dir) || path == @current_dir || path.gsub(@current_dir, "").count("/") > 1 }).sort
+    result = []
+    @file_system.each do |path, element|
+      next unless path.starts_with?(@current_dir)
+      next if path == @current_dir
+      next unless element.is_a?(VirtualFolder)
+      next if path.gsub(@current_dir, "").count("/") > 1
+      result << [element.name]
+    end
+    result.sort
   end
 
   def available_sub_files
-    (@file_system.keys.delete_if { |path| @file_system[path] == :dir || !path.starts_with?(@current_dir) || path.gsub(@current_dir, "").include?("/") }).sort
+    result = []
+    @file_system.each do |path, element|
+      next unless path.starts_with?(@current_dir)
+      next unless element.is_a?(VirtualFile)
+      next if path.gsub(@current_dir, "").include?("/")
+      result << [element.full_name, element.size]
+    end
+    result.sort
   end
 
   def random_password(length)
@@ -179,7 +203,7 @@ class ActionShell
       end
     else
       location << "/" unless location.ends_with?("/")
-      if available_sub_folders.include?("#{@current_dir}#{location}")
+      if available_sub_folders.include?(["#{@current_dir}#{location}"])
         @current_dir = "#{@current_dir}#{location}"
       else
         not_found = true
@@ -188,12 +212,23 @@ class ActionShell
     "directory not found: #{location}" if not_found
   end
 
+  def open(location = nil)
+    return "file must be given" if location.blank?
+    location = location.first
+
+    if @file_system[@current_dir + location].present?
+      @file_system[@current_dir + location].contents
+    else
+      "file not found: #{location}"
+    end
+  end
+
   def ls(p=nil)
     consolize("total #{(available_sub_folders + available_sub_files).count}=br=.=br=..=br=") << consolize((available_sub_folders + available_sub_files).sort)
   end
 
   def version(p=nil)
-    "ActionShell v0.4 build 2012-06-08"
+    "ActionShell v0.5 build 2012-06-08"
   end
 
   def help(p=nil)
@@ -284,6 +319,37 @@ class ActionShell
       @authenticated = true
       @password_retry = 0
       consolize("Password valid=br==br=Connection to #{victim[:ip]} established")
+    end
+  end
+
+  class VirtualFile
+    def initialize(options={})
+      @name     = options[:name].to_s
+      @type     = options[:type].to_s
+      @contents = options[:contents].to_s
+      @size     = options[:contents].to_s.length
+    end
+
+    def full_name
+      [@name, @type].join(".")
+    end
+
+    def size
+      @size
+    end
+
+    def contents
+      @contents
+    end
+  end
+
+  class VirtualFolder
+    def initialize(options={})
+      @name = options[:name].to_s
+    end
+
+    def name
+      @name
     end
   end
 end

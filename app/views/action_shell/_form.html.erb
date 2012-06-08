@@ -10,7 +10,6 @@
       $("#command_form").submit();
       $("#delegate").val('');
       term.clear();
-      term.set_prompt('<%= @shell.command_prompt %>');
       location.href = "#bottom"
     }, { 
       prompt: '<%= @shell.command_prompt %>',
