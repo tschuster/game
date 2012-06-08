@@ -64,18 +64,18 @@ class Job < ActiveRecord::Base
       [1, 2, 5].each do |cplx|
         (3 - Job.acceptable.where(:complexity => cplx, :type_id => Job::JOB_TYPE_DDOS).count).times do
 
+          difficulty = cplx*100 + rand(cplx*100)
           if cplx == 1
             hacking_ratio_required = 0
             botnet_ratio_required  = 10
           elsif cplx == 2
             hacking_ratio_required = 0
-            botnet_ratio_required  = (User.average_botnet_ratio*1.3).to_i
+            botnet_ratio_required  = (User.average_botnet_ratio*1.6).to_i
+            difficulty = 350 + rand(cplx*100)
           elsif cplx == 5
             hacking_ratio_required = 0
             botnet_ratio_required  = (User.best_botnet_ratio*1.2).to_i
           end
-
-          difficulty = cplx*100 + rand(cplx*100)
 
           Job.create(
             :title                  => "dDoS Attack",
