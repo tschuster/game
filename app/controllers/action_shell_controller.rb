@@ -8,7 +8,7 @@ class ActionShellController < ApplicationController
   end
 
   def compute
-    if params[:command].to_s.downcase.squish == "exit"
+    if params[:command].to_s.downcase.squish == "exit" && !@shell.remote?
       flash[:notice] = "ActionShell session ended"
       render :js => "$('#results_container').hide();document.location.href = '#{game_index_path}';"
     else

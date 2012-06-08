@@ -78,7 +78,11 @@ class ActionShell
 
   def command_prompt
     if @current_connection.present?
-      "#{@clients[@current_connection][:ip]}/#{@clients[@current_connection][:nickname]}$&nbsp;".html_safe
+      if authenticated
+        "#{@current_dir} #{@current_user.nickname}$&nbsp;".html_safe
+      else
+        "[#{@clients[@current_connection][:nickname]}]&nbsp;#{@clients[@current_connection][:ip]}/#{@current_dir} #{@current_user.nickname}$&nbsp;".html_safe
+      end
     else
       "#{@current_dir} #{@current_user.nickname}$&nbsp;".html_safe
     end
@@ -92,6 +96,11 @@ class ActionShell
     @password_retry = 0
     @current_connection = nil
     @authenticated = false
+    @current_dir = @file_system.first.first
+  end
+
+  def remote?
+    @current_connection.present? && @authenticated
   end
 
   def consolize(object, options = {})
@@ -122,15 +131,16 @@ class ActionShell
     result.gsub(" ", "&nbsp;").gsub("<", "&lt;").gsub(">", "&gt;").gsub("=br=", "<br>").html_safe
   end
 
-  def build_file_system!
-    @file_system = { 
-      "home/"                     => VirtualFolder.new(:name => "home/"),
-      "home/account/"             => VirtualFolder.new(:name => "home/account/"),
-      "home/account/balance.txt"  => VirtualFile.new(:name => "balance", :type => "txt", :contents => consolize(number_to_currency(@current_user.try(:money), :format => "%u %n"))),
-      "home/equipment/"           => VirtualFolder.new(:name => "home/equipment/")
+  def file_system_for(user)
+    prefix = user == @current_user ? nil : "[#{user.nickname}] #{@clients[user.nickname][:ip]}/"
+    result = {
+      "#{prefix}home/"                     => VirtualFolder.new(:name => "#{prefix}home/"),
+      "#{prefix}home/account/"             => VirtualFolder.new(:name => "#{prefix}home/account/"),
+      "#{prefix}home/account/balance.txt"  => VirtualFile.new(:name => "balance", :type => "txt", :contents => consolize(number_to_currency(user.try(:money), :format => "%u %n"))),
+      "#{prefix}home/equipment/"           => VirtualFolder.new(:name => "#{prefix}home/equipment/")
     }
-    if @current_user.present?
-      @current_user.equipments.active.each do |equipment|
+    if user.present?
+      user.equipments.active.each do |equipment|
         looping_file = VirtualFile.new(:name => equipment.title.gsub(" ", "_"), :type => "eqmt", :contents => 
           consolize([
             ["Title:", equipment.title],
@@ -139,15 +149,20 @@ class ActionShell
             ["Defense bonus:", "+#{equipment.defense_bonus}"]
           ])
         )
-        file_system["home/equipment/#{equipment.title.gsub(" ", "_")}.eqmt"] = looping_file
+        result["#{prefix}home/equipment/#{equipment.title.gsub(" ", "_")}.eqmt"] = looping_file
       end
     end
+    result
+  end
+
+  def build_file_system!
+    @file_system = file_system_for(@current_user)
     @current_dir = @file_system.first.first
   end
 
-  def available_sub_folders
+  def available_sub_folders_on(file_system)
     result = []
-    @file_system.each do |path, element|
+    file_system.each do |path, element|
       next unless path.starts_with?(@current_dir)
       next if path == @current_dir
       next unless element.is_a?(VirtualFolder)
@@ -157,9 +172,9 @@ class ActionShell
     result.sort
   end
 
-  def available_sub_files
+  def available_sub_files_on(file_system)
     result = []
-    @file_system.each do |path, element|
+    file_system.each do |path, element|
       next unless path.starts_with?(@current_dir)
       next unless element.is_a?(VirtualFile)
       next if path.gsub(@current_dir, "").include?("/")
@@ -191,19 +206,25 @@ class ActionShell
   def cd(location = nil)
     location = location.first if location.is_a?(Array)
     not_found = false
+    if remote?
+      victim = @clients[@current_connection]
+      file_system = file_system_for(User.find(victim[:id]))
+    else
+      file_system = @file_system
+    end
     if location.blank?
-      @current_dir = @file_system.first.first
+      @current_dir = file_system.first.first
     elsif location == "."
       @current_dir
     elsif location == ".."
-      if @current_dir != @file_system.first.first
+      if @current_dir != file_system.first.first
         @current_dir = @current_dir[0 ..@current_dir.chomp("/").rindex("/")]
       else
         @current_dir
       end
     else
       location << "/" unless location.ends_with?("/")
-      if available_sub_folders.include?(["#{@current_dir}#{location}"])
+      if available_sub_folders_on(file_system).include?(["#{@current_dir}#{location}"])
         @current_dir = "#{@current_dir}#{location}"
       else
         not_found = true
@@ -216,30 +237,44 @@ class ActionShell
     return "file must be given" if location.blank?
     location = location.first
 
-    if @file_system[@current_dir + location].present?
-      @file_system[@current_dir + location].contents
+    if remote?
+      victim = @clients[@current_connection]
+      file_system = file_system_for(User.find(victim[:id]))
+    else
+      file_system = @file_system
+    end
+    if file_system[@current_dir + location].present?
+      file_system[@current_dir + location].contents
     else
       "file not found: #{location}"
     end
   end
 
   def ls(p=nil)
-    consolize("total #{(available_sub_folders + available_sub_files).count}=br=.=br=..=br=") << consolize((available_sub_folders + available_sub_files).sort)
+    if remote?
+      victim = User.find(@clients[@current_connection][:id])
+      file_system = file_system_for(victim)
+    else
+      file_system = @file_system
+    end
+    consolize("total #{(available_sub_folders_on(file_system) + available_sub_files_on(file_system)).count}=br=.=br=..=br=") << consolize((available_sub_folders_on(file_system) + available_sub_files_on(file_system)).sort)
   end
 
   def version(p=nil)
-    "ActionShell v0.5 build 2012-06-08"
+    "ActionShell v0.6 build 2012-06-09"
   end
 
   def help(p=nil)
     consolize("=br=ActionShell supports the following commands:=br==br=") << consolize([
       ["help", "display this help text"],
+      ["version", "show version information"],
       ["ls", "list contents of current directory"],
       ["cd <dir>", "change directory to <dir>"],
-      ["version", "show version information"],
-      ["exit", "close ActionShell session and return to desktop"],
       ["ping <name|ip>", "ping a client via name to resolve the ip, or via ip to resolve the name"],
-      ["connect <ip>", "establish a connection to the given ip after entering the client's password"]
+      ["connect <ip>", "establish a connection to the given ip after entering the client's password"],
+      ["exit", "close active connection or close ActionShell session and return to desktop when no connection active"],
+      ["open <file>", "output contents of <file>"],
+      ["freeze <equipment>.eqmt", "unequip <equipment>.eqmt"],
     ])
   end
 
@@ -267,9 +302,9 @@ class ActionShell
     victim = User.find(client[:id])
     return "connection to #{ip} failed" if victim.blank?
 
-    # Set current connection
+    # Reset and set current connection
+    reset_connection!
     @current_connection = client[:nickname]
-    @password_retry = 0
 
     # The standard line length when both players have even strength
     base_line_length = 75
@@ -318,7 +353,45 @@ class ActionShell
     else
       @authenticated = true
       @password_retry = 0
+      @current_dir = "[#{victim[:nickname]}] #{victim[:ip]}/home/"
       consolize("Password valid=br==br=Connection to #{victim[:ip]} established")
+    end
+  end
+
+  def exit(p=nil)
+    reset_connection!
+    consolize("=br=Connection closed=br=")
+  end
+
+  def freeze(location)
+    return "Equipment must be given" if location.blank?
+    location = location.first
+    return "only .eqmt files are supported" unless location.ends_with?(".eqmt")
+
+    if remote?
+      victim = User.find(@clients[@current_connection][:id])
+      file_system = file_system_for(victim)
+    else
+      victim = @current_user
+      file_system = @file_system
+    end
+    if file_system[@current_dir + location].present?
+      equipment_title = location.split("/").last.gsub("_", " ").gsub(".eqmt", "")
+
+      equipment = victim.equipments.where(:title => equipment_title).first
+      if equipment.present? && equipment.unequip!
+        if remote?
+          reset_connection!
+          build_clients!
+          consolize("Equipment #{equipment_title} successfully unequipped=br=Connection closed=br=")
+        else
+          "Equipment #{equipment_title} successfully unequipped"
+        end
+      else
+        "Equipment not found: #{location}"
+      end
+    else
+      "equipment not found: #{location}"
     end
   end
 
