@@ -6,7 +6,7 @@ class NotificationsController < ApplicationController
 
   def read
     current_user.notifications.unread.update_all(:is_new => false)
-    redirect_to root_path
+    redirect_to game_index_path
   end
 
   protected

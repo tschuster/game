@@ -5,7 +5,7 @@ class ActionShellController < ApplicationController
 
   def index
     if @current_user.has_incomplete_actions?
-      redirect_to root_path, :alert => "Failed to start ActionShell due to unfinished action"
+      redirect_to game_index_path, :alert => "Failed to start ActionShell due to unfinished action"
     else
       @shell.perform! "init"
     end
