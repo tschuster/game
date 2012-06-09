@@ -5,11 +5,11 @@ class User < ActiveRecord::Base
   has_many :equipments, :dependent => :destroy
   has_many :companies
 
-  validates :nickname, :exclusion => { :in => ["admin", "administrator"] }, :uniqueness => { :case_sensitive => false}, :presence => true
+  validates :nickname, :exclusion => { :in => ["admin", "administrator"], :message => "is not allowed" }, :uniqueness => { :case_sensitive => false, :message => "is already taken" }, :presence => { :message => "is required" }
 
   # Include default devise modules. Others available are:
   # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable
+  devise :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable
 
   # Setup accessible (or protected) attributes for your model
   attr_accessible :nickname, :email, :password, :password_confirmation, :remember_me, :money, :botnet_ratio, :hacking_ratio, :defense_ratio
@@ -189,15 +189,15 @@ class User < ActiveRecord::Base
   end
 
   def next_botnet_ratio_time
-    botnet_ratio * botnet_ratio / 4
+    botnet_ratio_without_bonus * botnet_ratio_without_bonus / 4
   end
 
   def next_defense_ratio_time
-    defense_ratio * defense_ratio / 4
+    defense_ratio_without_bonus * defense_ratio_without_bonus / 4
   end
 
   def next_hacking_ratio_time
-    hacking_ratio * hacking_ratio / 4
+    hacking_ratio_without_bonus * hacking_ratio_without_bonus / 4
   end
 
   def time_to_attack(target, type = :hack)
@@ -310,4 +310,10 @@ class User < ActiveRecord::Base
       User.order("hacking_ratio DESC").first.hacking_ratio
     end
   end
+
+  protected
+
+    def email_required?
+      false 
+    end
 end

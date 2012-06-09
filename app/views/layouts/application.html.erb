@@ -45,9 +45,14 @@
           <ul class="nav pull-right">
             <li class="dropdown">
               <%= link_to "#", :class => "dropdown-toggle", :'data-toggle' => "dropdown" do %>
-                <%= current_user.nickname %> <b class="caret"></b>
+                Settings <b class="caret"></b>
               <% end %>
               <ul class="dropdown-menu">
+                <li><%= link_to "Profile", page_path(:profile) %></li>
+                <li><%= link_to "Help", page_path(:help) %></li>
+                <li><%= link_to "ChangeLog", page_path(:changelog) %></li>
+                <li><%= link_to "Imprint", page_path(:imprint) %></li>
+<% if false %>
                 <div id="personal_stats" style="padding: 15px; min-width: 155px;">
                   <h3>Your current Stats</h3>
                   <table border="0" cellspacing="0" cellpadding="0" style="width: 100%; margin-top: 6px;">
@@ -69,6 +74,7 @@
                     </tr>
                   </table>
                 </div>
+<% end %>
               </ul>
             </li>
             <li><%= link_to "Logout", destroy_user_session_path, :method => :delete %></li>
@@ -93,18 +99,20 @@
         });
       </script>
     <% end -%>
-    <div class="row">
-      <div class="span3">
-        <div id="current_stats_container">
-          <%= render :partial => "users/stats" %>
+    <% unless params[:controller] == "pages" || (params[:controller] == "users" && params[:action] == "update") %>
+      <div class="row">
+        <div class="span3">
+          <div id="current_stats_container">
+            <%= render :partial => "users/stats" %>
+          </div>
+        </div>
+        <div class="span9">
+          <div id="current_action_container">
+            <%= render :partial => "actions/current" %>
+          </div>
         </div>
       </div>
-      <div class="span9">
-        <div id="current_action_container">
-          <%= render :partial => "actions/current" %>
-        </div>
-      </div>
-    </div>
+    <% end %>
     <div class="row">
       <div class="span12">
         <%= yield %>

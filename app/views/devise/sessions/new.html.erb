@@ -14,4 +14,7 @@
   <div><%= f.submit "Sign in" %></div>
 <% end %>
 
-<%= link_to('Register', new_user_registration_path) %>
+<%= link_to('Register', new_user_registration_path) %><br />
+<% if false %>
+  <%= link_to("Forgot your password?", new_password_path(resource_name)) %>
+<% end %>

@@ -3,14 +3,14 @@ Game::Application.routes.draw do
 
     devise_for :users
 
-    resources :game, :only => :index
-    resources :action_shell, :only => [:index] do
+    resources :game, :only => [ :index ]
+    resources :action_shell, :only => [ :index ] do
       collection do
         put :compute
       end
     end
 
-    resources :users, :only => [ :show, :index ] do
+    resources :users, :only => [ :show, :index, :update ] do
       collection do
         get :stats
       end
@@ -34,12 +34,14 @@ Game::Application.routes.draw do
       end
     end
 
-    resources :actions, :only => [:index, :show, :create, :destroy] do
+    resources :actions, :only => [ :index, :show, :create, :destroy ] do
       collection do
         get 'current'
         get 'recent'
       end
     end
+
+    resources :pages, :only => [ :show ]
 
     match 'operations' => 'actions#operations', :as => :operations
 

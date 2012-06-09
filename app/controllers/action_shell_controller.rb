@@ -4,7 +4,11 @@ class ActionShellController < ApplicationController
   after_filter :set_session_from_shell
 
   def index
-    @shell.perform! "init"
+    if @current_user.has_incomplete_actions?
+      redirect_to root_path, :alert => "Failed to start ActionShell due to unfinished action"
+    else
+      @shell.perform! "init"
+    end
   end
 
   def compute
