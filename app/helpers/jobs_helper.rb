@@ -52,9 +52,9 @@ module JobsHelper
   def accept_button(job)
     result = ""
     if current_user.hacking_ratio < job.hacking_ratio_required || current_user.botnet_ratio < job.botnet_ratio_required
-      result << "<span class='btn deactivated'>You are too weak</span>"
+      result << "<span class='btn disabled'>You are too weak</span>"
     elsif current_user.has_incomplete_actions?
-      result << "<span class='btn deactivated'>Action pending</span>"
+      result << "<span class='btn disabled'>Action pending</span>"
     else
       result << link_to("accept", accept_job_path(job.id), :class => "btn btn-primary")
     end
@@ -64,9 +64,9 @@ module JobsHelper
   def accept_button_mobile(job)
     result = ""
     if current_user.hacking_ratio < job.hacking_ratio_required || current_user.botnet_ratio < job.botnet_ratio_required
-      result << "<span class='btn deactivated' style='font-size: 9px;'>Too weak</span>"
+      result << "<span class='btn disabled' style='font-size: 9px;'>Too weak</span>"
     elsif current_user.has_incomplete_actions?
-      result << "<span class='btn deactivated' style='font-size: 9px;'>Action pending</span>"
+      result << "<span class='btn disabled' style='font-size: 9px;'>Action pending</span>"
     else
       result << link_to("accept", accept_job_path(job.id), :class => "btn btn-primary", :style => "font-size: 9px;")
     end

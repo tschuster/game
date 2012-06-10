@@ -26,7 +26,7 @@
         <% if current_user.controls?(company) %>
             <span class="btn disabled" style="margin-bottom: 6px;">You control this company</span>
         <% else %>
-          <span class="btn btn-primary disabled" style="margin-bottom: 6px;">Action pending</span>
+          <span class="btn disabled" style="margin-bottom: 6px;">Action pending</span>
         <% end %>
       <% else %>
         <% if current_user.chance_of_success_against(company, :hack) > 0 %>

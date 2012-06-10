@@ -52,8 +52,8 @@ class User < ActiveRecord::Base
 
   # Botnet-Erweiterung dazukaufen
   def buy_botnet
-    return if money < CONFIG["botnet"]["buy_cost"].to_i
-    update_attributes(:money => [0, (money-CONFIG["botnet"]["buy_cost"].to_i)].max, :botnet_ratio => botnet_ratio_without_bonus + CONFIG["botnet"]["buy_ratio"].to_i)
+    return if money < next_botnet_ratio_cost
+    update_attributes(:money => [0, (money-next_botnet_ratio_cost)].max, :botnet_ratio => botnet_ratio_without_bonus + CONFIG["botnet"]["buy_ratio"].to_i)
   end
 
   # eigene Hacking-Skills erweitern
@@ -63,8 +63,8 @@ class User < ActiveRecord::Base
 
   # Hacking-Skill dazukaufen
   def buy_hacking
-    return if money < CONFIG["hacking"]["buy_cost"].to_i
-    update_attributes(:money => [0, (money-CONFIG["hacking"]["buy_cost"].to_i)].max, :hacking_ratio => hacking_ratio_without_bonus + CONFIG["hacking"]["buy_ratio"].to_i)
+    return if money < next_hacking_ratio_cost
+    update_attributes(:money => [0, (money-next_hacking_ratio_cost)].max, :hacking_ratio => hacking_ratio_without_bonus + CONFIG["hacking"]["buy_ratio"].to_i)
   end
 
   # eigene Verteidigung erweitern
@@ -74,8 +74,8 @@ class User < ActiveRecord::Base
 
   # Hacking-Skill dazukaufen
   def buy_defense
-    return if money < CONFIG["defense"]["buy_cost"].to_i
-    update_attributes(:money => [0, (money-CONFIG["defense"]["buy_cost"].to_i)].max, :defense_ratio => defense_ratio_without_bonus + CONFIG["defense"]["buy_ratio"].to_i)
+    return if money < next_defense_ratio_cost
+    update_attributes(:money => [0, (money-next_defense_ratio_cost)].max, :defense_ratio => defense_ratio_without_bonus + CONFIG["defense"]["buy_ratio"].to_i)
   end
 
   def has_purchased?(equipment)
@@ -84,6 +84,17 @@ class User < ActiveRecord::Base
 
   def can_purchase?(equipment)
     money >= equipment.price
+  end
+
+  def can_buy?(skill)
+    case skill
+    when :hacking
+      money >= next_hacking_ratio_cost
+    when :botnet
+      money >= next_botnet_ratio_cost
+    when :defense
+      money >= next_defense_ratio_cost
+    end
   end
 
   def purchase!(equipment)
@@ -192,12 +203,24 @@ class User < ActiveRecord::Base
     botnet_ratio_without_bonus * botnet_ratio_without_bonus / 4
   end
 
+  def next_botnet_ratio_cost
+    botnet_ratio_without_bonus.to_f
+  end
+
   def next_defense_ratio_time
     defense_ratio_without_bonus * defense_ratio_without_bonus / 4
   end
 
+  def next_defense_ratio_cost
+    defense_ratio_without_bonus.to_f
+  end
+
   def next_hacking_ratio_time
     hacking_ratio_without_bonus * hacking_ratio_without_bonus / 4
+  end
+
+  def next_hacking_ratio_cost
+    hacking_ratio_without_bonus.to_f
   end
 
   def time_to_attack(target, type = :hack)
