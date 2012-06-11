@@ -18,11 +18,11 @@ class Job < ActiveRecord::Base
   def duration_for(current_user)
     case type_id
       when Job::JOB_TYPE_SPAM
-        (difficulty*6000/current_user.botnet_ratio).to_i
+        (difficulty*4000/current_user.botnet_ratio).to_i
       when Job::JOB_TYPE_DDOS
-        (difficulty*6000/current_user.botnet_ratio).to_i
+        (difficulty*4000/current_user.botnet_ratio).to_i
       when Job::JOB_TYPE_DEFACEMENT
-        (difficulty*6000/current_user.hacking_ratio).to_i
+        (difficulty*4000/current_user.hacking_ratio).to_i
     else
       raise Job::ImplementationMissingException.new("Type-id = #{type_id}")
     end
@@ -74,7 +74,7 @@ class Job < ActiveRecord::Base
             difficulty = 350 + rand(cplx*100)
           elsif cplx == 5
             hacking_ratio_required = 0
-            botnet_ratio_required  = (User.best_botnet_ratio*1.2).to_i
+            botnet_ratio_required  = (User.best_botnet_ratio*0.9).to_i
           end
 
           Job.create(
@@ -95,8 +95,9 @@ class Job < ActiveRecord::Base
             hacking_ratio_required = 10
             botnet_ratio_required  = 0
           elsif cplx == 2
-            hacking_ratio_required = (User.average_hacking_ratio*0.9).to_i
+            hacking_ratio_required = (User.average_hacking_ratio*1.6).to_i
             botnet_ratio_required  = 0
+            difficulty = 350 + rand(cplx*100)
           elsif cplx == 5
             hacking_ratio_required = (User.best_hacking_ratio*0.9).to_i
             botnet_ratio_required  = 0
