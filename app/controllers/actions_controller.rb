@@ -20,7 +20,7 @@ class ActionsController < ApplicationController
     if Action.add_for_user(@action, current_user)
       redirect_to game_index_path, notice: 'You are performing an action'
     else
-      redirect_to game_index_path, alert: 'Actions awaiting completion'
+      redirect_to game_index_path, alert: 'Action impossible'
     end
   end
 
