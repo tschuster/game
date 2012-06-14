@@ -231,6 +231,7 @@ class User < ActiveRecord::Base
   def can_attack?(target, type = :hack)
     return false if to_strong_for(target, type) || to_weak_for(target, type)
     if target.is_a?(User)
+      return false if target.id == id
       chance_of_success_against(target, type) > 0
     else
       !controls?(target) || chance_of_success_against(target, type) > 0

@@ -159,19 +159,19 @@ class Action < ActiveRecord::Base
 
       elsif action.type_id == Action::TYPE_ATTACK_USER
         target = User.where(:id => action.target_id).first
-        return if target.blank? || user.id == target.id
+        return if target.blank? || !user.can_attack?(target, :hack)
         target_type = "User"
         DateTime.now + user.time_to_attack(target, :hack).seconds
 
       elsif action.type_id == Action::TYPE_ATTACK_COMPANY
         target = Company.where(:id => action.target_id).first
-        return if target.blank? || user.controls?(target)
+        return if target.blank? || !user.can_attack?(target, :hack)
         target_type = "Company"
         DateTime.now + user.time_to_attack(target, :hack).seconds
 
       elsif action.type_id == Action::TYPE_ATTACK_USER_DDOS
         target = User.where(:id => action.target_id).first
-        return if target.blank? || user.id == target.id
+        return if target.blank? || !user.can_attack?(target, :ddos)
         target_type = "User"
         DateTime.now + user.time_to_attack(target, :ddos).seconds
 
