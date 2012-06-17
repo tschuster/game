@@ -1,6 +1,6 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.5'
+gem 'rails', '3.2.6'
 gem 'mysql2'
 gem 'devise'
 gem 'symbolize' , :require => 'symbolize/active_record'
