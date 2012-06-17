@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Game</title>
+  <meta charset="utf-8">
+  <%= stylesheet_link_tag    "application" %>
+  <%= javascript_include_tag "application" %>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <%= csrf_meta_tags %>
+  <style>
+    body {
+      padding-top: 55px;
+    }
+  </style>
+  <%= stylesheet_link_tag "bootstrap-responsive" %>
+</head>
+<body>
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <%= link_to "Game", game_index_path, :class => "brand" %></li>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <% flash.each do |key, msg| -%>
+      <% if key == :alert %>
+        <div class="alert alert-error">
+      <% else %>
+        <div class="alert alert-success">
+      <% end %>
+        <%= msg %>
+      </div>
+      <script>
+        $(document).ready(function() {
+          $(".alert").delay(2000).fadeOut('slow');
+        });
+      </script>
+    <% end -%>
+    <%= yield %>
+  </div>
+</body>
+</html>

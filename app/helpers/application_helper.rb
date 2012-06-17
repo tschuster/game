@@ -52,4 +52,8 @@ module ApplicationHelper
       "color: #5EB95E;"
     end
   end
+
+  def show_current_partials
+    !(params[:controller] == "pages" || (params[:controller] == "users" && params[:action] == "update") || (params[:controller] == "users" && params[:action] == "index"))
+  end
 end

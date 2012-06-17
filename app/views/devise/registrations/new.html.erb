@@ -1,21 +1,21 @@
-<h2>Sign up</h2>
+<h2>Register</h2>
 
-<%= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
+<%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :class => "form form-vertical"}) do |f| %>
   <%= devise_error_messages! %>
 
-  <div><%= f.label :nickname %><br />
-  <%= f.text_field :nickname %></div>
+  <%= f.label :nickname %>
+  <%= f.text_field :nickname %>
 
-  <div><%= f.label :email, "Email (optional)" %><br />
-  <%= f.email_field :email %></div>
+  <%= f.label :email, "Email (optional)" %>
+  <%= f.email_field :email %>
 
-  <div><%= f.label :password %><br />
-  <%= f.password_field :password %></div>
+  <%= f.label :password %>
+  <%= f.password_field :password %>
 
-  <div><%= f.label :password_confirmation %><br />
-  <%= f.password_field :password_confirmation %></div>
-
-  <div><%= f.submit "Sign up" %></div>
+  <%= f.label :password_confirmation %>
+  <%= f.password_field :password_confirmation %>
+  <br />
+  <%= f.submit "Register", :class => "btn btn-primary" %>
+  <br /><br />
+  <%= link_to('Login', new_user_session_path, :class => "btn") %>
 <% end %>
-
-<%= link_to('Login', new_user_session_path) %>

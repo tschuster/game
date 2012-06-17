@@ -8,6 +8,15 @@ class UsersController < ApplicationController
 
   def index
     @users = User.all
+    @users.sort_by!(&:nickname)
+    @users_nicknames = @users.map { |u| "'#{u.nickname}'" }
+    
+    @hacking_strengths = "{name:'Hacking skill', data: [" << @users.map { |u| u.hacking_ratio }.join(",") << "]}"
+    @botnet_strengths  = "{name:'Botnet strength', data: [" << @users.map { |u| u.botnet_ratio }.join(",") << "]}"
+    @defense_strengths = "{name:'Defense ratio', data: [" << @users.map { |u| u.defense_ratio }.join(",") << "]}"
+    @moneys            = "{name:'Money', data: [" << @users.map { |u| u.money }.join(",") << "]}"
+
+    
   end
 
   def stats

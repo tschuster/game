@@ -234,7 +234,8 @@ class User < ActiveRecord::Base
       return false if target.id == id
       chance_of_success_against(target, type) > 0
     else
-      !controls?(target) || chance_of_success_against(target, type) > 0
+      return false if controls?(target)
+      chance_of_success_against(target, type) > 0
     end
   end
 

@@ -99,7 +99,7 @@
         });
       </script>
     <% end -%>
-    <% unless params[:controller] == "pages" || (params[:controller] == "users" && params[:action] == "update") %>
+    <% if show_current_partials %>
       <div class="row">
         <div class="span3">
           <div id="current_stats_container">

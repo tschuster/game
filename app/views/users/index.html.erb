@@ -1,22 +1,40 @@
-<table border="0" class="table table-bordered" cellspacing="0" cellpadding="0">
-  <tr>
-    <th>Id</th>
-    <th>Nickname</th>
-    <th>Email</th>
-    <th>Botnet ratio</th>
-    <th>Defense ratio</th>
-    <th>Hacking ratio</th>
-    <th>Money</th>
-  </tr>
-<% @users.each do |user| %>
-  <tr>
-    <td><%= user.id %></td>
-    <td><%= user.nickname %></td>
-    <td><%= user.email %></td>
-    <td><%= user.botnet_ratio %></td>
-    <td><%= user.defense_ratio %></td>
-    <td><%= user.hacking_ratio %></td>
-    <td><%= number_to_currency(user.money) %></td>
-  </tr>
-<% end %>
-</table>
+<%= javascript_include_tag "highcharts" %>
+<div class="tabbable">
+  <ul class="nav nav-tabs">
+    <li class="active">
+      <%= link_to("Userlist", "#userlist", :'data-toggle' => "tab") %>
+    </li>
+    <li>
+      <%= link_to("Strength", "#userstrength", :'data-toggle' => "tab") %>
+    </li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane active" id="userlist">
+      <table border="0" class="table table-bordered" cellspacing="0" cellpadding="0">
+        <tr>
+          <th>Id</th>
+          <th>Nickname</th>
+          <th>Email</th>
+          <th>Botnet ratio</th>
+          <th>Defense ratio</th>
+          <th>Hacking ratio</th>
+          <th>Money</th>
+        </tr>
+      <% @users.sort.each do |user| %>
+        <tr>
+          <td><%= user.id %></td>
+          <td><%= user.nickname %></td>
+          <td><%= user.email %></td>
+          <td><%= user.botnet_ratio %></td>
+          <td><%= user.defense_ratio %></td>
+          <td><%= user.hacking_ratio %></td>
+          <td><%= number_to_currency(user.money) %></td>
+        </tr>
+      <% end %>
+      </table>
+    </div>
+    <div class="tab-pane" id="userstrength">
+      <%= render :partial => "strength" %>
+    </div>
+  </div>
+</div>
