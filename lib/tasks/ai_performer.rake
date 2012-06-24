@@ -4,7 +4,7 @@ namespace :ai do
     ai_player = AiPlayer.find(20)
     while true do
       ai_player.perform_action!
-      sleep(5)
+      sleep(15*60)
     end
   end
 end
