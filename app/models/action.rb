@@ -40,7 +40,7 @@ class Action < ActiveRecord::Base
   def perform!
 
     # eigenes Botnet erweitern
-    if type_id == Action::TYPE_BOTNET_EVOLVE
+    result = if type_id == Action::TYPE_BOTNET_EVOLVE
       user.evolve_botnet
 
     # Botnet-Erweiterung dazukaufen
@@ -77,16 +77,16 @@ class Action < ActiveRecord::Base
 
     # Sperre aufheben
     elsif (type_id == Action::TYPE_SYSTEM_CRASH || type_id == Action::TYPE_DDOS_CRASH )
-      # n/a
+      true
 
     else
       raise Action::InvalidTypeException.new("Typ '#{type_id.to_s}' ungültig")
     end
-    complete!
+    complete!(result)
   end
 
-  def complete!
-    update_attribute(:completed, true)
+  def complete!(success = true)
+    update_attributes(:completed => true, :success => success)
   end
 
   def readable_type

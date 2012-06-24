@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120605231156) do
+ActiveRecord::Schema.define(:version => 20120623080256) do
 
   create_table "actions", :force => true do |t|
     t.integer  "type_id"
@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(:version => 20120605231156) do
     t.boolean  "completed",    :default => false
     t.integer  "target_id"
     t.string   "target_type"
+    t.boolean  "success",      :default => false
   end
 
   create_table "companies", :force => true do |t|

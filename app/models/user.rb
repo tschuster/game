@@ -52,7 +52,7 @@ class User < ActiveRecord::Base
 
   # Botnet-Erweiterung dazukaufen
   def buy_botnet
-    return if money < next_botnet_ratio_cost
+    return false if money < next_botnet_ratio_cost
     update_attributes(:money => [0, (money-next_botnet_ratio_cost)].max, :botnet_ratio => botnet_ratio_without_bonus + CONFIG["botnet"]["buy_ratio"].to_i)
   end
 
@@ -63,7 +63,7 @@ class User < ActiveRecord::Base
 
   # Hacking-Skill dazukaufen
   def buy_hacking
-    return if money < next_hacking_ratio_cost
+    return false if money < next_hacking_ratio_cost
     update_attributes(:money => [0, (money-next_hacking_ratio_cost)].max, :hacking_ratio => hacking_ratio_without_bonus + CONFIG["hacking"]["buy_ratio"].to_i)
   end
 
@@ -74,7 +74,7 @@ class User < ActiveRecord::Base
 
   # Hacking-Skill dazukaufen
   def buy_defense
-    return if money < next_defense_ratio_cost
+    return false if money < next_defense_ratio_cost
     update_attributes(:money => [0, (money-next_defense_ratio_cost)].max, :defense_ratio => defense_ratio_without_bonus + CONFIG["defense"]["buy_ratio"].to_i)
   end
 
@@ -113,7 +113,8 @@ class User < ActiveRecord::Base
   end
 
   def attack(target, type = :hack)
-    return if target.blank?
+    return false if target.blank?
+    success = false
     if target.is_a?(User)
 
       if type == :hack
@@ -197,6 +198,7 @@ class User < ActiveRecord::Base
       end
       Notification.create_for_all!(:attack_company, :attacker => self, :victim => target, :success => success)
     end
+    success
   end
 
   def next_botnet_ratio_time
@@ -298,6 +300,7 @@ class User < ActiveRecord::Base
 
     if type == :hack
       return 0 if hacking_ratio + target.defense_ratio == 0
+      return 0 if target.is_a?(Company) && controls?(target)
 
       # Summe aller Werte bildet die Anteile des Angreifers und Verteidigers ab
       (hacking_ratio.to_f / (hacking_ratio + target.defense_ratio).to_f * 100).to_i
