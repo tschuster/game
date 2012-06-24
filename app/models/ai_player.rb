@@ -44,13 +44,13 @@ class AiPlayer < User
 
     # determine strategy according to relation between agressiveness and defensiveness
     if agressiveness > defensiveness
-puts "my strategy is agressive"
+Rails.logger.info("my strategy is agressive")
       :agressive
     elsif agressiveness < defensiveness
-puts "my strategy is defensive"
+Rails.logger.info("my strategy is defensive")
       :defensive
     else
-puts "my strategy is moderate"
+Rails.logger.info("my strategy is moderate")
       :moderate
     end
   end
@@ -122,11 +122,11 @@ puts "my strategy is moderate"
 
     if options.present?
       if options[:accept_job_id].present? && Job.acceptable.where(:id => options[:accept_job_id]).first.present?
-puts "i accept job# #{options[:accept_job_id]}"
+Rails.logger.info("i accept job# #{options[:accept_job_id]}")
         Job.acceptable.where(:id => options[:accept_job_id]).first.accept_by(self)
       else
         result = Action.create(options)
-puts "i perform #{result.readable_type}"
+Rails.logger.info("i perform #{result.readable_type}")
         result
       end
     end
@@ -152,21 +152,21 @@ puts "i perform #{result.readable_type}"
       # increase hacking skill
       if hacking_ratio.to_f < botnet_ratio.to_f*1.3
         if can_buy?(:hacking)
-puts "i can buy hacking skill"
+Rails.logger.info("i can buy hacking skill")
           options = {
             :user_id      => id,
             :type_id      => Action::TYPE_HACKING_BUY,
             :completed_at => DateTime.now
           }
         elsif next_hacking_ratio_time < available_jobs.last.duration_for(self)
-puts "i can evolve hacking skill"
+Rails.logger.info("i can evolve hacking skill")
           options = {
             :user_id      => id,
             :type_id      => Action::TYPE_HACKING_EVOLVE,
             :completed_at => DateTime.now + next_hacking_ratio_time.seconds
           }
         else
-puts "i must perform a job to buy hacking skill"
+Rails.logger.info("i must perform a job to buy hacking skill")
           available_jobs.each do |job|
             options = { :accept_job_id => job.id } if (job.reward+money >= next_hacking_ratio_cost) && options.blank?
           end
@@ -176,21 +176,21 @@ puts "i must perform a job to buy hacking skill"
       # increase botnet strength
       else
         if can_buy?(:botnet)
-puts "i can buy botnet strength"
+Rails.logger.info("i can buy botnet strength")
           options = {
             :user_id      => id,
             :type_id      => Action::TYPE_BOTNET_BUY,
             :completed_at => DateTime.now
           }
         elsif next_botnet_ratio_time < available_jobs.last.duration_for(self)
-puts "i can evolve botnet strength"
+Rails.logger.info("i can evolve botnet strength")
           options = {
             :user_id      => id,
             :type_id      => Action::TYPE_BOTNET_EVOLVE,
             :completed_at => DateTime.now + next_botnet_ratio_time.seconds
           }
         else
-puts "i must peform a job to buy botnet strength"
+Rails.logger.info("i must peform a job to buy botnet strength")
           available_jobs.each do |job|
             options = { :accept_job_id => job.id } if (job.reward+money >= next_botnet_ratio_cost) && options.blank?
           end
@@ -206,21 +206,21 @@ puts "i must peform a job to buy botnet strength"
 
       # increase defense ratio
       if can_buy?(:defense)
-puts "i can buy defense"
+Rails.logger.info("i can buy defense")
         options = {
           :user_id      => id,
           :type_id      => Action::TYPE_DEFENSE_BUY,
           :completed_at => DateTime.now
         }
       elsif next_defense_ratio_time < available_jobs.last.duration_for(self)
-puts "i can evolve defense"
+Rails.logger.info("i can evolve defense")
         options = {
           :user_id      => id,
           :type_id      => Action::TYPE_DEFENSE_EVOLVE,
           :completed_at => DateTime.now + next_defense_ratio_time.seconds
         }
       else
-puts "i must perform a job to buy defense"
+Rails.logger.info("i must perform a job to buy defense")
         available_jobs.each do |job|
           options = { :accept_job_id => job.id } if (job.reward+money >= next_defense_ratio_cost) && options.blank?
         end
