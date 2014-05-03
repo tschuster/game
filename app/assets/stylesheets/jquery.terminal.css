@@ -109,7 +109,7 @@
     /*display: inline-block; */
 }
 .terminal .inverted, .cmd .inverted, .cmd .cursor.blink {
-    background-color: ##00fa4b;
+    background-color: #00fa4b;
     color: #000;
 }
 .terminal .terminal-output div div::-moz-selection,
