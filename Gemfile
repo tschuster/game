@@ -3,7 +3,7 @@ source 'http://rubygems.org'
 gem 'rails', '3.2.17'
 gem 'mysql2'
 gem 'devise'
-gem 'symbolize' , :require => 'symbolize/active_record'
+gem 'symbolize', git: 'git://github.com/nofxx/symbolize.git'
 
 group :assets do
   gem 'sass-rails'
@@ -16,6 +16,7 @@ gem 'jquery-rails'
 group :development do
   gem 'capistrano'
   gem 'rvm-capistrano'
+  gem 'better_errors'
 end
 
 group :production do
