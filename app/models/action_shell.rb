@@ -261,7 +261,7 @@ class ActionShell
   end
 
   def version(p=nil)
-    "ActionShell v0.6 build 2012-06-09"
+    "ActionShell v0.7 build 2014-05-03"
   end
 
   def help(p=nil)
