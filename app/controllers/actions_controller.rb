@@ -11,11 +11,11 @@ class ActionsController < ApplicationController
   end
 
   def current
-    render :layout => false
+    render layout: false
   end
 
   def create
-    @action = Action.new(:type_id => params[:type_id].to_i, :user_id => current_user.id, :target_id => params[:target_id])
+    @action = Action.new(type_id: params[:type_id].to_i, user_id: current_user.id, target_id: params[:target_id])
 
     if Action.add_for_user(@action, current_user)
       redirect_to game_index_path, notice: 'You are performing an action'
@@ -25,10 +25,10 @@ class ActionsController < ApplicationController
   end
 
   def destroy
-    @action = Action.where(:id => params[:id], :user_id => current_user.id, :completed => false).first
+    @action = Action.where(id: params[:id], user_id: current_user.id, completed: false).first
     if @action.present?
       if @action.job.present?
-        @action.job.update_attributes(:completed => false, :success => nil, :user_id => nil)
+        @action.job.update_attributes(completed: false, success: nil, user_id: nil)
       end
       @action.destroy
       flash.notice = "Action was successfully canceled."

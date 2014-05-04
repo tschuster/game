@@ -23,7 +23,7 @@
       <% end %>
       Time remaining: <div id="remaining"></div>
     <% end %>
-    <%= link_to("Cancel", action_path(@current_action), :method => :delete, :class => "btn", :confirm => "Are you sure you want to cancel your action?") if @current_action.can_be_canceled? %>
+    <%= link_to("Cancel", action_path(@current_action), method: :delete, class: "btn btn-default", confirm: "Are you sure you want to cancel your action?") if @current_action.can_be_canceled? %>
   <% else %>
     <h3>Your current Action</h3>
     <p>
