@@ -155,7 +155,7 @@ class User < ActiveRecord::Base
         Action.create(
           type_id:      Action::TYPE_SYSTEM_CRASH,
           user_id:      id,
-          completed_at: DateTime.now + 60.minutes,
+          completed_at: DateTime.now + (bootloader_active? ? 15.minutes : 60.minutes),
           completed:    false
         )
 
@@ -333,6 +333,10 @@ class User < ActiveRecord::Base
   def intrusion_detection_active?
     intrusion_detection_system = Equipment.where(klass: :utility, special_bonus: "ids").first
     items.where(equipment_id: intrusion_detection_system.id, equipped: true).first.present?
+  end
+
+  def bootloader_active?
+    Equipment.where(klass: :utility, special_bonus: "boot").first.equipped_by?(self)
   end
 
   class << self
