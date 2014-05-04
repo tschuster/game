@@ -1,32 +1,56 @@
 <h2>Your profile</h2>
-<%= form_for(current_user, :class => "form-horizontal") do |f| %>
-  <fieldset>
-    <legend>Change your nickname, email-address and password here</legend>
-    <div class="control-group">
-      <% if current_user.errors.present? %>
-        <% current_user.errors.full_messages.each do |msg| %>
-          <div class="alert alert-error"><%= msg %></div>
-        <% end %>
-      <% end %>
-      <%= f.label :nickname, "Nickname:", :class => "control-label" %>
-      <div class="controls">
-        <%= f.text_field :nickname, :class => "input-xlarge" %>
-      </div>
-      <%= f.label :email, "Email (optional):", :class => "control-label" %>
-      <div class="controls">
-        <%= f.text_field :email, :class => "input-xlarge" %>
-      </div>
-      <%= f.label :password, "New password:", :class => "control-label" %>
-      <div class="controls">
-        <%= f.password_field :password, :class => "input-xlarge" %>
-      </div>
-      <%= f.label :password_confirmation, "Confirm password:", :class => "control-label" %>
-      <div class="controls">
-        <%= f.password_field :password_confirmation, :class => "input-xlarge" %>
+<%= form_for(current_user, class: "form-horizontal", role: "form") do |f| %>
+  <div class="well">
+    Change your nickname, email-address and password here
+  </div>
+  <% if current_user.errors.present? %>
+    <% current_user.errors.full_messages.each do |msg| %>
+      <div class="alert alert-danger"><%= msg %></div>
+    <% end %>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :nickname %>
+    <div class="row">
+      <div class="col-xs-4">
+        <%= f.text_field :nickname, class: "form-control" %>
       </div>
     </div>
-  </fieldset>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :email, "Email (optional):" %>
+    <div class="row">
+      <div class="col-xs-4">
+        <%= f.email_field :email, class: "form-control" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="checkbox">
+    <label>
+      <%= f.check_box :notify %> Send me notifications to my email address
+    </label>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :password %>
+    <div class="row">
+      <div class="col-xs-4">
+        <%= f.password_field :password, class: "form-control" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :password_confirmation %>
+    <div class="row">
+      <div class="col-xs-4">
+        <%= f.password_field :password_confirmation, class: "form-control" %>
+      </div>
+    </div>
+  </div>
   <div class="form-actions">
-    <%= f.submit "Update details", :class => "btn btn-primary" %> <%= link_to "Back", game_index_path, :class => "btn" %>
+    <%= f.submit "Update details", :class => "btn btn-primary" %> <%= link_to "Back", game_index_path, :class => "btn btn-default" %>
   </div>
 <% end %>

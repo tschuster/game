@@ -5,3 +5,4 @@
 /config/database.yml
 config/deploy.rb
 Capfile
+/config/initializers/mailer.rb

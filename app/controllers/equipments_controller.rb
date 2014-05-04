@@ -1,19 +1,19 @@
 # encoding: utf-8
 class EquipmentsController < ApplicationController
-  before_filter :set_equipment_by_item_id, :only => [:buy]
-  before_filter :set_equipment, :only => [:update]
-  before_filter :set_equipments, :only => [:index]
-  before_filter :set_available_equipments, :only => [:index]
+  before_filter :set_equipment, only: [:buy]
+  before_filter :set_item, only: [:update]
+  before_filter :set_equipments, only: [:index]
+  before_filter :set_available_equipments, only: [:index]
 
   def index
   end
 
   def update
-    if !current_user.has_purchased? @equipment
+    if !current_user.has_purchased? @item.equipment
       flash.alert = "You do not own this equipment!"
-    elsif params[:unequip].present? && @equipment.unequip!
+    elsif params[:unequip].present? && @item.unequip!
       
-    elsif @equipment.equip!
+    elsif @item.equip!
       flash.notice = "Item equipped"
     else
       flash.alert = "Something went wrong..."
@@ -43,32 +43,26 @@ class EquipmentsController < ApplicationController
   protected
 
     def set_equipment
-      @equipment = Equipment.where(:id => params[:id]).first
+      @equipment = Equipment.where(id: params[:item_id]).first
     end
 
-    def set_equipment_by_item_id
-      @equipment = Equipment.build_by_item_id(params[:item_id])
+    def set_item
+      @equipment = Equipment.where(id: params[:id]).first
+      @item = current_user.items.where(equipment_id: @equipment.id).first
     end
 
     def set_equipments
-      @equipments = current_user.equipments.sort_by! { |elm| elm.item_id.split("_") }
+      @user_firewalls = Equipment.where("id in(?)", current_user.items.pluck(:equipment_id)).where(klass: :firewall).order(:level)
+      @user_compilers = Equipment.where("id in(?)", current_user.items.pluck(:equipment_id)).where(klass: :compiler).order(:level)
+      @user_botnets = Equipment.where("id in(?)", current_user.items.pluck(:equipment_id)).where(klass: :botnet).order(:level)
+      @user_utilities = Equipment.where("id in(?)", current_user.items.pluck(:equipment_id)).where(klass: :utility).order(:level)
     end
 
     def set_available_equipments
-      @available_equipments = []
-      EQUIPMENT.each_pair do |key_prefix, eqmts|
-        eqmts.each_pair do |key_suffix, eqmt|
-          @available_equipments << Equipment.new(
-            title: eqmt["title"],
-            item_id: [key_prefix, key_suffix].join("_"),
-            klass: eqmt["klass"],
-            hacking_bonus: eqmt["hacking_bonus"].to_i,
-            botnet_bonus: eqmt["botnet_bonus"].to_i,
-            defense_bonus: eqmt["defense_bonus"].to_i,
-            price: eqmt["price"].to_i
-          )
-        end
-      end
-      @available_equipments.sort_by! { |elm| elm.item_id.split("_") }
+      @available_firewalls = Equipment.where(klass: :firewall).order(:level)
+      @available_compilers = Equipment.where(klass: :compiler).order(:level)
+      @available_botnets = Equipment.where(klass: :botnet).order(:level)
+      @available_utilities = Equipment.where(klass: :utility).order(:level)
+      @available_equipments = Equipment.order(:klass)
     end
 end

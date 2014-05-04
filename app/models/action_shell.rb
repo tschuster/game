@@ -134,14 +134,15 @@ class ActionShell
   def file_system_for(user)
     prefix = user == @current_user ? nil : "[#{user.nickname}] #{@clients[user.nickname][:ip]}/"
     result = {
-      "#{prefix}home/"                     => VirtualFolder.new(:name => "#{prefix}home/"),
-      "#{prefix}home/account/"             => VirtualFolder.new(:name => "#{prefix}home/account/"),
-      "#{prefix}home/account/balance.txt"  => VirtualFile.new(:name => "balance", :type => "txt", :contents => consolize(number_to_currency(user.try(:money), :format => "%u %n"))),
-      "#{prefix}home/equipment/"           => VirtualFolder.new(:name => "#{prefix}home/equipment/")
+      "#{prefix}home/"                     => VirtualFolder.new(name: "#{prefix}home/"),
+      "#{prefix}home/account/"             => VirtualFolder.new(name: "#{prefix}home/account/"),
+      "#{prefix}home/account/balance.txt"  => VirtualFile.new(name: "balance", type: "txt", contents: consolize(number_to_currency(user.try(:money), format: "%u %n"))),
+      "#{prefix}home/equipment/"           => VirtualFolder.new(name: "#{prefix}home/equipment/")
     }
     if user.present?
-      user.equipments.active.each do |equipment|
-        looping_file = VirtualFile.new(:name => equipment.title.gsub(" ", "_"), :type => "eqmt", :contents => 
+      user.items.active.each do |item|
+        equipment = item.equipment
+        looping_file = VirtualFile.new(name: equipment.title.gsub(" ", "_"), type: "eqmt", contents: 
           consolize([
             ["Title:", equipment.title],
             ["Hacking skill bonus:", "+#{equipment.hacking_bonus}"],
@@ -195,8 +196,8 @@ class ActionShell
 
       random_ip = "#{rand(253)+1}.#{rand(256)}.#{rand(256)}.#{rand(253)+1}"
       password = random_password(10)
-      @clients[u.nickname] = { :nickname => u.nickname, :id => u.id, :ip => random_ip, :password => password, :type => :user }
-      @clients[random_ip]  = { :nickname => u.nickname, :id => u.id, :ip => random_ip, :password => password, :type => :ip }
+      @clients[u.nickname] = { nickname: u.nickname, id: u.id, ip: random_ip, password: password, type: :user }
+      @clients[random_ip]  = { nickname: u.nickname, id: u.id, ip: random_ip, password: password, type: :ip }
     end
   end
 
@@ -318,7 +319,7 @@ class ActionShell
     # Attacker weaker than victim
     else
       percentage_weaker = (victim.defense_ratio.to_f / [@current_user.hacking_ratio.to_f, 1].max).round(2)-1
-      effective_line_legth = [(base_line_length+percentage_stronger*delta).round(0), 100].min
+      effective_line_legth = [(base_line_length+percentage_weaker*delta).round(0), 100].min
     end
 
     # Display password stream
@@ -351,6 +352,9 @@ class ActionShell
         consolize("Password invalid!") << "<script>$('#delegate').val('check_password');</script>".html_safe
       end
     else
+
+      # Password correct, activating intrusion detection system if available...
+      User.find(victim[:id]).intruder_alert!
       @authenticated = true
       @password_retry = 0
       @current_dir = "[#{victim[:nickname]}] #{victim[:ip]}/home/"
@@ -378,7 +382,7 @@ class ActionShell
     if file_system[@current_dir + location].present?
       equipment_title = location.split("/").last.gsub("_", " ").gsub(".eqmt", "")
 
-      equipment = victim.equipments.where(:title => equipment_title).first
+      equipment = Equipment.where("id in (?)", victim.items.map(&:equipment_id)).where(title: equipment_title).first
       if equipment.present? && equipment.unequip!
         if remote?
           reset_connection!

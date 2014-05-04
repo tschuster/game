@@ -15,10 +15,11 @@
           <th>Id</th>
           <th>Nickname</th>
           <th>Email</th>
-          <th>Botnet ratio</th>
+          <th>Botnet strength</th>
           <th>Defense ratio</th>
-          <th>Hacking ratio</th>
+          <th>Hacking skill</th>
           <th>Money</th>
+          <th>Notify?</th>
         </tr>
       <% @users.sort.each do |user| %>
         <tr>
@@ -29,6 +30,7 @@
           <td><%= user.defense_ratio %></td>
           <td><%= user.hacking_ratio %></td>
           <td><%= number_to_currency(user.money) %></td>
+          <td><%= check_box_tag "#{user.id}_notify", nil, user.notify? %></td>
         </tr>
       <% end %>
       </table>

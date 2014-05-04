@@ -1,21 +1,52 @@
 <h2>Register</h2>
 
-<%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :class => "form form-vertical"}) do |f| %>
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: "form", role: "form"}) do |f| %>
   <%= devise_error_messages! %>
 
-  <%= f.label :nickname %>
-  <%= f.text_field :nickname %>
+  <div class="form-group">
+    <%= f.label :nickname %>
+    <div class="row">
+      <div class="col-xs-4">
+        <%= f.text_field :nickname, class: "form-control" %>
+      </div>
+    </div>
+  </div>
 
-  <%= f.label :email, "Email (optional)" %>
-  <%= f.email_field :email %>
+  <div class="form-group">
+    <%= f.label :email, "Email (optional)" %>
+    <div class="row">
+      <div class="col-xs-4">
+        <%= f.email_field :email, class: "form-control" %>
+      </div>
+    </div>
+  </div>
 
-  <%= f.label :password %>
-  <%= f.password_field :password %>
+  <div class="checkbox">
+    <label>
+      <%= f.check_box :notify %> Send me notifications to my email address
+    </label>
+  </div>
 
-  <%= f.label :password_confirmation %>
-  <%= f.password_field :password_confirmation %>
+  <div class="form-group">
+    <%= f.label :password %>
+    <div class="row">
+      <div class="col-xs-4">
+        <%= f.password_field :password, class: "form-control" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :password_confirmation %>
+    <div class="row">
+      <div class="col-xs-4">
+        <%= f.password_field :password_confirmation, class: "form-control" %>
+      </div>
+    </div>
+  </div>
+
   <br />
-  <%= f.submit "Register", :class => "btn btn-primary" %>
+  <%= f.submit "Register", class: "btn btn-primary" %>
   <br /><br />
-  <%= link_to('Login', new_user_session_path, :class => "btn") %>
+  <%= link_to('Login', new_user_session_path, class: "btn btn-default") %>
 <% end %>

@@ -1,48 +1,48 @@
 class User < ActiveRecord::Base
-  has_many :actions, :dependent => :destroy
-  has_many :jobs, :dependent => :destroy
-  has_many :notifications, :dependent => :destroy
-  has_many :equipments, :dependent => :destroy
+  has_many :actions, dependent: :destroy
+  has_many :jobs, dependent: :destroy
+  has_many :notifications, dependent: :destroy
+  has_many :items, dependent: :destroy
   has_many :companies
 
-  validates :nickname, :exclusion => { :in => ["admin", "administrator"], :message => "is not allowed" }, :uniqueness => { :case_sensitive => false, :message => "is already taken" }, :presence => { :message => "is required" }
+  validates :nickname, exclusion: { in: ["admin", "administrator"], message: "is not allowed" }, uniqueness: { case_sensitive: false, message: "is already taken" }, presence: { message: "is required" }
 
   # Include default devise modules. Others available are:
   # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :nickname, :email, :password, :password_confirmation, :remember_me, :money, :botnet_ratio, :hacking_ratio, :defense_ratio
+  attr_accessible :nickname, :email, :password, :password_confirmation, :remember_me, :money, :botnet_ratio, :hacking_ratio, :defense_ratio, :notify
 
   before_destroy :clear_company
 
   def hacking_ratio
-    super + equipments.active.pluck(:hacking_bonus).sum
+    super + items.active.map(&:hacking_bonus).sum
   end
 
   def hacking_ratio_without_bonus
-    hacking_ratio - equipments.active.pluck(:hacking_bonus).sum
+    hacking_ratio - items.active.map(&:hacking_bonus).sum
   end
 
   def botnet_ratio
-    super + equipments.active.pluck(:botnet_bonus).sum
+    super + items.active.map(&:botnet_bonus).sum
   end
 
   def botnet_ratio_without_bonus
-    botnet_ratio - equipments.active.pluck(:botnet_bonus).sum
+    botnet_ratio - items.active.map(&:botnet_bonus).sum
   end
 
   def defense_ratio
-    super + equipments.active.pluck(:defense_bonus).sum
+    super + items.active.map(&:defense_bonus).sum
   end
 
   def defense_ratio_without_bonus
-    defense_ratio - equipments.active.pluck(:defense_bonus).sum
+    defense_ratio - items.active.map(&:defense_bonus).sum
   end
 
   # stoppt alle aktuellen Actions
   def cancel_actions!
-    actions.incomplete.update_all(:completed => true)
+    actions.incomplete.update_all(completed: true)
   end
 
   # eigenes Botnet erweitern
@@ -53,7 +53,7 @@ class User < ActiveRecord::Base
   # Botnet-Erweiterung dazukaufen
   def buy_botnet
     return false if money < next_botnet_ratio_cost
-    update_attributes(:money => [0, (money-next_botnet_ratio_cost)].max, :botnet_ratio => botnet_ratio_without_bonus + CONFIG["botnet"]["buy_ratio"].to_i)
+    update_attributes(money: [0, (money-next_botnet_ratio_cost)].max, botnet_ratio: botnet_ratio_without_bonus + CONFIG["botnet"]["buy_ratio"].to_i)
   end
 
   # eigene Hacking-Skills erweitern
@@ -64,7 +64,7 @@ class User < ActiveRecord::Base
   # Hacking-Skill dazukaufen
   def buy_hacking
     return false if money < next_hacking_ratio_cost
-    update_attributes(:money => [0, (money-next_hacking_ratio_cost)].max, :hacking_ratio => hacking_ratio_without_bonus + CONFIG["hacking"]["buy_ratio"].to_i)
+    update_attributes(money: [0, (money-next_hacking_ratio_cost)].max, hacking_ratio: hacking_ratio_without_bonus + CONFIG["hacking"]["buy_ratio"].to_i)
   end
 
   # eigene Verteidigung erweitern
@@ -75,11 +75,11 @@ class User < ActiveRecord::Base
   # Hacking-Skill dazukaufen
   def buy_defense
     return false if money < next_defense_ratio_cost
-    update_attributes(:money => [0, (money-next_defense_ratio_cost)].max, :defense_ratio => defense_ratio_without_bonus + CONFIG["defense"]["buy_ratio"].to_i)
+    update_attributes(money: [0, (money-next_defense_ratio_cost)].max, defense_ratio: defense_ratio_without_bonus + CONFIG["defense"]["buy_ratio"].to_i)
   end
 
   def has_purchased?(equipment)
-    equipments.pluck(:item_id).include?(equipment.item_id)
+    items.pluck(:equipment_id).include?(equipment.id)
   end
 
   def can_purchase?(equipment)
@@ -132,43 +132,43 @@ class User < ActiveRecord::Base
           receive_money!(stolen_money) if stolen_money > 0.0
 
           # Notifications
-          Notification.create_for(:attack_success_victim, target, :value => stolen_money, :attacker => self)
-          Notification.create_for(:attack_success_attacker, self, :value => stolen_money, :victim => target)
+          Notification.create_for(:attack_success_victim, target, value: stolen_money, attacker: self)
+          Notification.create_for(:attack_success_attacker, self, value: stolen_money, victim: target)
         elsif type == :ddos
 
           # Actions hart canceln
           target.cancel_actions!
           Action.create(
-            :type_id      => Action::TYPE_DDOS_CRASH,
-            :user_id      => target.id,
-            :completed_at => DateTime.now + 60.minutes,
-            :completed    => false
+            type_id:      Action::TYPE_DDOS_CRASH,
+            user_id:      target.id,
+            completed_at: DateTime.now + 60.minutes,
+            completed:    false
           )
 
           # Notifications
-          Notification.create_for(:ddos_success_victim, target, :attacker => self)
-          Notification.create_for(:ddos_success_attacker, self, :victim => target)
+          Notification.create_for(:ddos_success_victim, target, attacker: self)
+          Notification.create_for(:ddos_success_attacker, self, victim: target)
         end
       else
 
         # attack failed
         Action.create(
-          :type_id      => Action::TYPE_SYSTEM_CRASH,
-          :user_id      => id,
-          :completed_at => DateTime.now + 60.minutes,
-          :completed    => false
+          type_id:      Action::TYPE_SYSTEM_CRASH,
+          user_id:      id,
+          completed_at: DateTime.now + 60.minutes,
+          completed:    false
         )
 
         # Notifications
         if type == :hack
-          Notification.create_for(:attack_failed_victim, target, :attacker => self)
-          Notification.create_for(:attack_failed_attacker, self, :victim => target)
+          Notification.create_for(:attack_failed_victim, target, attacker: self)
+          Notification.create_for(:attack_failed_attacker, self, victim: target)
         elsif type == :ddos
-          Notification.create_for(:ddos_failed_victim, target, :attacker => self)
-          Notification.create_for(:ddos_failed_attacker, self, :victim => target)
+          Notification.create_for(:ddos_failed_victim, target, attacker: self)
+          Notification.create_for(:ddos_failed_attacker, self, victim: target)
         end
       end
-      Notification.create_for_all!(:attack, :attacker => self, :victim => target)
+      Notification.create_for_all!(:attack, attacker: self, victim: target)
     else
       result = rand(hacking_ratio + target.defense_ratio)
       success = result <= hacking_ratio
@@ -176,27 +176,27 @@ class User < ActiveRecord::Base
       if success
 
         # Angriff erfolgreich
-        Notification.create_for(:attack_company_success_previous_owner, target.user, :victim => target, :attacker => self) if target.user.present?
+        Notification.create_for(:attack_company_success_previous_owner, target.user, victim: target, attacker: self) if target.user.present?
         target.get_controlled_by!(self)
 
         # Notifications
-        Notification.create_for(:attack_company_success_attacker, self, :victim => target, :value => target.money_per_hour)
+        Notification.create_for(:attack_company_success_attacker, self, victim: target, value: target.money_per_hour)
       else
 
         # attack failed
         target.defend_against(self)
         Action.create(
-          :type_id      => Action::TYPE_SYSTEM_CRASH,
-          :user_id      => id,
-          :completed_at => DateTime.now + 60.minutes,
-          :completed    => false
+          type_id:      Action::TYPE_SYSTEM_CRASH,
+          user_id:      id,
+          completed_at: DateTime.now + 60.minutes,
+          completed:    false
         )
 
         # Notification
-        Notification.create_for(:attack_company_failed_attacker, self, :victim => target)
-        Notification.create_for(:attack_company_failed_owner, target.user, :victim => target, :attacker => self) if target.user.present?
+        Notification.create_for(:attack_company_failed_attacker, self, victim: target)
+        Notification.create_for(:attack_company_failed_owner, target.user, victim: target, attacker: self) if target.user.present?
       end
-      Notification.create_for_all!(:attack_company, :attacker => self, :victim => target, :success => success)
+      Notification.create_for_all!(:attack_company, attacker: self, victim: target, success: success)
     end
     success
   end
@@ -250,7 +250,7 @@ class User < ActiveRecord::Base
   end
 
   def current_job
-    Job.where(:user_id => id, :completed => false).first
+    Job.where(user_id: id, completed: false).first
   end
 
   def receive_money!(value)
@@ -319,6 +319,20 @@ class User < ActiveRecord::Base
 
   def clear_company
     company.update_attribute(:user_id, nil) if company.present?
+  end
+
+  def notify?
+    notify
+  end
+
+  def intruder_alert!
+    return if email.blank? || !notify? || !intrusion_detection_active?
+    Notifier.intruder_alert(self).deliver
+  end
+
+  def intrusion_detection_active?
+    intrusion_detection_system = Equipment.where(klass: :utility, special_bonus: "ids").first
+    items.where(equipment_id: intrusion_detection_system.id, equipped: true).first.present?
   end
 
   class << self

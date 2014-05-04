@@ -13,7 +13,7 @@
     </td>
     <td>
       <% if @current_action.present? %>
-        <span class="btn disabled">Action pending</span>
+        <span class="btn btn-default disabled">Action pending</span>
       <% else %>
         <%= link_to "perform action", actions_path(:type_id => Action::TYPE_HACKING_EVOLVE), :method => :post, :class => "btn btn-primary" %>
       <% end %>
@@ -33,11 +33,11 @@
     </td>
     <td>
       <% if @current_action.present? %>
-        <span class="btn disabled">Action pending</span>
+        <span class="btn btn-default disabled">Action pending</span>
       <% elsif current_user.can_buy?(:hacking) %>
         <%= link_to "perform action", actions_path(:type_id => Action::TYPE_HACKING_BUY), :method => :post, :class => "btn btn-primary" %>
       <% else %>
-        <span class="btn disabled">not enough money</span>
+        <span class="btn btn-default disabled">not enough money</span>
       <% end %>
     </td>
   </tr>
@@ -55,7 +55,7 @@
     </td>
     <td>
       <% if @current_action.present? %>
-        <span class="btn disabled">Action pending</span>
+        <span class="btn btn-default disabled">Action pending</span>
       <% else %>
         <%= link_to "perform action", actions_path(:type_id => Action::TYPE_BOTNET_EVOLVE), :method => :post, :class => "btn btn-primary" %>
       <% end %>
@@ -75,11 +75,11 @@
     </td>
     <td>
       <% if @current_action.present? %>
-        <span class="btn disabled">Action pending</span>
+        <span class="btn btn-default disabled">Action pending</span>
       <% elsif current_user.can_buy?(:botnet) %>
         <%= link_to "perform action", actions_path(:type_id => Action::TYPE_BOTNET_BUY), :method => :post, :class => "btn btn-primary" %>
       <% else %>
-        <span class="btn disabled">not enough money</span>
+        <span class="btn btn-default disabled">not enough money</span>
       <% end %>
     </td>
   </tr>
@@ -97,7 +97,7 @@
     </td>
     <td>
       <% if @current_action.present? %>
-        <span class="btn disabled">Action pending</span>
+        <span class="btn btn-default disabled">Action pending</span>
       <% else %>
         <%= link_to "perform action", actions_path(:type_id => Action::TYPE_DEFENSE_EVOLVE), :method => :post, :class => "btn btn-primary" %>
       <% end %>
@@ -117,11 +117,11 @@
     </td>
     <td>
       <% if @current_action.present? %>
-        <span class="btn disabled">Action pending</span>
+        <span class="btn btn-default disabled">Action pending</span>
       <% elsif current_user.can_buy?(:defense) %>
         <%= link_to "perform action", actions_path(:type_id => Action::TYPE_DEFENSE_BUY), :method => :post, :class => "btn btn-primary" %>
       <% else %>
-        <span class="btn disabled">not enough money</span>
+        <span class="btn btn-default disabled">not enough money</span>
       <% end %>
     </td>
   </tr>

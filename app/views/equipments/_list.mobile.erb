@@ -34,9 +34,9 @@
         <td style="background-color: <%= color_now %>; font-size: 11px;"><%= number_to_currency(eqmt.price, :precision => 0) %></td>
         <td style="background-color: <%= color_now %>; font-size: 11px; ">
           <% if current_user.has_purchased? eqmt %>
-            <span class="btn disabled btn-mini">Purchased</span>
+            <span class="btn btn-default disabled btn-mini">Purchased</span>
           <% elsif current_user.money < eqmt.price %>
-            <span class="btn disabled btn-mini">Insufficent Funds</span>
+            <span class="btn btn-default disabled btn-mini">Insufficent Funds</span>
           <% else %>
             <%= link_to "Purchase", buy_equipments_path(:item_id => eqmt.item_id), :method => :post, :class => "btn btn-primary btn-mini" %>
           <% end %>
@@ -46,7 +46,7 @@
           <% if mine && !eqmt.equipped_by?(current_user) %>
             <%= link_to "Equip", equipment_path(eqmt), :method => :put, :class => "btn btn-primary btn-mini" %>
           <% else %>
-            <span class="btn disabled btn-mini">Equipped</span><br />
+            <span class="btn btn-default disabled btn-mini">Equipped</span><br />
             <%= link_to "Unequip", equipment_path(eqmt, :unequip => true), :method => :put, :class => "btn btn-primary btn-mini", :style => "margin-top: 6px;" %>
           <% end %>
         </td>

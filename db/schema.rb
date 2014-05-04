@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120623080256) do
+ActiveRecord::Schema.define(:version => 20140504121713) do
 
   create_table "actions", :force => true do |t|
     t.integer  "type_id"
@@ -35,18 +35,25 @@ ActiveRecord::Schema.define(:version => 20120623080256) do
     t.datetime "updated_at",    :null => false
   end
 
-  create_table "equipment", :force => true do |t|
-    t.integer  "user_id"
+  create_table "equipments", :force => true do |t|
     t.string   "klass"
-    t.string   "item_id"
     t.string   "title"
-    t.integer  "hacking_bonus", :default => 0
-    t.integer  "botnet_bonus",  :default => 0
-    t.integer  "defense_bonus", :default => 0
-    t.integer  "price",         :default => 0
-    t.boolean  "active",        :default => false
-    t.datetime "created_at",                       :null => false
-    t.datetime "updated_at",                       :null => false
+    t.text     "description"
+    t.integer  "hacking_bonus"
+    t.integer  "botnet_bonus"
+    t.integer  "defense_bonus"
+    t.string   "special_bonus"
+    t.float    "price"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
+  create_table "items", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "equipment_id"
+    t.boolean  "equipped",     :default => false
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
   end
 
   create_table "jobs", :force => true do |t|
@@ -105,6 +112,7 @@ ActiveRecord::Schema.define(:version => 20120623080256) do
     t.integer  "hacking_ratio",                                                        :default => 10
     t.string   "nickname"
     t.integer  "defense_ratio",                                                        :default => 10
+    t.boolean  "notify",                                                               :default => false
   end
 
   add_index "users", ["nickname"], :name => "index_users_on_nickname", :unique => true

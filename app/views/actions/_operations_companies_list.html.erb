@@ -24,15 +24,15 @@
     <td>
       <% if current_user.has_incomplete_actions? %>
         <% if current_user.controls?(company) %>
-            <span class="btn disabled" style="margin-bottom: 6px;">You control this company</span>
+            <span class="btn btn-default disabled" style="margin-bottom: 6px;">You control this company</span>
         <% else %>
-          <span class="btn disabled" style="margin-bottom: 6px;">Action pending</span>
+          <span class="btn btn-default disabled" style="margin-bottom: 6px;">Action pending</span>
         <% end %>
       <% else %>
         <% if current_user.can_attack?(company, :hack) %>
           <%= link_to "Hack", actions_path(:type_id => Action::TYPE_ATTACK_COMPANY, :target_id => company.id), :class => "btn btn-primary", :method => :post, :style => "margin-bottom: 6px;" %>
         <% else %>
-          <span class="btn disabled" style="margin-bottom: 6px;">
+          <span class="btn btn-default disabled" style="margin-bottom: 6px;">
             <% if current_user.controls?(company) %>
               You control this company
             <% elsif current_user.to_weak_for(company, :hack) %>

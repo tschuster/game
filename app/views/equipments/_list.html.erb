@@ -1,6 +1,5 @@
 <table border="0" class="table table-bordered" cellspacing="0" cellpadding="0">
   <tr>
-    <th>Type</th>
     <th>Name</th>
     <th>Description</th>
     <% unless mine %>
@@ -8,48 +7,50 @@
     <% end %>
     <th>&nbsp;</th>
   </tr>
-  <% color_not = "#F9F9F9" %>
-  <% color_now = "#FFF" %>
-  <% equipments.each_index do |i| %>
-  <% eqmt = equipments[i] %>
-  <% (color_now, color_not = color_not, color_now) if equipments[i-1].present? && equipments[i-1].klass != eqmt.klass %>
+  <% equipments.each do |eqmt| %>
     <tr>
-      <td style="background-color: <%= color_now %>;"><%= eqmt.readable_class %></td>
-      <td style="background-color: <%= color_now %>;"><%= eqmt.title %></td>
-      <td style="background-color: <%= color_now %>; padding: 0px;">
+      <td><%= eqmt.title %></td>
+      <td style="padding: 0px;">
         <table border="0" style="border: 0px;" cellspacing="0" cellpadding="0">
           <tr>
-            <td style="background-color: <%= color_now %>; padding: 4px; border: 0px; white-space: nowrap;">Hacking skill bonus:</td>
-            <td style="background-color: <%= color_now %>; padding: 4px; border: 0px; text-align: right;">+<%= eqmt.hacking_bonus %></td>
+            <td colspan="2" style="padding: 4px; border: 0px;">
+              <%= eqmt.description %>
+            </td>
           </tr>
-          <tr>
-            <td style="background-color: <%= color_now %>; padding: 4px; border: 0px; white-space: nowrap;">Botnet bonus:</td>
-            <td style="background-color: <%= color_now %>; padding: 4px; border: 0px; text-align: right;">+<%= eqmt.botnet_bonus %></td>
-          </tr>
-          <tr>
-            <td style="background-color: <%= color_now %>; padding: 4px; border: 0px; white-space: nowrap;">Defense bonus:</td>
-            <td style="background-color: <%= color_now %>; padding: 4px; border: 0px; text-align: right;">+<%= eqmt.defense_bonus %></td>
-          </tr>
+          <% if [eqmt.computed_hacking_bonus, eqmt.computed_botnet_bonus, eqmt.computed_defense_bonus].sum > 0 %>
+            <tr>
+              <td style="padding: 4px; border: 0px; white-space: nowrap;">Hacking skill bonus:</td>
+              <td style="padding: 4px; border: 0px; text-align: right;">+<%= eqmt.computed_hacking_bonus %></td>
+            </tr>
+            <tr>
+              <td style="padding: 4px; border: 0px; white-space: nowrap;">Botnet bonus:</td>
+              <td style="padding: 4px; border: 0px; text-align: right;">+<%= eqmt.computed_botnet_bonus %></td>
+            </tr>
+            <tr>
+              <td style="padding: 4px; border: 0px; white-space: nowrap;">Defense bonus:</td>
+              <td style="padding: 4px; border: 0px; text-align: right;">+<%= eqmt.computed_defense_bonus %></td>
+            </tr>
+          <% end %>
         </table>
       </td>
       <% unless mine %>
-        <td style="background-color: <%= color_now %>;"><%= number_to_currency(eqmt.price) %></td>
-        <td style="background-color: <%= color_now %>;">
+        <td><%= number_to_currency(eqmt.price) %></td>
+        <td>
           <% if current_user.has_purchased? eqmt %>
-            <span class="btn disabled">Purchased</span>
+            <span class="btn btn-default disabled">Purchased</span>
           <% elsif current_user.money < eqmt.price %>
-            <span class="btn disabled">Insufficent Funds</span>
+            <span class="btn btn-default disabled">Insufficent Funds</span>
           <% else %>
-            <%= link_to "Purchase", buy_equipments_path(:item_id => eqmt.item_id), :method => :post, :class => "btn btn-primary" %>
+            <%= link_to "Purchase", buy_equipments_path(item_id: eqmt.id), method: :post, class: "btn btn-primary" %>
           <% end %>
         </td>
       <% else %>
-        <td style="background-color: <%= color_now %>;">
+        <td>
           <% if mine && !eqmt.equipped_by?(current_user) %>
-            <%= link_to "Equip", equipment_path(eqmt), :method => :put, :class => "btn btn-primary" %>
+            <%= link_to "Equip", equipment_path(eqmt), method: :put, class: "btn btn-primary" %>
           <% else %>
-            <span class="btn disabled">Equipped</span><br />
-            <%= link_to "Unequip", equipment_path(eqmt, :unequip => true), :method => :put, :class => "btn btn-primary", :style => "margin-top: 6px;" %>
+            <span class="btn btn-default disabled">Equipped</span><br />
+            <%= link_to "Unequip", equipment_path(eqmt, unequip: true), method: :put, class: "btn btn-primary", style: "margin-top: 6px;" %>
           <% end %>
         </td>
       <% end %>

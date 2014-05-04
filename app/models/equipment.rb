@@ -1,24 +1,12 @@
-# encoding: utf-8
 class Equipment < ActiveRecord::Base
-  belongs_to :user
+  set_table_name "equipments"
+  has_many :items
 
-  symbolize :klass, :in => [ :firewall, :compiler, :botnet ], :scope => true
+  symbolize :klass, in: [ :firewall, :compiler, :botnet, :utility ], scope: true
 
-  scope :active, where(:active => true)
-
-  before_save :deactivate_same_klass
+  attr_accessible :title, :description, :hacking_bonus, :botnet_bonus, :defense_bonus, :special_bonus, :price
 
   class ImplementationMissingException < StandardError
-  end
-
-  class << self
-    def build_by_item_id(item_id)
-      return if item_id.blank?
-      begin
-        Equipment.new((EQUIPMENT[item_id.split("_").first][item_id.split("_").last.to_i]).merge({:item_id => item_id}))
-      rescue
-      end
-    end
   end
 
   def readable_class
@@ -29,45 +17,52 @@ class Equipment < ActiveRecord::Base
       "Compiler"
     when :botnet
       "Botnet"
+    when :utility
+      "Utility"
     else
       raise Equipment::ImplementationMissingException.new("Typ '#{klass}' ungültig")
     end
   end
 
-  def equipped?
-    active
-  end
-
   def equipped_by?(user)
-    equipped? && user_id == user.id
+    user.items.where(equipment_id: id, equipped: true).first.present?
   end
 
-  def purchased?
-    persisted? && user_id.present?
-  end
-
-  def equip!
-    return unless persisted?
-
-    update_attribute(:active, true)
-  end
-
-  def unequip!
-    return unless persisted?
-
-    update_attribute(:active, false)
+  def purchased_by?(user)
+    user.items.where(equipment_id: id).first.present?
   end
 
   def purchase_and_equip_by!(user)
-    return if persisted?
+    return if equipped_by?(user) || purchased_by?(user)
 
-    self.user = user
-    self.active = true
-    save!
+    new_item = Item.new(user_id: user.id, equipment_id: id, equipped: true)
+    new_item.save!
   end
 
-  # andere des gleichen Typs deaktivieren
-  def deactivate_same_klass
-    Equipment.where(self.id.present? ? (["id != ?", self.id]) : "1=1").where(:user_id => user_id, :klass => self.klass).update_all(:active => false)
+  def computed_hacking_bonus
+    hacking_bonus.to_i + case special_bonus
+    when :special_1
+      0
+    else
+      0
+    end
+  end
+
+  def computed_botnet_bonus
+    botnet_bonus.to_i + case special_bonus
+    when :special_1
+      0
+    else
+      0
+    end
+  end
+
+  def computed_defense_bonus
+    defense_bonus.to_i + case special_bonus
+    when :special_1
+      0
+    else
+      0
+    end
   end
 end

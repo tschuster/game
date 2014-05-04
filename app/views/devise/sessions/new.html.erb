@@ -1,21 +1,34 @@
 <h2>Login</h2>
 
-<%= form_for(resource, :as => resource_name, :url => session_path(resource_name), :html => { :class => "form form-vertical"}) do |f| %>
+<%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: "form", role: "form"}) do |f| %>
+  <div class="form-group">
+    <%= f.label :nickname %>
+    <div class="row">
+      <div class="col-xs-4">
+        <%= f.text_field :nickname, class: "form-control" %>
+      </div>
+    </div>
+  </div>
 
-  <%= f.label :nickname %>
-  <%= f.text_field :nickname %>
-
-  <%= f.label :password %>
-  <%= f.password_field :password %>
+  <div class="form-group">
+    <%= f.label :password %>
+    <div class="row">
+      <div class="col-xs-4">
+        <%= f.password_field :password, class: "form-control" %>
+      </div>
+    </div>
+  </div>
 
   <% if devise_mapping.rememberable? -%>
-    <%= f.label :remember_me, :class => "checkbox" do %>
-      <%= f.check_box :remember_me %> Remember me
-    <% end %>
+    <div class="checkbox">
+      <label>
+        <%= f.check_box :remember_me %> Remember me
+      </label>
+    </div>
   <% end -%>
-  <%= f.submit "Login", :class => "btn btn-primary" %>
+  <%= f.submit "Login", class: "btn btn-primary" %>
   <br /><br />
-  <%= link_to('Register', new_user_registration_path, :class => "btn") %>
+  <%= link_to('Register', new_user_registration_path, class: "btn btn-default") %>
 <% end %>
 <% if false %>
   <%= link_to("Forgot your password?", new_password_path(resource_name)) %>

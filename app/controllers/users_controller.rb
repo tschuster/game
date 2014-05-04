@@ -1,9 +1,9 @@
 class UsersController < ApplicationController
-  before_filter :authenticate_admin!, :only => :index
+  before_filter :authenticate_admin!, only: :index
   respond_to :html, :mobile
 
   def show
-    render :layout => false
+    render layout: false
   end
 
   def index
@@ -24,15 +24,22 @@ class UsersController < ApplicationController
 
   def update
     if params[:user].present?
-      params[:user].delete_if { |param_name, param_value| (param_name.to_s == "password" || param_name.to_s == "password_confirmation") && param_value.blank?  }
-      if current_user.update_attributes(
-          :nickname => params[:user][:nickname],
-          :email => params[:user][:email],
-          :password_confirmation => params[:user][:password_confirmation],
-          :password => params[:user][:password]
-        )
-        sign_in(current_user, :bypass => true)
-        flash.notice = "Your profile has been updated"
+      params[:user].delete_if { |param_name, param_value| (param_name.to_s == "password" || param_name.to_s == "password_confirmation") && param_value.blank? }
+      if params[:user][:notify].to_i == 1 && params[:user][:email].blank?
+        flash.alert = "How am I supposed to notify you without your email address?!"
+      else
+        if current_user.update_attributes(
+            nickname: params[:user][:nickname],
+            email: params[:user][:email],
+            notify: params[:user][:notify],
+            password_confirmation: params[:user][:password_confirmation],
+            password: params[:user][:password]
+          )
+          sign_in(current_user, bypass: true)
+          flash.notice = "Your profile has been updated"
+        else
+          flash.alert = "Could not save user data"
+        end
       end
     else
       flash.alert = "No user data to save"

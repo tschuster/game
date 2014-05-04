@@ -92,3 +92,8 @@ b:
     botnet_bonus: "60"
     defense_bonus: "0"
     price: "1950"
+m:
+  1:
+    klass: "utility"
+    title: "Intrusion Detection System"
+    price: "8400"
