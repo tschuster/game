@@ -1,128 +1,123 @@
 <table border="0" cellspacing="0" cellpadding="0" class="table table-bordered">
   <tr>
     <td>
-      <% if @current_action.present? %>
-        <%= image_tag("hacking_evolve.png", :'no_pix' => true) %>
-      <% else %>
-        <%= link_to image_tag("hacking_evolve.png", :'no_pix' => true), actions_path(:type_id => Action::TYPE_HACKING_EVOLVE), :method => :post %>
-      <% end %>  
+      <h3>Hacking skill</h3>
+      Your skill in hacking determines how easy it is for you to attack other hackers or companies. Experienced hackers also have a bonus on retrieving passwords via Action Shell.
+      Increase your hacking skill by <%= CONFIG["hacking"]["evolve_ratio"] %>.
     </td>
     <td>
-      <h3>Evolve hacking skill</h3>
-      Increase your hacking skill by <%= CONFIG["hacking"]["evolve_ratio"] %>. Each level needs more time to accomplish.<br />Duration: <%= humanize(current_user.next_hacking_ratio_time) %>
-    </td>
-    <td>
-      <% if @current_action.present? %>
-        <span class="btn btn-default disabled">Action pending</span>
-      <% else %>
-        <%= link_to "perform action", actions_path(:type_id => Action::TYPE_HACKING_EVOLVE), :method => :post, :class => "btn btn-primary" %>
-      <% end %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <% if @current_action.present? || !current_user.can_buy?(:hacking) %>
-        <%= image_tag("hacking_buy.png", :'no_pix' => true) %>
-      <% else %>
-        <%= link_to image_tag("hacking_buy.png", :'no_pix' => true), actions_path(:type_id => Action::TYPE_HACKING_BUY), :method => :post %>
-      <% end %>
-    </td>
-    <td>
-      <h3>Buy hacking skill</h3>
-      Increase your hacking skill by <%= CONFIG["hacking"]["buy_ratio"] %>.<br />Cost: <%= number_to_currency(current_user.next_hacking_ratio_cost) %>
-    </td>
-    <td>
-      <% if @current_action.present? %>
-        <span class="btn btn-default disabled">Action pending</span>
-      <% elsif current_user.can_buy?(:hacking) %>
-        <%= link_to "perform action", actions_path(:type_id => Action::TYPE_HACKING_BUY), :method => :post, :class => "btn btn-primary" %>
-      <% else %>
-        <span class="btn btn-default disabled">not enough money</span>
-      <% end %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <% if @current_action.present? %>
-        <%= image_tag("botnet_evolve.png", :'no_pix' => true) %>
-      <% else %>
-        <%= link_to image_tag("botnet_evolve.png", :'no_pix' => true), actions_path(:type_id => Action::TYPE_BOTNET_EVOLVE), :method => :post %>
-      <% end %>
-    </td>
-    <td>
-      <h3>Evolve your botnet</h3>
-      Increase your botnet strength by <%= CONFIG["botnet"]["evolve_ratio"] %>. Each level needs more time to accomplish.<br />Duration: <%= humanize(current_user.next_botnet_ratio_time) %>
-    </td>
-    <td>
-      <% if @current_action.present? %>
-        <span class="btn btn-default disabled">Action pending</span>
-      <% else %>
-        <%= link_to "perform action", actions_path(:type_id => Action::TYPE_BOTNET_EVOLVE), :method => :post, :class => "btn btn-primary" %>
-      <% end %>
+      <table border="0" cellspacing="0" cellpadding="0" class="table table-condensed">
+        <tr>
+          <td style="border: 0; min-width: 240px;">
+            Duration:<br /><%= humanize(current_user.next_hacking_ratio_time) %>
+          </td>
+          <td style="border: 0; text-align: right;">
+            <% if @current_action.present? %>
+              <span class="btn btn-default disabled">Action pending</span>
+            <% else %>
+              <%= link_to(actions_path(type_id: Action::TYPE_HACKING_EVOLVE), method: :post, class: "btn btn-primary") do %>
+                <span class="glyphicon glyphicon-collapse-up" style="width: 61px;"> Train</span>
+              <% end %>
+            <% end %>
+          </td>
+        </tr>
+        <tr>
+          <td style="border: 0;">
+            Cost: <%= number_to_currency(current_user.next_hacking_ratio_cost) %>
+          </td>
+          <td style="border: 0; text-align: right;">
+            <% if @current_action.present? %>
+              <span class="btn btn-default disabled">Action pending</span>
+            <% elsif !current_user.can_buy?(:hacking) %>
+                <span class="btn btn-default disabled">Insufficent Funds</span>
+            <% else %>
+              <%= link_to(actions_path(type_id: Action::TYPE_HACKING_BUY), method: :post, class: "btn btn-primary") do %>
+                <span class="glyphicon glyphicon-usd" style="width: 61px;"> Buy&nbsp;</span>
+              <% end %>
+            <% end %>
+          </td>
+        </tr>
+      </table>
     </td>
   </tr>
   <tr>
     <td>
-      <% if @current_action.present? || !current_user.can_buy?(:botnet) %>
-        <%= image_tag("botnet_buy.png", :'no_pix' => true) %>
-      <% else %>
-        <%= link_to image_tag("botnet_buy.png", :'no_pix' => true), actions_path(:type_id => Action::TYPE_BOTNET_BUY), :method => :post %>
-      <% end %>
+      <h3>Botnet strength</h3>
+      To successfully perform dDos-attacks on other hackers or companies and to send spam mails you need a large botnet. Increase your botnet strength by <%= CONFIG["botnet"]["evolve_ratio"] %>.
     </td>
     <td>
-      <h3>Buy botnet</h3>
-      Increase your botnet strength by <%= CONFIG["botnet"]["buy_ratio"] %>.<br />Cost: <%= number_to_currency(current_user.next_botnet_ratio_cost) %>
-    </td>
-    <td>
-      <% if @current_action.present? %>
-        <span class="btn btn-default disabled">Action pending</span>
-      <% elsif current_user.can_buy?(:botnet) %>
-        <%= link_to "perform action", actions_path(:type_id => Action::TYPE_BOTNET_BUY), :method => :post, :class => "btn btn-primary" %>
-      <% else %>
-        <span class="btn btn-default disabled">not enough money</span>
-      <% end %>
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <% if @current_action.present? %>
-        <%= image_tag("defense_evolve.png", :'no_pix' => true) %>
-      <% else %>
-        <%= link_to image_tag("defense_evolve.png", :'no_pix' => true), actions_path(:type_id => Action::TYPE_DEFENSE_EVOLVE), :method => :post %>
-      <% end %>
-    </td>
-    <td>
-      <h3>Evolve defense ratio</h3>
-      Increase your defense ratio by <%= CONFIG["defense"]["evolve_ratio"] %>. Each level needs more time to accomplish.<br />Duration: <%= humanize(current_user.next_defense_ratio_time) %>
-    </td>
-    <td>
-      <% if @current_action.present? %>
-        <span class="btn btn-default disabled">Action pending</span>
-      <% else %>
-        <%= link_to "perform action", actions_path(:type_id => Action::TYPE_DEFENSE_EVOLVE), :method => :post, :class => "btn btn-primary" %>
-      <% end %>
+      <table border="0" cellspacing="0" cellpadding="0" class="table table-condensed">
+        <tr>
+          <td style="border: 0;">
+            Duration:<br /><%= humanize(current_user.next_botnet_ratio_time) %>
+          </td>
+          <td style="border: 0; text-align: right;">
+            <% if @current_action.present? %>
+              <span class="btn btn-default disabled">Action pending</span>
+            <% else %>
+              <%= link_to(actions_path(type_id: Action::TYPE_BOTNET_EVOLVE), method: :post, class: "btn btn-primary") do %>
+                <span class="glyphicon glyphicon-collapse-up" style="width: 61px;"> Train</span>
+              <% end %>
+            <% end %>
+          </td>
+        </tr>
+        <tr>
+          <td style="border: 0;">
+            Cost: <%= number_to_currency(current_user.next_botnet_ratio_cost) %>
+          </td>
+          <td style="border: 0; text-align: right;">
+            <% if @current_action.present? %>
+                <span class="btn btn-default disabled">Action pending</span>
+            <% elsif !current_user.can_buy?(:botnet) %>
+                <span class="btn btn-default disabled">Insufficent Funds</span>
+            <% else %>
+              <%= link_to(actions_path(type_id: Action::TYPE_BOTNET_BUY), method: :post, class: "btn btn-primary") do %>
+                <span class="glyphicon glyphicon-usd" style="width: 61px;"> Buy&nbsp;</span>
+              <% end %>
+            <% end %>
+          </td>
+        </tr>
+      </table>
     </td>
   </tr>
   <tr>
     <td>
-      <% if @current_action.present? || !current_user.can_buy?(:hacking) %>
-        <%= image_tag("defense_buy.png", :'no_pix' => true) %>
-      <% else %>
-        <%= link_to image_tag("defense_buy.png", :'no_pix' => true), actions_path(:type_id => Action::TYPE_DEFENSE_BUY), :method => :post %>
-      <% end %>
+      <h3>Defense ratio</h3>
+      Defend your systems against attacks by increasing your defense by <%= CONFIG["defense"]["evolve_ratio"] %>.
     </td>
     <td>
-      <h3>Buy defense ratio</h3>
-      Increase your defense ratio by <%= CONFIG["defense"]["buy_ratio"] %>.<br />Cost: <%= number_to_currency(current_user.next_defense_ratio_cost) %>
-    </td>
-    <td>
-      <% if @current_action.present? %>
-        <span class="btn btn-default disabled">Action pending</span>
-      <% elsif current_user.can_buy?(:defense) %>
-        <%= link_to "perform action", actions_path(:type_id => Action::TYPE_DEFENSE_BUY), :method => :post, :class => "btn btn-primary" %>
-      <% else %>
-        <span class="btn btn-default disabled">not enough money</span>
-      <% end %>
+      <table border="0" cellspacing="0" cellpadding="0" class="table table-condensed">
+        <tr>
+          <td style="border: 0;">
+            Duration:<br /><%= humanize(current_user.next_defense_ratio_time) %>
+          </td>
+          <td style="border: 0; text-align: right;">
+            <% if @current_action.present? %>
+              <span class="btn btn-default disabled">Action pending</span>
+            <% elsif !current_user.can_buy?(:defense) %>
+                <span class="btn btn-default disabled">Insufficent Funds</span>
+            <% else %>
+              <%= link_to(actions_path(type_id: Action::TYPE_DEFENSE_EVOLVE), method: :post, class: "btn btn-primary") do %>
+                <span class="glyphicon glyphicon-collapse-up" style="width: 61px;"> Train</span>
+              <% end %>
+            <% end %>
+          </td>
+        </tr>
+        <tr>
+          <td style="border: 0;">
+            Cost: <%= number_to_currency(current_user.next_defense_ratio_cost) %>
+          </td>
+          <td style="border: 0; text-align: right;">
+          <% if @current_action.present? || !current_user.can_buy?(:defense) %>
+              <span class="btn btn-default disabled">Action pending</span>
+            <% else %>
+              <%= link_to(actions_path(type_id: Action::TYPE_DEFENSE_BUY), method: :post, class: "btn btn-primary") do %>
+                <span class="glyphicon glyphicon-usd" style="width: 61px;"> Buy&nbsp;</span>
+              <% end %>
+            <% end %>
+          </td>
+        </tr>
+      </table>
     </td>
   </tr>
 </table>

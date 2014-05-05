@@ -42,17 +42,17 @@ class Notification < ActiveRecord::Base
       when :attack_failed_victim
         "<p>You have been hacked by #{options[:attacker].nickname} but your firewall kept you safe!</p>"
       when :attack_failed_attacker, :ddos_failed_attacker
-        "<p>You failed to hack #{options[:victim].nickname}!</p> Your systems are damadged and rebooting."
+        "<p>You failed to hack #{options[:victim].nickname}!</p> Your system is now rebooting."
       when :attack_company_failed_owner
         "<p>The company #{options[:victim].name} wich you control has repelled an attacked by #{options[:attacker].nickname}!</p> The company's defenses have been upgraded."
       when :attack_company_failed_attacker
-        "<p>You failed to hack #{options[:victim].name}!</p> The company's defenses have been upgraded. Your systems are damadged and rebooting."
+        "<p>You failed to hack #{options[:victim].name}!</p> The company's defenses have been upgraded. Your system is now rebooting."
       when :ddos_success_victim
         "<p>You have been dDoS-attacked by #{options[:attacker].nickname}!</p>Your systems are damadged and rebooting. Your current action has been canceled."
       when :ddos_success_attacker
         "<p>You have successfully attacked #{options[:victim].nickname} with a dDoS-attack!</p>"
       when :ddos_failed_victim
-        "<p>You have been dDoS-attacked by #{options[:attacker].nickname} but your firewall kept you safe!</p>"
+        "<p>You have been dDoS-attacked by #{options[:attacker].nickname} but your defenses kept you safe!</p>"
       when :news
         options[:message]
       end
