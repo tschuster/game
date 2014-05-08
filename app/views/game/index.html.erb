@@ -1,32 +1,12 @@
-<% if false %>
-<div class="cont">
-  <%= image_tag "world_1000.png", :'data-nopix' => true %>
-  <div class="world">
-    <%= image_tag("dot.png", :class => "dot_1 dot", :id => "dot_1", :'data-content' => "Data Center", :title => "Apple") %>
-  </div>
-  <div class="world">
-    <%= image_tag("dot.png", :class => "dot_2 dot", :id => "dot_2", :'data-content' => "Data Center", :title => "Apple") %>
-  </div>
-</div>
-<script>
-  $(document).ready(function() {
-    $(".dot").popover({
-      placement: 'top',
-      title: "Apple",
-      delay: { hide: 800, show: 10 }
-    });
-  });
-</script>
-<% end %>
 <h2>News<%= " (#{current_user.unread_notifications_count})" if current_user.unread_notifications_count > 0 %></h2>
 <table border="0" class="table table-bordered" cellspacing="0" cellpadding="0">
   <tr>
     <th style="width: 140px;">Received at</th>
-    <th>Headline <%= link_to("mark as read", read_notifications_path, :method => :put, :class => "pull-right") if current_user.unread_notifications_count > 0 %></th>
+    <th>Headline <%= link_to("mark as read", read_notifications_path, method: :put, class: "pull-right") if current_user.unread_notifications_count > 0 %></th>
   </tr>
   <% @notifications.each do |notification| %>
     <tr>
-      <td <%= style_for notification %>><%= ll(notification.created_at, :format => :long) %></td>
+      <td <%= style_for notification %>><%= ll(notification.created_at, format: :long) %></td>
       <td <%= style_for notification %>><%= notification.message.html_safe %></td>
     </tr>
   <% end %>

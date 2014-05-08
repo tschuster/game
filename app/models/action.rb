@@ -92,15 +92,15 @@ class Action < ActiveRecord::Base
   def readable_type
     case type_id
     when Action::TYPE_BOTNET_EVOLVE
-      "Evolve Botnet"
+      "Increase Botnet"
     when Action::TYPE_BOTNET_BUY
       "Buy Botnet"
     when Action::TYPE_HACKING_EVOLVE
-      "Evolve Hacking Skill"
+      "Train Hacking Skill"
     when Action::TYPE_HACKING_BUY
       "Buy Hacking Skill"
     when Action::TYPE_DEFENSE_EVOLVE
-      "Evolve Defense"
+      "Increase Defense"
     when Action::TYPE_DEFENSE_BUY
       "Buy Defense"
     when Action::TYPE_PERFORM_JOB
