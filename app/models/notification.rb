@@ -2,7 +2,7 @@ include ActionView::Helpers::NumberHelper
 class Notification < ActiveRecord::Base
   belongs_to :user
 
-  symbolize :klass, :in => [
+  symbolize :klass, in: [
     :news, 
     :attack_success_victim, 
     :attack_success_attacker, 
@@ -18,14 +18,14 @@ class Notification < ActiveRecord::Base
     :attack_company_success_previous_owner, 
     :attack_company_failed_owner,
     :attack_company_failed_attacker
-  ], :scopes => true
+  ], scopes: true
 
   scope :latest_10, {
-    :order => "created_at DESC",
-    :limit => 10
+    order: "created_at DESC",
+    limit: 10
   }
 
-  scope :unread, where(:is_new => true)
+  scope :unread, where(is_new: true)
 
   class << self
     def create_for(klass, user, options = {})
@@ -58,11 +58,11 @@ class Notification < ActiveRecord::Base
       end
 
       Notification.create(
-        :user => user,
-        :from_user_id => options[:from_user_id],
-        :klass => klass,
-        :message => message,
-        :is_new => true
+        user: user,
+        from_user_id: options[:from_user_id],
+        klass: klass,
+        message: message,
+        is_new: true
       )
     end
 
@@ -81,12 +81,14 @@ class Notification < ActiveRecord::Base
       end
 
       User.all.each do |user|
+        next if options[:skip].present? && options[:skip].include? user.id
+
         Notification.create!(
-          :user => user,
-          :from_user_id => options[:from_user_id],
-          :klass => :news,
-          :message => message,
-          :is_new => true
+          user: user,
+          from_user_id: options[:from_user_id],
+          klass: :news,
+          message: message,
+          is_new: true
         )
       end
     end

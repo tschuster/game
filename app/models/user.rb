@@ -168,7 +168,7 @@ class User < ActiveRecord::Base
           Notification.create_for(:ddos_failed_attacker, self, victim: target)
         end
       end
-      Notification.create_for_all!(:attack, attacker: self, victim: target)
+      Notification.create_for_all!(:attack, attacker: self, victim: target, skip: [target.id, victim.id])
     else
       result = rand(hacking_ratio + target.defense_ratio)
       success = result <= hacking_ratio
@@ -196,7 +196,7 @@ class User < ActiveRecord::Base
         Notification.create_for(:attack_company_failed_attacker, self, victim: target)
         Notification.create_for(:attack_company_failed_owner, target.user, victim: target, attacker: self) if target.user.present?
       end
-      Notification.create_for_all!(:attack_company, attacker: self, victim: target, success: success)
+      Notification.create_for_all!(:attack_company, attacker: self, victim: target, success: success, skip: [self.id])
     end
     success
   end
