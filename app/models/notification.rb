@@ -81,7 +81,7 @@ class Notification < ActiveRecord::Base
       end
 
       User.all.each do |user|
-        next if options[:skip].present? && options[:skip].include? user.id
+        next if options[:skip].present? && options[:skip].include?(user.id)
 
         Notification.create!(
           user: user,
