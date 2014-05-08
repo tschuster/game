@@ -5,6 +5,8 @@
   <meta charset="utf-8">
   <%= stylesheet_link_tag    "application" %>
   <%= javascript_include_tag "application" %>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <%= csrf_meta_tags %>
   <style>
@@ -12,19 +14,16 @@
       padding-top: 55px;
     }
   </style>
-  <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
-  <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 </head>
 <body>
-  <div class="navbar navbar-fixed-top">
-    <div class="navbar-inner">
-      <div class="container">
-        <%= link_to "Game#{current_user.unread_notifications_count > 0 ? " (#{current_user.unread_notifications_count})" : nil}", game_index_path, :class => "brand" %></li>
-        <%= link_to "Logout", destroy_user_session_path, :method => :delete, :class => "btn btn-navbar", :style => "color: white;" %>
-        </div>
+  <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <%= link_to "Game#{current_user.unread_notifications_count > 0 ? " (#{current_user.unread_notifications_count})" : nil}", game_index_path, class: "navbar-brand" %>
+      <%= link_to "Logout", destroy_user_session_path, method: :delete, class: "btn navbar-btn navbar-right pull-right", style: "color: white;" %>
       </div>
     </div>
-  </div>
+  </nav>
   <div class="container">
     <% flash.each do |key, msg| -%>
       <% if key == :alert %>
