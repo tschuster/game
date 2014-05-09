@@ -129,6 +129,7 @@ class User < ActiveRecord::Base
         # Angriff erfolgreich
         if type == :hack
           stolen_money = target.take_money!((400/chance_of_success_against(target, :hack).to_f*100).round)
+          stolen_money /= 2 if target.wallet_active?
           receive_money!(stolen_money) if stolen_money > 0.0
 
           # Notifications
@@ -337,6 +338,10 @@ class User < ActiveRecord::Base
 
   def bootloader_active?
     Equipment.where(klass: :utility, special_bonus: "boot").first.equipped_by?(self)
+  end
+
+  def wallet_active?
+    Equipment.where(klass: :utility, special_bonus: "wallet").first.equipped_by?(self)
   end
 
   class << self
