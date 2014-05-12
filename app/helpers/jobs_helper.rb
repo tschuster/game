@@ -56,7 +56,7 @@ module JobsHelper
     elsif current_user.has_incomplete_actions?
       result << "<span class='btn btn-default disabled'>Action pending</span>"
     else
-      result << link_to("accept", accept_job_path(job.id), :class => "btn btn-primary")
+      result << link_to("accept", accept_job_path(job.id), class: "btn btn-primary")
     end
     result.html_safe
   end
@@ -68,7 +68,7 @@ module JobsHelper
     elsif current_user.has_incomplete_actions?
       result << "<span class='btn btn-default disabled' style='font-size: 9px;'>Action pending</span>"
     else
-      result << link_to("accept", accept_job_path(job.id), :class => "btn btn-primary", :style => "font-size: 9px;")
+      result << link_to("accept", accept_job_path(job.id), class "btn btn-primary", style: "font-size: 9px;")
     end
     result.html_safe
   end
