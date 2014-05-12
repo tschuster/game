@@ -7,3 +7,6 @@ hacking:
 defense:
   evolve_ratio: 5
   buy_ratio: 5
+company:
+  income_evolve_ratio: 1
+  defense_evolve_ratio: 5

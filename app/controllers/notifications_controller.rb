@@ -5,7 +5,7 @@ class NotificationsController < ApplicationController
   end
 
   def read
-    current_user.notifications.unread.update_all(:is_new => false)
+    current_user.notifications.unread.update_all(is_new: false)
     redirect_to game_index_path
   end
 

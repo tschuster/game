@@ -7,10 +7,10 @@
     <th style="width: 350px;">Chance of success</th>
     <th></th>
   </tr>
-<% @companies.each do |company| %>
+<% companies.each do |company| %>
   <tr>
     <td><%= company.name %></td>
-    <td><%= number_to_currency(company.money_per_hour) %></td>
+    <td><%= number_to_currency(company.income_per_hour) %></td>
     <td><%= company.user.try(:nickname) %></td>
     <td><%= humanize(current_user.time_to_attack(company, :hack)) if current_user.can_attack?(company, :hack) %></td>
     <td>

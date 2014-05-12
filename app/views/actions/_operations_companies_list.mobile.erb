@@ -10,7 +10,7 @@
   <tr>
     <td style="font-size: 10px;">
     <%= company.name %><br />
-    (<%= number_to_currency(company.money_per_hour) %>/Hour)
+    (<%= number_to_currency(company.income_per_hour) %>/Hour)
     </td>
     <td style="font-size: 10px;"><%= company.user.try(:nickname) %></td>
     <td style="font-size: 10px;">

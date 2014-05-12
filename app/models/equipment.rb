@@ -1,5 +1,5 @@
 class Equipment < ActiveRecord::Base
-  set_table_name "equipments"
+  self.table_name = "equipments"
   has_many :items
 
   symbolize :klass, in: [ :firewall, :compiler, :botnet, :utility ], scope: true

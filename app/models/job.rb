@@ -9,11 +9,11 @@ class Job < ActiveRecord::Base
   JOB_TYPE_SPAM  = 2
   JOB_TYPE_DEFACEMENT = 3
 
-  scope :incomplete, :conditions => { :completed => false }
-  scope :unaccepted, where(:user_id => nil)
-  scope :simple, where(:complexity => 1).order("type_id ASC")
-  scope :complex, where(:complexity => 2).order("type_id ASC")
-  scope :challenging, where(:complexity => 5).order("type_id ASC")
+  scope :incomplete, conditions: { completed: false }
+  scope :unaccepted, where(user_id: nil)
+  scope :simple, where(complexity: 1).order("type_id ASC")
+  scope :complex, where(complexity: 2).order("type_id ASC")
+  scope :challenging, where(complexity: 5).order("type_id ASC")
 
   def duration_for(current_user)
     case type_id
@@ -32,7 +32,7 @@ class Job < ActiveRecord::Base
     return if completed
 
     update_attribute(:user_id, user.id)
-    action = Action.new(:type_id => Action::TYPE_PERFORM_JOB, :user_id => user.id, :job_id => id)
+    action = Action.new(type_id: Action::TYPE_PERFORM_JOB, user_id: user.id, job_id: id)
     Action.add_for_user(action, user)
 
     Job.generate!
@@ -40,7 +40,7 @@ class Job < ActiveRecord::Base
 
   def perform!
     user.receive_money!(reward)
-    update_attributes(:completed => true, :success => true, :completed_at => DateTime.now)
+    update_attributes(completed: true, success: true, completed_at: DateTime.now)
   end
 
   class << self
@@ -50,19 +50,19 @@ class Job < ActiveRecord::Base
     end
 
     def should_generate?
-      Job.acceptable.where(:complexity => 1, :type_id => Job::JOB_TYPE_DDOS).count < 1 ||
-      Job.acceptable.where(:complexity => 1, :type_id => Job::JOB_TYPE_DEFACEMENT).count < 1 ||
-      Job.acceptable.where(:complexity => 2, :type_id => Job::JOB_TYPE_DDOS).count < 1 ||
-      Job.acceptable.where(:complexity => 2, :type_id => Job::JOB_TYPE_DEFACEMENT).count < 1 ||
-      Job.acceptable.where(:complexity => 5, :type_id => Job::JOB_TYPE_DDOS).count < 1 ||
-      Job.acceptable.where(:complexity => 5, :type_id => Job::JOB_TYPE_DEFACEMENT).count < 1
+      Job.acceptable.where(complexity: 1, type_id: Job::JOB_TYPE_DDOS).count < 1 ||
+      Job.acceptable.where(complexity: 1, type_id: Job::JOB_TYPE_DEFACEMENT).count < 1 ||
+      Job.acceptable.where(complexity: 2, type_id: Job::JOB_TYPE_DDOS).count < 1 ||
+      Job.acceptable.where(complexity: 2, type_id: Job::JOB_TYPE_DEFACEMENT).count < 1 ||
+      Job.acceptable.where(complexity: 5, type_id: Job::JOB_TYPE_DDOS).count < 1 ||
+      Job.acceptable.where(complexity: 5, type_id: Job::JOB_TYPE_DEFACEMENT).count < 1
     end
 
     def generate!
       return unless should_generate?
 
       [1, 2, 5].each do |cplx|
-        (3 - Job.acceptable.where(:complexity => cplx, :type_id => Job::JOB_TYPE_DDOS).count).times do
+        (3 - Job.acceptable.where(complexity: cplx, type_id: Job::JOB_TYPE_DDOS).count).times do
 
           difficulty = cplx*100 + rand(cplx*100)
           if cplx == 1
@@ -78,18 +78,18 @@ class Job < ActiveRecord::Base
           end
 
           Job.create(
-            :title                  => "dDoS Attack",
-            :description            => "The client wants you to take out the servers of a company.",
-            :type_id                => Job::JOB_TYPE_DDOS,
-            :difficulty             => difficulty,
-            :reward                 => difficulty,
-            :hacking_ratio_required => hacking_ratio_required,
-            :botnet_ratio_required  => botnet_ratio_required,
-            :complexity             => cplx
+            title:                  "dDoS Attack",
+            description:            "The client wants you to take out the servers of a company.",
+            type_id:                Job::JOB_TYPE_DDOS,
+            difficulty:             difficulty,
+            reward:                 difficulty,
+            hacking_ratio_required: hacking_ratio_required,
+            botnet_ratio_required:  botnet_ratio_required,
+            complexity:             cplx
           )
         end
 
-        (3 - Job.acceptable.where(:complexity => cplx, :type_id => Job::JOB_TYPE_DEFACEMENT).count).times do
+        (3 - Job.acceptable.where(complexity: cplx, type_id: Job::JOB_TYPE_DEFACEMENT).count).times do
 
           if cplx == 1
             hacking_ratio_required = 10
@@ -106,14 +106,14 @@ class Job < ActiveRecord::Base
           difficulty = cplx*100 + rand(cplx*100)
 
           Job.create(
-            :title                  => "Defacement",
-            :description            => "The client wants you to vandalize a website.",
-            :type_id                => Job::JOB_TYPE_DEFACEMENT,
-            :difficulty             => difficulty,
-            :reward                 => difficulty,
-            :hacking_ratio_required => hacking_ratio_required,
-            :botnet_ratio_required  => botnet_ratio_required,
-            :complexity             => cplx
+            title:                  "Defacement",
+            description:            "The client wants you to vandalize a website.",
+            type_id:                Job::JOB_TYPE_DEFACEMENT,
+            difficulty:             difficulty,
+            reward:                 difficulty,
+            hacking_ratio_required: hacking_ratio_required,
+            botnet_ratio_required:  botnet_ratio_required,
+            complexity:             cplx
           )
         end
       end

@@ -97,6 +97,16 @@ class User < ActiveRecord::Base
     end
   end
 
+  def can_buy_for_company?(skill, company)
+    return false if company.user_id != id
+    case skill
+    when :income
+      money >= company.next_income_ratio_cost
+    when :defense
+      money >= company.next_defense_ratio_cost
+    end
+  end
+
   def purchase!(equipment)
     return unless can_purchase?(equipment)
     return if has_purchased?(equipment)
@@ -181,7 +191,7 @@ class User < ActiveRecord::Base
         target.get_controlled_by!(self)
 
         # Notifications
-        Notification.create_for(:attack_company_success_attacker, self, victim: target, value: target.money_per_hour)
+        Notification.create_for(:attack_company_success_attacker, self, victim: target, value: target.income_per_hour)
       else
 
         # attack failed

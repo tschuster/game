@@ -10,7 +10,7 @@ class AiPlayer < User
   # determine, which strategy to use. Can result in :agressive, :defensive and :moderate
   def strategy
 
-    attacks_in_last_24_hours = Action.where(["type_id = ? OR type_id = ?", Action::TYPE_ATTACK_USER, Action::TYPE_ATTACK_USER_DDOS]).where(:target_id => id, :target_type => "User", :completed => true).where("completed_at >= ?", DateTime.now-24.hours).count
+    attacks_in_last_24_hours = Action.where(["type_id = ? OR type_id = ?", Action::TYPE_ATTACK_USER, Action::TYPE_ATTACK_USER_DDOS]).where(target_id: id, target_type: "User", completed: true).where("completed_at >= ?", DateTime.now-24.hours).count
 
     # how often was the player succesfully attacked in the last 24 hours?
     if successful_attacks_in_last_24_hours > 0 && !counterattack_successful?
@@ -66,25 +66,25 @@ Rails.logger.info("===> AI: my strategy is moderate")
       if attackable_companies.present?
         company_with_highest_success_rate = attackable_companies.sort_by! { |c| chance_of_success_against(c, :hack) }.first
         options = {
-          :user_id      => id,
-          :target_id    => company_with_highest_success_rate.id,
-          :target_type  => "Company",
-          :type_id      => Action::TYPE_ATTACK_COMPANY,
-          :completed_at => time_to_attack(company_with_highest_success_rate, :hack)
+          user_id:      id,
+          target_id:    company_with_highest_success_rate.id,
+          target_type:  "Company",
+          type_id:      Action::TYPE_ATTACK_COMPANY,
+          completed_at: time_to_attack(company_with_highest_success_rate, :hack)
         }
 
       # counter-attack last attacker (if his attack is still unavenged)
       elsif successful_attacks_in_last_24_hours > 0 && !counterattack_successful?
-        last_attacker = Action.where(["type_id = ? OR type_id = ?", Action::TYPE_ATTACK_USER, Action::TYPE_ATTACK_USER_DDOS]).where(:target_id => id, :target_type => "User", :completed => true, :success => true).where("completed_at >= ?", DateTime.now-24.hours).order("completed_at DESC").first.try(:user)
+        last_attacker = Action.where(["type_id = ? OR type_id = ?", Action::TYPE_ATTACK_USER, Action::TYPE_ATTACK_USER_DDOS]).where(target_id: id, target_type: "User", completed: true, success: true).where("completed_at >= ?", DateTime.now-24.hours).order("completed_at DESC").first.try(:user)
         if last_attacker.present? && 
           (can_attack?(last_attacker, :hack) || can_attack?(last_attacker, :ddos)) && 
           (chance_of_success_against(last_attacker, :hack) >= 50.0 || chance_of_success_against(last_attacker, :ddos) >= 50.0)
 
           # determine attack type based on success rate and possible reward
           options = {
-            :user_id     => id,
-            :target_id   => last_attacker.id,
-            :target_type => "User"
+            user_id:     id,
+            target_id:   last_attacker.id,
+            target_type: "User"
           }
 
           # assume that last attacker is rich if he controls a company
@@ -121,9 +121,9 @@ Rails.logger.info("===> AI: my strategy is moderate")
     end
 
     if options.present?
-      if options[:accept_job_id].present? && Job.acceptable.where(:id => options[:accept_job_id]).first.present?
+      if options[:accept_job_id].present? && Job.acceptable.where(id: options[:accept_job_id]).first.present?
 Rails.logger.info("===> AI: i accept job# #{options[:accept_job_id]}")
-        Job.acceptable.where(:id => options[:accept_job_id]).first.accept_by(self)
+        Job.acceptable.where(id: options[:accept_job_id]).first.accept_by(self)
       else
         result = Action.create(options)
 Rails.logger.info("===> AI: i perform #{result.readable_type}")
@@ -134,14 +134,14 @@ Rails.logger.info("===> AI: i perform #{result.readable_type}")
 
   private
     def successful_attacks_in_last_24_hours
-      Action.where(["type_id = ? OR type_id = ?", Action::TYPE_ATTACK_USER, Action::TYPE_ATTACK_USER_DDOS]).where(:target_id => id, :target_type => "User", :completed => true, :success => true).where("completed_at >= ?", DateTime.now-24.hours).count
+      Action.where(["type_id = ? OR type_id = ?", Action::TYPE_ATTACK_USER, Action::TYPE_ATTACK_USER_DDOS]).where(target_id: id, target_type: "User", completed: true, success: true).where("completed_at >= ?", DateTime.now-24.hours).count
     end
 
     def counterattack_successful?
-      last_attack = Action.where(["type_id = ? OR type_id = ?", Action::TYPE_ATTACK_USER, Action::TYPE_ATTACK_USER_DDOS]).where(:target_id => id, :target_type => "User", :completed => true, :success => true).where("completed_at >= ?", DateTime.now-24.hours).order("completed_at DESC").last
+      last_attack = Action.where(["type_id = ? OR type_id = ?", Action::TYPE_ATTACK_USER, Action::TYPE_ATTACK_USER_DDOS]).where(target_id: id, target_type: "User", completed: true, success: true).where("completed_at >= ?", DateTime.now-24.hours).order("completed_at DESC").last
       return false if last_attack.blank?
 
-      my_last_attack = actions.where(["type_id = ? OR type_id = ?", Action::TYPE_ATTACK_USER, Action::TYPE_ATTACK_USER_DDOS]).where(:target_id => last_attack.user_id, :target_type => "User", :completed => true, :success => true).first
+      my_last_attack = actions.where(["type_id = ? OR type_id = ?", Action::TYPE_ATTACK_USER, Action::TYPE_ATTACK_USER_DDOS]).where(target_id: last_attack.user_id, target_type: "User", completed: true, success: true).first
       my_last_attack.present?
     end    
 
@@ -154,23 +154,23 @@ Rails.logger.info("===> AI: i perform #{result.readable_type}")
         if can_buy?(:hacking)
 Rails.logger.info("===> AI: i can buy hacking skill")
           options = {
-            :user_id      => id,
-            :type_id      => Action::TYPE_HACKING_BUY,
-            :completed_at => DateTime.now
+            user_id:      id,
+            type_id:      Action::TYPE_HACKING_BUY,
+            completed_at: DateTime.now
           }
         elsif next_hacking_ratio_time < available_jobs.last.duration_for(self)
 Rails.logger.info("===> AI: i can evolve hacking skill")
           options = {
-            :user_id      => id,
-            :type_id      => Action::TYPE_HACKING_EVOLVE,
-            :completed_at => DateTime.now + next_hacking_ratio_time.seconds
+            user_id:      id,
+            type_id:      Action::TYPE_HACKING_EVOLVE,
+            completed_at: DateTime.now + next_hacking_ratio_time.seconds
           }
         else
 Rails.logger.info("===> AI: i must perform a job to buy hacking skill")
           available_jobs.each do |job|
-            options = { :accept_job_id => job.id } if (job.reward+money >= next_hacking_ratio_cost) && options.blank?
+            options = { accept_job_id: job.id } if (job.reward+money >= next_hacking_ratio_cost) && options.blank?
           end
-          options = { :accept_job_id => available_jobs.last.id } if options.blank?
+          options = { accept_job_id: available_jobs.last.id } if options.blank?
         end
 
       # increase botnet strength
@@ -178,23 +178,23 @@ Rails.logger.info("===> AI: i must perform a job to buy hacking skill")
         if can_buy?(:botnet)
 Rails.logger.info("===> AI: i can buy botnet strength")
           options = {
-            :user_id      => id,
-            :type_id      => Action::TYPE_BOTNET_BUY,
-            :completed_at => DateTime.now
+            user_id:      id,
+            type_id:      Action::TYPE_BOTNET_BUY,
+            completed_at: DateTime.now
           }
         elsif next_botnet_ratio_time < available_jobs.last.duration_for(self)
 Rails.logger.info("===> AI: i can evolve botnet strength")
           options = {
-            :user_id      => id,
-            :type_id      => Action::TYPE_BOTNET_EVOLVE,
-            :completed_at => DateTime.now + next_botnet_ratio_time.seconds
+            user_id:      id,
+            type_id:      Action::TYPE_BOTNET_EVOLVE,
+            completed_at: DateTime.now + next_botnet_ratio_time.seconds
           }
         else
 Rails.logger.info("===> AI: i must peform a job to buy botnet strength")
           available_jobs.each do |job|
-            options = { :accept_job_id => job.id } if (job.reward+money >= next_botnet_ratio_cost) && options.blank?
+            options = { accept_job_id: job.id } if (job.reward+money >= next_botnet_ratio_cost) && options.blank?
           end
-          options = { :accept_job_id => available_jobs.last.id } if options.blank?
+          options = { accept_job_id: available_jobs.last.id } if options.blank?
         end
       end
       options
@@ -208,23 +208,23 @@ Rails.logger.info("===> AI: i must peform a job to buy botnet strength")
       if can_buy?(:defense)
 Rails.logger.info("===> AI: i can buy defense")
         options = {
-          :user_id      => id,
-          :type_id      => Action::TYPE_DEFENSE_BUY,
-          :completed_at => DateTime.now
+          user_id:      id,
+          type_id:      Action::TYPE_DEFENSE_BUY,
+          completed_at: DateTime.now
         }
       elsif next_defense_ratio_time < available_jobs.last.duration_for(self)
 Rails.logger.info("===> AI: i can evolve defense")
         options = {
-          :user_id      => id,
-          :type_id      => Action::TYPE_DEFENSE_EVOLVE,
-          :completed_at => DateTime.now + next_defense_ratio_time.seconds
+          user_id:      id,
+          type_id:      Action::TYPE_DEFENSE_EVOLVE,
+          completed_at: DateTime.now + next_defense_ratio_time.seconds
         }
       else
 Rails.logger.info("===> AI: i must perform a job to buy defense")
         available_jobs.each do |job|
-          options = { :accept_job_id => job.id } if (job.reward+money >= next_defense_ratio_cost) && options.blank?
+          options = { accept_job_id: job.id } if (job.reward+money >= next_defense_ratio_cost) && options.blank?
         end
-        options = { :accept_job_id => available_jobs.last.id } if options.blank?
+        options = { accept_job_id: available_jobs.last.id } if options.blank?
       end
       options
     end

@@ -7,7 +7,8 @@ class ActionsController < ApplicationController
   def operations
     @attackable_users = User.where("id != ?", current_user.id).delete_if { |user| current_user.chance_of_success_against(user, :hack) <= 0.0 && current_user.chance_of_success_against(user, :ddos) <= 0.0 }
     @not_attackable_users = User.where("id != ?", current_user.id).where("id NOT IN (?)", @attackable_users.map(&:id))
-    @companies = Company.all
+    @controlled_companies = current_user.companies
+    @companies = Company.where("id not in (?)", @controlled_companies.map(&:id).join(","))
   end
 
   def current

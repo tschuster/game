@@ -1,6 +1,6 @@
 class JobsController < ApplicationController
-  before_filter :set_jobs, :only => :index
-  before_filter :set_job, :only => :accept
+  before_filter :set_jobs, only: :index
+  before_filter :set_job, only: :accept
 
   respond_to :html, :mobile
 
@@ -13,7 +13,7 @@ class JobsController < ApplicationController
     else
       @job.accept_by(current_user)
     end
-    redirect_to game_index_path, :notice => "You have accepted a job!"
+    redirect_to game_index_path, notice: "You have accepted a job!"
   end
 
   protected
