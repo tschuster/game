@@ -383,13 +383,18 @@ class ActionShell
       equipment_title = location.split("/").last.gsub("_", " ").gsub(".eqmt", "")
 
       equipment = Equipment.where("id in (?)", victim.items.map(&:equipment_id)).where(title: equipment_title).first
-      if equipment.present? && equipment.unequip!
-        if remote?
-          reset_connection!
-          build_clients!
-          consolize("Equipment #{equipment_title} successfully unequipped=br=Connection closed=br=")
+      if equipment.present? 
+        item = victim.items.where(equipment_id: equipment.id).first
+        if item.present? && item.unequip!
+          if remote?
+            reset_connection!
+            build_clients!
+            consolize("Equipment #{equipment_title} successfully unequipped=br=Connection closed=br=")
+          else
+            "Equipment #{equipment_title} successfully unequipped"
+          end
         else
-          "Equipment #{equipment_title} successfully unequipped"
+          "Equipment not found: #{location}"
         end
       else
         "Equipment not found: #{location}"
