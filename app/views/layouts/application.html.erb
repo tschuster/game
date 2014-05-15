@@ -23,7 +23,7 @@
           dataType: "json"
         }).done(function(data) {
           var content = "";
-          if (data.action == {}) {
+          if (data.action == null) {
             content += "<h3>Your current Action</h3><p>You are not doing anything.</p>Don't waste your time! You can <%=j link_to 'perform actions', actions_path %>, <%=j link_to 'start operations', operations_path %> or <%=j link_to 'accept jobs', jobs_path %>.";
           } else if (data.action.type_id == <%= Action::TYPE_SYSTEM_CRASH %>) {
             content += "<h3>System rebooting</h3>You failed your last attack and the target's defenses have crashed your system. You cannot perform any actions while you are rebooting your system...<br />Systems will be back online at "+data.action.completed_at+".<br />Time remaining: <div id='remaining'></div>";
@@ -34,17 +34,19 @@
           } else if (data.action.readable_type != null) {
             content += "<h3>Your current Action</h3>"+data.action.readable_type+"<br />Will be finished at "+data.action.completed_at+".<br />Time remaining: <div id='remaining'></div>";
           }
-          if (data.action.cancel) {
+          if (data.action != null && data.action.cancel) {
             content += "<a href='/game/actions/"+data.action.id+"' class='btn btn-default' data-confirm='Are you sure you want to cancel your action?' data-method='delete' rel='nofollow'>Cancel</a>"
           }
           $(".current_action").html(content);
+          if (data.action != null) {
+            $("#remaining").countdown({layout: '{d<}{dn} {dl} and {d>}{hn} {hl}, {mn} {ml}, {sn} {sl}', until: new Date(data.action.time_left)}); 
+          }
 
           if (data.notification.unread_count > 0) {
             document.title = "Game ("+data.notification.unread_count+")";
           } else {
             document.title = "Game";
           }
-          $("#remaining").countdown({layout: '{d<}{dn} {dl} and {d>}{hn} {hl}, {mn} {ml}, {sn} {sl}', until: new Date(data.action.time_left)}); 
         });
         $.ajax({
           url: "<%= user_url(current_user, format: :json) %>",
