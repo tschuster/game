@@ -6,12 +6,14 @@
       });
     </script>
     <% if @current_action.type_id == Action::TYPE_SYSTEM_CRASH %>
-        <h3>System rebooting</h3>
+      <h3>System rebooting</h3>
       You failed your last attack and the target's defenses have crashed your system. You cannot perform any actions while you are rebooting your system...<br />
+      Systems will be back online at <%= @current_action.completed_at.strftime("%H:%M:%S") %>.<br />
       Time remaining: <div id="remaining"></div>
     <% elsif @current_action.type_id == Action::TYPE_DDOS_CRASH %>
       <h3>System rebooting</h3>
       You were attacked with a dDoS-Attack. You cannot perform any actions while you are rebooting your system...<br />
+      Systems will be back online at <%= @current_action.completed_at.strftime("%H:%M:%S") %>.<br />
       Time remaining: <div id="remaining"></div>
     <% else %>
       <% if @current_action.job.present? %>
@@ -21,6 +23,7 @@
         <h3>Your current Action</h3>
         <%= @current_action.readable_type %><br />
       <% end %>
+      Will be finished at <%= @current_action.completed_at.strftime("%H:%M:%S") %>.<br />
       Time remaining: <div id="remaining"></div>
     <% end %>
     <%= link_to("Cancel", action_path(@current_action), method: :delete, class: "btn btn-default", confirm: "Are you sure you want to cancel your action?") if @current_action.can_be_canceled? %>

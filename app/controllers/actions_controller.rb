@@ -1,5 +1,6 @@
 class ActionsController < ApplicationController
   respond_to :html, :mobile
+  respond_to :html, :mobile, :json, only: [:current]
 
   def index
   end

@@ -1,0 +1,19 @@
+{
+  "action": {
+<% if @current_action.present? %>
+    "id": <%= @current_action.id %>,
+    "time_left": <%= @current_action.completed_at.to_i*1000 %>,
+    "type_id": <%= @current_action.type_id %>,
+    "completed_at": "<%= @current_action.completed_at.strftime("%H:%M:%S") %>",
+    "cancel": <%= @current_action.can_be_canceled? %>,
+  <% if @current_action.job.present? %>
+    "job_description": "<%= @current_action.job.description %>"
+  <% else %>
+    "readable_type": "<%= @current_action.readable_type %>"
+  <% end %>
+<% end %>
+  },
+  "notification": {
+    "unread_count": <%= current_user.unread_notifications_count %>
+  }
+}

@@ -5,7 +5,7 @@
     <%= f.label :nickname %>
     <div class="row">
       <div class="col-xs-4">
-        <%= f.text_field :nickname, class: "form-control" %>
+        <%= f.text_field :nickname, class: "form-control", id: "nickname" %>
       </div>
     </div>
   </div>
@@ -33,3 +33,8 @@
 <% if false %>
   <%= link_to("Forgot your password?", new_password_path(resource_name)) %>
 <% end %>
+<script>
+  $(document).ready(function() {
+    $("#nickname").focus();
+  });
+</script>

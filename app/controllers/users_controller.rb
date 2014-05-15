@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
-  before_filter :authenticate_admin!, only: :index
+  before_filter :authenticate_admin!, only: [:index]
   respond_to :html, :mobile
+  respond_to :html, :mobile, :json, only: [:stats]
 
   def show
     render layout: false

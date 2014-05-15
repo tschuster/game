@@ -17,10 +17,47 @@
   <script>
     $(document).ready(function() {
       var refreshId = setInterval(function() {
-         $("#current_action_container").load('<%= current_actions_url %>');
-         $("#current_stats_container").load('<%= user_url(current_user) %>');
+        $.ajax({
+          url: "<%= current_actions_url(format: :json) %>",
+          cache: false,
+          dataType: "json"
+        }).done(function(data) {
+          var content = "";
+          if (data.action == {}) {
+            content += "<h3>Your current Action</h3><p>You are not doing anything.</p>Don't waste your time! You can <%=j link_to 'perform actions', actions_path %>, <%=j link_to 'start operations', operations_path %> or <%=j link_to 'accept jobs', jobs_path %>.";
+          } else if (data.action.type_id == <%= Action::TYPE_SYSTEM_CRASH %>) {
+            content += "<h3>System rebooting</h3>You failed your last attack and the target's defenses have crashed your system. You cannot perform any actions while you are rebooting your system...<br />Systems will be back online at "+data.action.completed_at+".<br />Time remaining: <div id='remaining'></div>";
+          } else if (data.action.type_id == <%= Action::TYPE_DDOS_CRASH %>) {
+            content += "<h3>System rebooting</h3>You were attacked with a dDoS-Attack. You cannot perform any actions while you are rebooting your system...<br />Systems will be back online at "+data.action.completed_at+".<br />Time remaining: <div id='remaining'></div>";
+          } else if (data.action.job_description != null) {
+            content += "<h3>Your current Job</h3>"+data.action.job_description+"<br />Will be finished at "+data.action.completed_at+".<br />Time remaining: <div id='remaining'></div>";
+          } else if (data.action.readable_type != null) {
+            content += "<h3>Your current Action</h3>"+data.action.readable_type+"<br />Will be finished at "+data.action.completed_at+".<br />Time remaining: <div id='remaining'></div>";
+          }
+          if (data.action.cancel) {
+            content += "<a href='/game/actions/"+data.action.id+"' class='btn btn-default' data-confirm='Are you sure you want to cancel your action?' data-method='delete' rel='nofollow'>Cancel</a>"
+          }
+          $(".current_action").html(content);
+
+          if (data.notification.unread_count > 0) {
+            document.title = "Game ("+data.notification.unread_count+")";
+          } else {
+            document.title = "Game";
+          }
+          $("#remaining").countdown({layout: '{d<}{dn} {dl} and {d>}{hn} {hl}, {mn} {ml}, {sn} {sl}', until: new Date(data.action.time_left)}); 
+        });
+        $.ajax({
+          url: "<%= user_url(current_user, format: :json) %>",
+          cache: false,
+          dataType: "json"
+        }).done(function(data) {
+          var stats_content = "";
+          if (data.user != null) {
+            stats_container += "<h3>Your current Stats</h3><table border='0' cellspacing='0' cellpadding='0' class='table-condensed'><tr><td>Hacking skill:</td><td>"+data.user.hacking_ratio+"</td></tr><tr><td>Botnet strength:</td><td>"+data.user.botnet_ratio+"</td></tr><tr><td>Defense ratio:</td><td>"+data.user.defense_ratio+"</td></tr><tr><td>Money:</td><td>"+data.user.money+"</td></tr></table>";
+          }
+          $("#current_stats_container").html(stats_content);
+        });
       }, 10000);
-      $.ajaxSetup({ cache: false });
     });
   </script>
 </head>
@@ -33,7 +70,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <%= link_to "Game", game_index_path, :class => "navbar-brand" %></li>
+        <%= link_to "Game", game_index_path, class: "navbar-brand" %></li>
       </div>
       <div class="collapse navbar-collapse" id="navbar-collapse">
         <ul class="nav navbar-nav">
@@ -46,7 +83,7 @@
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <li class="dropdown">
-            <%= link_to "#", :class => "dropdown-toggle", :'data-toggle' => "dropdown" do %>
+            <%= link_to "#", class: "dropdown-toggle", :'data-toggle' => "dropdown" do %>
               Settings <b class="caret"></b>
             <% end %>
             <ul class="dropdown-menu">
@@ -56,7 +93,7 @@
               <li><%= link_to "Imprint", page_path(:imprint) %></li>
             </ul>
           </li>
-          <li><%= link_to "Logout", destroy_user_session_path, :method => :delete %></li>
+          <li><%= link_to "Logout", destroy_user_session_path, method: :delete %></li>
         </ul>
       </div>
     </div>
@@ -81,12 +118,12 @@
       <div class="row">
         <div class="col-md-3">
           <div id="current_stats_container">
-            <%= render :partial => "users/stats" %>
+            <%= render partial: "users/stats" %>
           </div>
         </div>
         <div class="col-md-9">
           <div id="current_action_container">
-            <%= render :partial => "actions/current" %>
+            <%= render partial: "actions/current" %>
           </div>
         </div>
       </div>
