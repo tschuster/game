@@ -11,7 +11,7 @@ class Company < ActiveRecord::Base
   end
 
   def income_per_action
-    income/6.0
+    income/6.0/60.0
   end
 
   def income_per_hour
