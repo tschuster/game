@@ -195,7 +195,6 @@ class User < ActiveRecord::Base
       else
 
         # attack failed
-        target.defend_against(self)
         Action.create(
           type_id:      Action::TYPE_SYSTEM_CRASH,
           user_id:      id,

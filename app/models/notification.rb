@@ -44,9 +44,9 @@ class Notification < ActiveRecord::Base
       when :attack_failed_attacker, :ddos_failed_attacker
         "<p>You failed to hack #{options[:victim].nickname}!</p> Your system is now rebooting."
       when :attack_company_failed_owner
-        "<p>The company #{options[:victim].name} wich you control has repelled an attacked by #{options[:attacker].nickname}!</p> The company's defenses have been upgraded."
+        "<p>The company #{options[:victim].name} wich you control has repelled an attacked by #{options[:attacker].nickname}!</p>"
       when :attack_company_failed_attacker
-        "<p>You failed to hack #{options[:victim].name}!</p> The company's defenses have been upgraded. Your system is now rebooting."
+        "<p>You failed to hack #{options[:victim].name}!</p> Your system is now rebooting."
       when :ddos_success_victim
         "<p>You have been dDoS-attacked by #{options[:attacker].nickname}!</p>Your systems are damadged and rebooting. Your current action has been canceled."
       when :ddos_success_attacker
