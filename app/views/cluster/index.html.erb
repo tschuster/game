@@ -1,0 +1,54 @@
+<%= stylesheet_link_tag    "jquery.jvectormap" %>
+<%= javascript_include_tag "jquery.jvectormap.min" %>
+<%= javascript_include_tag "jquery.map_de" %>
+<script>
+
+$(function(){
+  var map;
+
+  map = new jvm.WorldMap({
+    container: $('#map'),
+    map: 'de_merc_en',
+    regionsSelectable: false,
+    regionStyle: {
+      initial: {
+        fill: '#dcdcdc'
+      },
+      selected: {
+        fill: '#6d6d6d'
+      }
+    },
+    onRegionClick: function(id, code){
+      $.ajax({
+        url: "<%= cluster_index_path %>/"+code+".json",
+        cache: false,
+        dataType: "json"
+      }).done(function(data) {
+        if (data.cluster != null) {
+          $("#cluster_name").html(data.cluster.name);
+          if (data.cluster.controlled_by != null) {
+            $("#controlled_by").html(data.cluster.controlled_by);
+          } else {
+            $("#controlled_by").html("nobody");
+          }
+          $("#selection").show();
+        } else {
+          $("#selection").hide();
+        }
+      });
+    }
+  });
+  map.setSelectedRegions([<%= @controlled_cluster %>]);
+  $("#selection").hide();
+});
+</script>
+
+<div class="row">
+  <div id="map" style="height: 600px;" class="col-md-8">
+  
+  </div>
+  <div id="selection" class="col-md-4">
+    <h3 id="cluster_name">Cluster Name</h3>
+    Controlled by <span id="controlled_by">Nobody</span>
+  </div>
+</div>

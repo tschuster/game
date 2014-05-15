@@ -42,6 +42,7 @@ Game::Application.routes.draw do
     end
 
     resources :pages, only: [ :show ]
+    resources :cluster, only: [ :index, :show ]
 
     match 'operations' => 'actions#operations', as: :operations
 

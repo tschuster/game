@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140504121713) do
+ActiveRecord::Schema.define(:version => 20140515195511) do
 
   create_table "actions", :force => true do |t|
     t.integer  "type_id"
@@ -26,6 +26,12 @@ ActiveRecord::Schema.define(:version => 20140504121713) do
     t.boolean  "success",      :default => false
   end
 
+  create_table "clusters", :force => true do |t|
+    t.string  "map_id"
+    t.string  "name"
+    t.integer "user_id"
+  end
+
   create_table "companies", :force => true do |t|
     t.string   "name"
     t.integer  "user_id"
@@ -36,16 +42,15 @@ ActiveRecord::Schema.define(:version => 20140504121713) do
   end
 
   create_table "equipments", :force => true do |t|
-    t.string   "klass"
-    t.string   "title"
-    t.text     "description"
-    t.integer  "hacking_bonus"
-    t.integer  "botnet_bonus"
-    t.integer  "defense_bonus"
-    t.string   "special_bonus"
-    t.float    "price"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.string  "klass"
+    t.string  "title"
+    t.text    "description"
+    t.integer "hacking_bonus"
+    t.integer "botnet_bonus"
+    t.integer "defense_bonus"
+    t.string  "special_bonus"
+    t.float   "price"
+    t.integer "level"
   end
 
   create_table "items", :force => true do |t|

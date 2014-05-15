@@ -4,6 +4,7 @@ class User < ActiveRecord::Base
   has_many :notifications, dependent: :destroy
   has_many :items, dependent: :destroy
   has_many :companies
+  has_many :clusters
 
   validates :nickname, exclusion: { in: ["admin", "administrator"], message: "is not allowed" }, uniqueness: { case_sensitive: false, message: "is already taken" }, presence: { message: "is required" }
 

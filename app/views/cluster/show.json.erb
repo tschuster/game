@@ -1,0 +1,11 @@
+{
+  "cluster": {
+    "id": "<%= @cluster.map_id %>",
+    "name": "<%= @cluster.name %>",
+    <% if @cluster.user.present? %>
+      "controlled_by": "<%= @cluster.user.nickname %>"
+    <% else %>
+      "controlled_by": null
+    <% end %>
+  }
+}
