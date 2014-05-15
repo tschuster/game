@@ -1,6 +1,7 @@
 {
-  "action": {
+  "action": 
 <% if @current_action.present? %>
+  {
     "id": <%= @current_action.id %>,
     "time_left": <%= @current_action.completed_at.to_i*1000 %>,
     "type_id": <%= @current_action.type_id %>,
@@ -11,8 +12,10 @@
   <% else %>
     "readable_type": "<%= @current_action.readable_type %>"
   <% end %>
-<% end %>
   },
+  <% else %>
+  null,
+<% end %>
   "notification": {
     "unread_count": <%= current_user.unread_notifications_count %>
   }
