@@ -4,8 +4,27 @@
     <h3>Your stats</h3>
     <%= render partial: "users/stats" %>
     <h3>Your equipment</h3>
-    <% if @equipments.present? %>
-      <%= render partial: "list", locals: { equipments: @equipments, mine: true } %>
+    <% if (@user_firewalls+@user_compilers+@user_botnets+@user_utilities).present? %>
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#firewalls_user" data-toggle="tab">Firewalls</a></li>
+        <li><a href="#compilers_user" data-toggle="tab">Compilers</a></li>
+        <li><a href="#botnets_user" data-toggle="tab">Botnets</a></li>
+        <li><a href="#utilities_user" data-toggle="tab">Utilities</a></li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane active" id="firewalls_user">
+          <%= render partial: "list", locals: { equipments: @user_firewalls, mine: true } %>
+        </div>
+        <div class="tab-pane" id="compilers_user">
+          <%= render partial: "list", locals: { equipments: @user_compilers, mine: true } %>
+        </div>
+        <div class="tab-pane" id="botnets_user">
+          <%= render partial: "list", locals: { equipments: @user_botnets, mine: true } %>
+        </div>
+        <div class="tab-pane" id="utilities_user">
+          <%= render partial: "list", locals: { equipments: @user_utilities, mine: true } %>
+        </div>
+      </div>
     <% else %>
       Nothing purchased yet.<br /><br />
     <% end %>
@@ -14,6 +33,25 @@
 <div class="row">
   <div class="col-md-12">
     <h3>Equipment available</h3>
-    <%= render partial: "list", locals: { equipments: @available_equipments, mine: false } %>
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#firewalls" data-toggle="tab">Firewalls</a></li>
+      <li><a href="#compilers" data-toggle="tab">Compilers</a></li>
+      <li><a href="#botnets" data-toggle="tab">Botnets</a></li>
+      <li><a href="#utilities" data-toggle="tab">Utilities</a></li>
+    </ul>
+    <div class="tab-content">
+      <div class="tab-pane active" id="firewalls">
+        <%= render partial: "list", locals: { equipments: @available_firewalls, mine: false } %>
+      </div>
+      <div class="tab-pane" id="compilers">
+        <%= render partial: "list", locals: { equipments: @available_compilers, mine: false } %>
+      </div>
+      <div class="tab-pane" id="botnets">
+        <%= render partial: "list", locals: { equipments: @available_botnets, mine: false } %>
+      </div>
+      <div class="tab-pane" id="utilities">
+        <%= render partial: "list", locals: { equipments: @available_utilities, mine: false } %>
+      </div>
+    </div>
   </div>
 </div>

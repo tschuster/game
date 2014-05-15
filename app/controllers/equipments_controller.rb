@@ -5,6 +5,8 @@ class EquipmentsController < ApplicationController
   before_filter :set_equipments, only: [:index]
   before_filter :set_available_equipments, only: [:index]
 
+  respond_to :html, :mobile
+
   def index
   end
 
@@ -63,6 +65,5 @@ class EquipmentsController < ApplicationController
       @available_compilers = Equipment.where(klass: :compiler).order(:level)
       @available_botnets = Equipment.where(klass: :botnet).order(:level)
       @available_utilities = Equipment.where(klass: :utility).order(:level)
-      @available_equipments = Equipment.order(:klass)
     end
 end
