@@ -44,8 +44,12 @@
 
           if (data.notification.unread_count > 0) {
             document.title = "Game ("+data.notification.unread_count+")";
+            $("#desktop_link").html("Desktop ("+data.notification.unread_count+")");
+            $("#news_headline").html("News ("+data.notification.unread_count+")");
           } else {
             document.title = "Game";
+            $("#desktop_link").html("Desktop");
+            $("#news_headline").html("News");
           }
         });
         $.ajax({
@@ -76,7 +80,7 @@
       </div>
       <div class="collapse navbar-collapse" id="navbar-collapse">
         <ul class="nav navbar-nav">
-          <li <%= active_class "game" %>><%= link_to "Desktop#{current_user.unread_notifications_count > 0 ? " (#{current_user.unread_notifications_count})" : nil}", game_index_path %></li>
+          <li <%= active_class "game" %>><%= link_to "Desktop#{current_user.unread_notifications_count > 0 ? " (#{current_user.unread_notifications_count})" : nil}", game_index_path, id: "desktop_link" %></li>
           <li <%= active_class "actions", "index" %>><%= link_to "Actions", actions_path %></li>
           <li <%= active_class "jobs" %>><%= link_to "Jobs", jobs_path %></li>
           <li <%= active_class "actions", "operations" %>><%= link_to "Operations", operations_path %></li>
