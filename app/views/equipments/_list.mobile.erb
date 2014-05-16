@@ -18,15 +18,15 @@
         <table border="0" style="border: 0px;" cellspacing="0" cellpadding="0">
           <tr>
             <td style="background-color: <%= color_now %>; padding: 4px; border: 0px; white-space: nowrap;">Hacking:</td>
-            <td style="background-color: <%= color_now %>; padding: 4px; border: 0px; text-align: right;">+<%= eqmt.hacking_bonus %></td>
+            <td style="background-color: <%= color_now %>; padding: 4px; border: 0px; text-align: right;">+<%= mine ? eqmt.computed_hacking_bonus_for(current_user) : eqmt.computed_hacking_bonus_for(nil) %></td>
           </tr>
           <tr>
             <td style="background-color: <%= color_now %>; padding: 4px; border: 0px; white-space: nowrap;">Botnet:</td>
-            <td style="background-color: <%= color_now %>; padding: 4px; border: 0px; text-align: right;">+<%= eqmt.botnet_bonus %></td>
+            <td style="background-color: <%= color_now %>; padding: 4px; border: 0px; text-align: right;">+<%= mine ? eqmt.computed_botnet_bonus_for(current_user) : eqmt.computed_botnet_bonus_for(nil) %></td>
           </tr>
           <tr>
             <td style="background-color: <%= color_now %>; padding: 4px; border: 0px; white-space: nowrap;">Defense:</td>
-            <td style="background-color: <%= color_now %>; padding: 4px; border: 0px; text-align: right;">+<%= eqmt.defense_bonus %></td>
+            <td style="background-color: <%= color_now %>; padding: 4px; border: 0px; text-align: right;">+<%= mine ? eqmt.computed_defense_bonus_for(current_user) : eqmt.computed_defense_bonus_for(nil) %></td>
           </tr>
         </table>
       </td>

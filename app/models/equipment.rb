@@ -39,28 +39,47 @@ class Equipment < ActiveRecord::Base
     new_item.save!
   end
 
-  def computed_hacking_bonus
+  def set?
+    set_id.present?
+  end
+  def computed_hacking_bonus_for(user)
     hacking_bonus.to_i + case special_bonus
-    when :special_1
-      0
+    when "set_netmaster"
+      if hacking_bonus.present? && user.present? && user.has_complete_set?(set_id)
+      (hacking_bonus*0.1).to_i
+      else
+        0
+      end
+    when "set_team13"
+      (hacking_bonus.present? && user.present? && user.has_complete_set?(set_id)) ? 15 : 0
     else
       0
     end
   end
 
-  def computed_botnet_bonus
+  def computed_botnet_bonus_for(user)
     botnet_bonus.to_i + case special_bonus
-    when :special_1
-      0
+    when "set_netmaster"
+      if botnet_bonus.present? && user.present? && user.has_complete_set?(set_id)
+      (botnet_bonus*0.1).to_i
+      else
+        0
+      end
     else
       0
     end
   end
 
-  def computed_defense_bonus
+  def computed_defense_bonus_for(user)
     defense_bonus.to_i + case special_bonus
-    when :special_1
-      0
+    when "set_netmaster"
+      if defense_bonus.present? && user.present? && user.has_complete_set?(set_id)
+      (defense_bonus*0.1).to_i
+      else
+        0
+      end
+    when "set_team13"
+      (defense_bonus.present? && user.present? && user.has_complete_set?(set_id)) ? 15 : 0
     else
       0
     end

@@ -354,6 +354,12 @@ class User < ActiveRecord::Base
     Equipment.where(klass: :utility, special_bonus: "wallet").first.equipped_by?(self)
   end
 
+  def has_complete_set?(set_id)
+    set_equipments = Equipment.where(set_id: set_id).pluck(:id)
+    return false if set_equipments.blank?
+    items.active.pluck(:equipment_id) & set_equipments == set_equipments
+  end
+
   class << self
     def average_botnet_ratio
       User.pluck(:botnet_ratio).sum/User.count

@@ -26,14 +26,14 @@ class Item < ActiveRecord::Base
   end
 
   def hacking_bonus
-    equipment.computed_hacking_bonus
+    equipment.computed_hacking_bonus_for(user)
   end
 
   def botnet_bonus
-    equipment.computed_botnet_bonus
+    equipment.computed_botnet_bonus_for(user)
   end
 
   def defense_bonus
-    equipment.computed_defense_bonus
+    equipment.computed_defense_bonus_for(user)
   end
 end

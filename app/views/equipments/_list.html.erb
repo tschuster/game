@@ -8,7 +8,7 @@
     <th>&nbsp;</th>
   </tr>
   <% equipments.each do |eqmt| %>
-    <tr>
+    <tr <%= 'class="success"'.html_safe if eqmt.set? %>>
       <td><%= eqmt.title %></td>
       <td style="padding: 0px;">
         <table border="0" style="border: 0px;" cellspacing="0" cellpadding="0">
@@ -17,18 +17,18 @@
               <%= eqmt.description %>
             </td>
           </tr>
-          <% if [eqmt.computed_hacking_bonus, eqmt.computed_botnet_bonus, eqmt.computed_defense_bonus].sum > 0 %>
+          <% if [eqmt.computed_hacking_bonus_for(current_user), eqmt.computed_botnet_bonus_for(current_user), eqmt.computed_defense_bonus_for(current_user)].sum > 0 %>
             <tr>
               <td style="padding: 4px; border: 0px; white-space: nowrap;">Hacking skill bonus:</td>
-              <td style="padding: 4px; border: 0px; text-align: right;">+<%= eqmt.computed_hacking_bonus %></td>
+              <td style="padding: 4px; border: 0px; text-align: right;">+<%= mine ? eqmt.computed_hacking_bonus_for(current_user) : eqmt.computed_hacking_bonus_for(nil) %></td>
             </tr>
             <tr>
               <td style="padding: 4px; border: 0px; white-space: nowrap;">Botnet bonus:</td>
-              <td style="padding: 4px; border: 0px; text-align: right;">+<%= eqmt.computed_botnet_bonus %></td>
+              <td style="padding: 4px; border: 0px; text-align: right;">+<%= mine ? eqmt.computed_botnet_bonus_for(current_user) : eqmt.computed_botnet_bonus_for(nil) %></td>
             </tr>
             <tr>
               <td style="padding: 4px; border: 0px; white-space: nowrap;">Defense bonus:</td>
-              <td style="padding: 4px; border: 0px; text-align: right;">+<%= eqmt.computed_defense_bonus %></td>
+              <td style="padding: 4px; border: 0px; text-align: right;">+<%= mine ? eqmt.computed_defense_bonus_for(current_user) : eqmt.computed_defense_bonus_for(nil) %></td>
             </tr>
           <% end %>
         </table>

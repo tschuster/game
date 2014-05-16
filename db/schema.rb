@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140515195511) do
+ActiveRecord::Schema.define(:version => 20140516113249) do
 
   create_table "actions", :force => true do |t|
     t.integer  "type_id"
@@ -51,6 +51,7 @@ ActiveRecord::Schema.define(:version => 20140515195511) do
     t.string  "special_bonus"
     t.float   "price"
     t.integer "level"
+    t.integer "set_id"
   end
 
   create_table "items", :force => true do |t|
