@@ -297,9 +297,9 @@ class User < ActiveRecord::Base
   def to_weak_for(target, type = :hack)
     case type
     when :hack
-      target.defense_ratio > hacking_ratio * 1.5
+      target.defense_ratio > hacking_ratio * 2.5
     when :ddos
-      target.defense_ratio > botnet_ratio * 1.5
+      target.defense_ratio > botnet_ratio * 2.5
     end
   end
 
