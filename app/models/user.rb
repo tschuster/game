@@ -361,7 +361,7 @@ class User < ActiveRecord::Base
   end
 
   def total_income_per_hour
-    return 0.0 if companies.blank?
+    return nil if companies.blank?
     companies.map(&:income_per_hour).sum
   end
 
