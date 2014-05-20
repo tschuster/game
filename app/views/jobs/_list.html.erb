@@ -1,6 +1,5 @@
 <table border="0" cellspacing="0" cellpadding="0" class="table table-bordered">
   <tr>
-    <th>&nbsp;</th>
     <th>Job Type</th>
     <th>Description</th>
     <th>Duration</th>
@@ -10,12 +9,11 @@
   </tr>
   <% jobs.each do |job| %>
     <tr>
-      <td><%= image_for(job) %></td>
       <td><%= job.title %></td>
       <td><%= job.description %></td>
       <td><%= humanize(job.duration_for(current_user)) %></td>
       <td><%= job_requirement(job) %></td>
-      <td class="amount"><%= number_to_currency(job.reward, :format => "%n %u") %></td>
+      <td class="amount"><%= number_to_currency(job.reward) %></td>
       <td><%= accept_button(job) %></td>
     </tr>
   <% end %>
