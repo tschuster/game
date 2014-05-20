@@ -360,6 +360,11 @@ class User < ActiveRecord::Base
     items.active.pluck(:equipment_id) & set_equipments == set_equipments
   end
 
+  def total_income_per_hour
+    return 0.0 if companies.blank?
+    companies.map(&:income_per_hour).sum
+  end
+
   class << self
     def average_botnet_ratio
       User.pluck(:botnet_ratio).sum/User.count

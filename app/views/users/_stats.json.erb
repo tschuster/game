@@ -1,10 +1,11 @@
 {
   <% if current_user.present? %>
-  user: {
-    hacking_ratio: <%= current_user.hacking_ratio %>,
-    botnet_ratio: <%= current_user.botnet_ratio %>,
-    defense_ratio: <%= current_user.defense_ratio %>,
-    money: <%= number_to_currency(current_user.money) %>
+  "user": {
+    "hacking_ratio": <%= current_user.hacking_ratio %>,
+    "botnet_ratio": <%= current_user.botnet_ratio %>,
+    "defense_ratio": <%= current_user.defense_ratio %>,
+    "money": "<%= number_to_currency(current_user.money) %>",
+    "income": "<%= number_to_currency(current_user.total_income_per_hour) %>"
   }
   <% end %>
 }

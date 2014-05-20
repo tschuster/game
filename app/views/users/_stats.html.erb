@@ -16,4 +16,10 @@
     <td>Money:</td>
     <td><%= number_to_currency(current_user.money) %></td>
   </tr>
+<% if current_user.companies.present? %>
+  <tr>
+    <td>Income/hour:</td>
+    <td><%= number_to_currency(current_user.total_income_per_hour) %></td>
+  </tr>
+<% end %>
 </table>
