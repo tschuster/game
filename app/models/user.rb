@@ -87,13 +87,13 @@ class User < ActiveRecord::Base
     money >= equipment.price
   end
 
-  def can_buy?(skill)
-    case skill
-    when :hacking
+  def can_buy?(action_id)
+    case action_id
+    when Action::TYPE_HACKING_BUY
       money >= next_hacking_ratio_cost
-    when :botnet
+    when Action::TYPE_BOTNET_BUY
       money >= next_botnet_ratio_cost
-    when :defense
+    when Action::TYPE_DEFENSE_BUY
       money >= next_defense_ratio_cost
     end
   end

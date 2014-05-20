@@ -15,8 +15,16 @@ $(function(){
         fill: '#dcdcdc'
       },
       selected: {
-        fill: '#6d6d6d'
+        fill: '#02873a'
       }
+    },
+    series: {
+      regions: [{
+        attribute: "fill",
+        values: {
+          <%= @country_color_values.join(",").html_safe %>
+        }
+      }]
     },
     onRegionClick: function(id, code){
       $.ajax({
@@ -38,7 +46,6 @@ $(function(){
       });
     }
   });
-  map.setSelectedRegions([<%= @controlled_cluster %>]);
   $("#selection").hide();
 });
 </script>

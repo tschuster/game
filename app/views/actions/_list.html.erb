@@ -12,13 +12,7 @@
             Duration:<br /><%= humanize(current_user.next_hacking_ratio_time) %>
           </td>
           <td style="border: 0; text-align: right;">
-            <% if @current_action.present? %>
-              <span class="btn btn-default disabled">Action pending</span>
-            <% else %>
-              <%= link_to(actions_path(type_id: Action::TYPE_HACKING_EVOLVE), method: :post, class: "btn btn-primary") do %>
-                <span class="glyphicon glyphicon-collapse-up" style="width: 61px;"> Train</span>
-              <% end %>
-            <% end %>
+            <%= action_button_for(Action::TYPE_HACKING_EVOLVE) %>
           </td>
         </tr>
         <tr>
@@ -26,15 +20,7 @@
             Cost: <%= number_to_currency(current_user.next_hacking_ratio_cost) %>
           </td>
           <td style="border: 0; text-align: right;">
-            <% if @current_action.present? %>
-              <span class="btn btn-default disabled">Action pending</span>
-            <% elsif !current_user.can_buy?(:hacking) %>
-                <span class="btn btn-default disabled">Insufficent Funds</span>
-            <% else %>
-              <%= link_to(actions_path(type_id: Action::TYPE_HACKING_BUY), method: :post, class: "btn btn-primary") do %>
-                <span class="glyphicon glyphicon-usd" style="width: 61px;"> Buy&nbsp;</span>
-              <% end %>
-            <% end %>
+            <%= action_button_for(Action::TYPE_HACKING_BUY) %>
           </td>
         </tr>
       </table>
@@ -52,13 +38,7 @@
             Duration:<br /><%= humanize(current_user.next_botnet_ratio_time) %>
           </td>
           <td style="border: 0; text-align: right;">
-            <% if @current_action.present? %>
-              <span class="btn btn-default disabled">Action pending</span>
-            <% else %>
-              <%= link_to(actions_path(type_id: Action::TYPE_BOTNET_EVOLVE), method: :post, class: "btn btn-primary") do %>
-                <span class="glyphicon glyphicon-collapse-up" style="width: 61px;"> Train</span>
-              <% end %>
-            <% end %>
+            <%= action_button_for(Action::TYPE_BOTNET_EVOLVE) %>
           </td>
         </tr>
         <tr>
@@ -66,15 +46,7 @@
             Cost: <%= number_to_currency(current_user.next_botnet_ratio_cost) %>
           </td>
           <td style="border: 0; text-align: right;">
-            <% if @current_action.present? %>
-                <span class="btn btn-default disabled">Action pending</span>
-            <% elsif !current_user.can_buy?(:botnet) %>
-                <span class="btn btn-default disabled">Insufficent Funds</span>
-            <% else %>
-              <%= link_to(actions_path(type_id: Action::TYPE_BOTNET_BUY), method: :post, class: "btn btn-primary") do %>
-                <span class="glyphicon glyphicon-usd" style="width: 61px;"> Buy&nbsp;</span>
-              <% end %>
-            <% end %>
+            <%= action_button_for(Action::TYPE_BOTNET_BUY) %>
           </td>
         </tr>
       </table>
@@ -92,13 +64,7 @@
             Duration:<br /><%= humanize(current_user.next_defense_ratio_time) %>
           </td>
           <td style="border: 0; text-align: right;">
-            <% if @current_action.present? %>
-              <span class="btn btn-default disabled">Action pending</span>
-            <% else %>
-              <%= link_to(actions_path(type_id: Action::TYPE_DEFENSE_EVOLVE), method: :post, class: "btn btn-primary") do %>
-                <span class="glyphicon glyphicon-collapse-up" style="width: 61px;"> Train</span>
-              <% end %>
-            <% end %>
+            <%= action_button_for(Action::TYPE_DEFENSE_EVOLVE) %>
           </td>
         </tr>
         <tr>
@@ -106,15 +72,7 @@
             Cost: <%= number_to_currency(current_user.next_defense_ratio_cost) %>
           </td>
           <td style="border: 0; text-align: right;">
-          <% if @current_action.present? %>
-            <span class="btn btn-default disabled">Action pending</span>
-          <% elsif !current_user.can_buy?(:defense) %>
-            <span class="btn btn-default disabled">Insufficent Funds</span>
-          <% else %>
-            <%= link_to(actions_path(type_id: Action::TYPE_DEFENSE_BUY), method: :post, class: "btn btn-primary") do %>
-              <span class="glyphicon glyphicon-usd" style="width: 61px;"> Buy&nbsp;</span>
-            <% end %>
-          <% end %>
+            <%= action_button_for(Action::TYPE_DEFENSE_BUY) %>
           </td>
         </tr>
       </table>

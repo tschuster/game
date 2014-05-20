@@ -5,11 +5,7 @@
       Increase your hacking skill by <%= CONFIG["hacking"]["evolve_ratio"] %>. Each level needs more time to accomplish.<br />Duration: <%= humanize(current_user.next_hacking_ratio_time) %>
     </td>
     <td style="vertical-align: middle;">
-      <% if @current_action.present? %>
-        <span class="btn btn-default disabled">Action pending</span>
-      <% else %>
-        <%= link_to "perform action", actions_path(type_id: Action::TYPE_HACKING_EVOLVE), method: :post, class: "btn btn-primary" %>
-      <% end %>
+      <%= action_button_for(Action::TYPE_HACKING_EVOLVE) %>
     </td>
   </tr>
   <tr>
@@ -18,13 +14,7 @@
       Increase your hacking skill by <%= CONFIG["hacking"]["buy_ratio"] %>.<br />Cost: <%= number_to_currency(current_user.next_hacking_ratio_cost) %>
     </td>
     <td style="vertical-align: middle;">
-      <% if @current_action.present? %>
-        <span class="btn btn-default disabled">Action pending</span>
-      <% elsif current_user.can_buy?(:hacking) %>
-        <%= link_to "perform action", actions_path(type_id: Action::TYPE_HACKING_BUY), method: :post, class: "btn btn-primary" %>
-      <% else %>
-        <span class="btn btn-default disabled">not enough money</span>
-      <% end %>
+      <%= action_button_for(Action::TYPE_HACKING_BUY) %>
     </td>
   </tr>
   <tr>
@@ -33,11 +23,7 @@
       Increase your botnet strength by <%= CONFIG["botnet"]["evolve_ratio"] %>. Each level needs more time to accomplish.<br />Duration: <%= humanize(current_user.next_botnet_ratio_time) %>
     </td>
     <td style="vertical-align: middle;">
-      <% if @current_action.present? %>
-        <span class="btn btn-default disabled">Action pending</span>
-      <% else %>
-        <%= link_to "perform action", actions_path(type_id: Action::TYPE_BOTNET_EVOLVE), method: :post, class: "btn btn-primary" %>
-      <% end %>
+      <%= action_button_for(Action::TYPE_BOTNET_EVOLVE) %>
     </td>
   </tr>
   <tr>
@@ -46,13 +32,7 @@
       Increase your botnet strength by <%= CONFIG["botnet"]["buy_ratio"] %>.<br />Cost: <%= number_to_currency(current_user.next_botnet_ratio_cost) %>
     </td>
     <td style="vertical-align: middle;">
-      <% if @current_action.present? %>
-        <span class="btn btn-default disabled">Action pending</span>
-      <% elsif current_user.can_buy?(:botnet) %>
-        <%= link_to "perform action", actions_path(type_id: Action::TYPE_BOTNET_BUY), method: :post, class: "btn btn-primary" %>
-      <% else %>
-        <span class="btn btn-default disabled">not enough money</span>
-      <% end %>
+      <%= action_button_for(Action::TYPE_BOTNET_BUY) %>
     </td>
   </tr>
   <tr>
@@ -61,11 +41,7 @@
       Increase your defense ratio by <%= CONFIG["defense"]["evolve_ratio"] %>. Each level needs more time to accomplish.<br />Duration: <%= humanize(current_user.next_defense_ratio_time) %>
     </td>
     <td style="vertical-align: middle;">
-      <% if @current_action.present? %>
-        <span class="btn btn-default disabled">Action pending</span>
-      <% else %>
-        <%= link_to "perform action", actions_path(type_id: Action::TYPE_DEFENSE_EVOLVE), method: :post, class: "btn btn-primary" %>
-      <% end %>
+      <%= action_button_for(Action::TYPE_DEFENSE_EVOLVE) %>
     </td>
   </tr>
   <tr>
@@ -74,13 +50,7 @@
       Increase your defense ratio by <%= CONFIG["defense"]["buy_ratio"] %>.<br />Cost: <%= number_to_currency(current_user.next_defense_ratio_cost) %>
     </td>
     <td style="vertical-align: middle;">
-      <% if @current_action.present? %>
-        <span class="btn btn-default disabled">Action pending</span>
-      <% elsif current_user.can_buy?(:defense) %>
-        <%= link_to "perform action", actions_path(type_id: Action::TYPE_DEFENSE_BUY), method: :post, class: "btn btn-primary" %>
-      <% else %>
-        <span class="btn btn-default disabled">not enough money</span>
-      <% end %>
+      <%= action_button_for(Action::TYPE_DEFENSE_BUY) %>
     </td>
   </tr>
 </table>

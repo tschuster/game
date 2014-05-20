@@ -151,7 +151,7 @@ Rails.logger.info("===> AI: i perform #{result.readable_type}")
 
       # increase hacking skill
       if hacking_ratio.to_f < botnet_ratio.to_f*1.3
-        if can_buy?(:hacking)
+        if can_buy?(Action::TYPE_HACKING_BUY)
 Rails.logger.info("===> AI: i can buy hacking skill")
           options = {
             user_id:      id,
@@ -175,7 +175,7 @@ Rails.logger.info("===> AI: i must perform a job to buy hacking skill")
 
       # increase botnet strength
       else
-        if can_buy?(:botnet)
+        if can_buy?(Action::TYPE_BOTNET_BUY)
 Rails.logger.info("===> AI: i can buy botnet strength")
           options = {
             user_id:      id,
@@ -205,7 +205,7 @@ Rails.logger.info("===> AI: i must peform a job to buy botnet strength")
       available_jobs = Job.acceptable.where("hacking_ratio_required = 0 OR (hacking_ratio_required > 0 AND hacking_ratio_required <= ?)", hacking_ratio).where("botnet_ratio_required = 0 OR (botnet_ratio_required > 0 AND botnet_ratio_required <= ?)", botnet_ratio).sort_by! { |job| job.duration_for(self).seconds }
 
       # increase defense ratio
-      if can_buy?(:defense)
+      if can_buy?(Action::TYPE_DEFENSE_BUY)
 Rails.logger.info("===> AI: i can buy defense")
         options = {
           user_id:      id,

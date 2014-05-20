@@ -15,7 +15,16 @@ class ClusterController < ApplicationController
   protected
 
     def set_controlled_cluster
-      @controlled_cluster = Cluster.where("user_id is not null").pluck(:map_id).map { |c| '"' << c << '"'}.join(",").html_safe
+      @country_color_values = []
+      Cluster.all.each do |c|
+        if c.user_id == current_user.id
+          @country_color_values << "\"#{c.map_id}\":\"#02873a\""
+        elsif c.user_id.blank?
+          @country_color_values << "\"#{c.map_id}\":\"#c7c7c7\""
+        else
+          @country_color_values << "\"#{c.map_id}\":\"#8b0101\""
+        end
+      end
     end
 
     def set_cluster
