@@ -31,7 +31,7 @@
         <% end %>
       <% else %>
         <% if current_user.can_attack?(company, :hack) %>
-          <%= link_to "Hack", actions_path(:type_id => Action::TYPE_ATTACK_COMPANY, :target_id => company.id), :class => "btn btn-primary", :method => :post, :style => "margin-bottom: 6px;" %>
+          <%= link_to "Hack", actions_path(type_id: Action::TYPE_ATTACK_COMPANY, target_id: company.id), class: "btn btn-primary", method: :post, style: "margin-bottom: 6px;" %>
         <% else %>
           <span class="btn btn-default disabled" style="margin-bottom: 6px;">
             <% if current_user.controls?(company) %>

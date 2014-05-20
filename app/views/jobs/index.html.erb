@@ -10,21 +10,21 @@
 <div class="tab-content">
   <div class="tab-pane active" id="simple_jobs">
     <% if @simple_jobs.present? %>
-      <%= render :partial => "list", :locals => { :jobs => @simple_jobs } %>
+      <%= render partial: "list", locals: { jobs: @simple_jobs } %>
     <% else %>
       There are currently no jobs available. Check back later!
     <% end %>
   </div>
   <div class="tab-pane" id="complex_jobs">
     <% if @complex_jobs.present? %>
-      <%= render :partial => "list", :locals => { :jobs => @complex_jobs } %>
+      <%= render partial: "list", locals: { jobs: @complex_jobs } %>
     <% else %>
       There are currently no jobs available. Check back later!
     <% end %>
   </div>
   <div class="tab-pane" id="challenging_jobs">
     <% if @challenging_jobs.present? %>
-      <%= render :partial => "list", :locals => { :jobs => @challenging_jobs } %>
+      <%= render partial: "list", locals: { jobs: @challenging_jobs } %>
     <% else %>
       There are currently no jobs available. Check back later!
     <% end %>

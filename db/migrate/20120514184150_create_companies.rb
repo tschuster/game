@@ -9,11 +9,11 @@ class CreateCompanies < ActiveRecord::Migration
       t.timestamps
     end
 
-    change_column :users, :money, :decimal, :precision => 10, :scale => 2, :default => 100
+    change_column :users, :money, :decimal, precision: 10, scale: 2, default: 100
   end
 
   def down
     drop_table :companies
-    change_column :users, :money, :integer, :default => 100
+    change_column :users, :money, :integer, default: 100
   end
 end

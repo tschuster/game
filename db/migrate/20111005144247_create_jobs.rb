@@ -10,7 +10,7 @@ class CreateJobs < ActiveRecord::Migration
       t.integer :user_id
       t.timestamps
       t.datetime :completed_at
-      t.boolean :completed, :default => false
+      t.boolean :completed, default: false
       t.boolean :success
     end
   end

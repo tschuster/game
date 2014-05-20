@@ -2,7 +2,7 @@ class AddFieldsToUser < ActiveRecord::Migration
   def up
     change_table :users do |t|
       t.string :nickname
-      t.integer :defense_ratio, :default => 10
+      t.integer :defense_ratio, default: 10
     end
   end
 

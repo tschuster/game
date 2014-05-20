@@ -19,7 +19,7 @@ namespace :deploy do
     chmods_to_set.each                { |target, chmod| run "chmod #{chmod} #{target}" }
   end
 
-  task :cleanup, :except => { :no_release => true } do
+  task :cleanup, except: { no_release: true } do
     count = fetch(:keep_releases, 5).to_i
     local_releases = capture("ls -xt #{releases_path}").split.reverse
     if count >= local_releases.length

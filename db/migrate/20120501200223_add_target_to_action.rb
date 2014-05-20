@@ -1,7 +1,7 @@
 class AddTargetToAction < ActiveRecord::Migration
   def up
     change_table :actions do |t|
-      t.integer :target_id, :default => nil
+      t.integer :target_id, default: nil
       t.string :target_type
     end
   end

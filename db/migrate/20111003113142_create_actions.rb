@@ -6,7 +6,7 @@ class CreateActions < ActiveRecord::Migration
       t.integer :job_id
       t.timestamps
       t.datetime :completed_at
-      t.boolean :completed, :default => false
+      t.boolean :completed, default: false
     end
   end
 end
