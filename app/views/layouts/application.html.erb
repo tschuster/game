@@ -59,7 +59,11 @@
         }).done(function(data) {
           var stats_content = "";
           if (data.user != null) {
-            stats_content += "<h3>Your current Stats</h3><table border='0' cellspacing='0' cellpadding='0' class='table-condensed'><tr><td>Hacking skill:</td><td>"+data.user.hacking_ratio+"</td></tr><tr><td>Botnet strength:</td><td>"+data.user.botnet_ratio+"</td></tr><tr><td>Defense ratio:</td><td>"+data.user.defense_ratio+"</td></tr><tr><td>Money:</td><td>"+data.user.money+"</td></tr><tr><td>Income/hour:</td><td>"+data.user.income+"</td></tr></table>";
+            stats_content += "<h3>Your current Stats</h3><table border='0' cellspacing='0' cellpadding='0' class='table-condensed'><tr><td>Hacking skill:</td><td>"+data.user.hacking_ratio+"</td></tr><tr><td>Botnet strength:</td><td>"+data.user.botnet_ratio+"</td></tr><tr><td>Defense ratio:</td><td>"+data.user.defense_ratio+"</td></tr><tr><td>Money:</td><td>"+data.user.money+"</td></tr>";
+            if (data.user.income != "") {
+              stats_content += "<tr><td>Income/hour:</td><td>"+data.user.income+"</td></tr>";
+            }
+            stats_content += "</table>";
           }
           $("#current_stats_container").html(stats_content);
         });
