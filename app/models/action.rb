@@ -164,7 +164,7 @@ class Action < ActiveRecord::Base
 
     # eine neue Action für einen User zur Abarbeitung anlegen
     def add_for_user(action, user)
-      return if user.has_incomplete_actions?
+      return if user.has_incomplete_actions? && ![Action::TYPE_BOTNET_BUY, Action::TYPE_HACKING_BUY, Action::TYPE_DEFENSE_BUY].include?(action.type_id)
       target_type = nil
 
       # Validierungen

@@ -10,7 +10,7 @@ module ActionsHelper
         result = '<span class="btn btn-default disabled">System down</span>'
       elsif current_user.can_buy?(action_id)
         result = link_to(actions_path(type_id: action_id), method: :post, class: "btn btn-primary") do
-          '<span class="glyphicon glyphicon-usd" style="width: 61px;"> Buy</span>'
+          '<span class="glyphicon glyphicon-usd" style="width: 61px;"> Buy</span>'.html_safe
         end
       else
         result = '<span class="btn btn-default disabled">Insufficent Funds</span>'
