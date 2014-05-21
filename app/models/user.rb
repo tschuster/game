@@ -98,12 +98,12 @@ class User < ActiveRecord::Base
     end
   end
 
-  def can_buy_for_company?(skill, company)
+  def can_buy_for_company?(action_id, company)
     return false if company.user_id != id
-    case skill
-    when :income
+    case action_id
+    when Action::TYPE_COMPANY_INCOME_BUY
       money >= company.next_income_ratio_cost
-    when :defense
+    when Action::TYPE_COMPANY_DEFENSE_BUY
       money >= company.next_defense_ratio_cost
     end
   end

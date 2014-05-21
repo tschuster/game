@@ -10,13 +10,7 @@
             Duration:<br /><%= humanize(company.next_income_ratio_time) %>
           </td>
           <td style="border: 0; text-align: right;">
-            <% if @current_action.present? %>
-              <span class="btn btn-default disabled">Action pending</span>
-            <% else %>
-              <%= link_to(actions_path(type_id: Action::TYPE_COMPANY_INCOME_EVOLVE, target_id: company.id), method: :post, class: "btn btn-primary") do %>
-                <span class="glyphicon glyphicon-collapse-up" style="width: 83px;"> Increase</span>
-              <% end %>
-            <% end %>
+            <%= company_action_button_for(Action::TYPE_COMPANY_INCOME_EVOLVE, company) %>
           </td>
         </tr>
         <tr>
@@ -24,15 +18,7 @@
             Cost: <%= number_to_currency(company.next_income_ratio_cost) %>
           </td>
           <td style="border: 0; text-align: right;">
-            <% if @current_action.present? %>
-              <span class="btn btn-default disabled">Action pending</span>
-            <% elsif !current_user.can_buy_for_company?(:income, company) %>
-                <span class="btn btn-default disabled">Insufficent Funds</span>
-            <% else %>
-              <%= link_to(actions_path(type_id: Action::TYPE_COMPANY_INCOME_BUY, target_id: company.id), method: :post, class: "btn btn-primary") do %>
-                <span class="glyphicon glyphicon-usd" style="width: 83px;"> Buy&nbsp;</span>
-              <% end %>
-            <% end %>
+            <%= company_action_button_for(Action::TYPE_COMPANY_INCOME_BUY, company) %>
           </td>
         </tr>
       </table>
@@ -47,13 +33,7 @@
             Duration:<br /><%= humanize(company.next_defense_ratio_time) %>
           </td>
           <td style="border: 0; text-align: right">
-            <% if @current_action.present? %>
-              <span class="btn btn-default disabled">Action pending</span>
-            <% else %>
-              <%= link_to(actions_path(type_id: Action::TYPE_COMPANY_DEFENSE_EVOLVE, target_id: company.id), method: :post, class: "btn btn-primary") do %>
-                <span class="glyphicon glyphicon-collapse-up" style="width: 83px;"> Increase</span>
-              <% end %>
-            <% end %>
+            <%= company_action_button_for(Action::TYPE_COMPANY_DEFENSE_EVOLVE, company) %>
           </td>
         </tr>
         <tr>
@@ -61,15 +41,7 @@
             Cost: <%= number_to_currency(company.next_defense_ratio_cost) %>
           </td>
           <td style="border: 0; text-align: right;">
-            <% if @current_action.present? %>
-              <span class="btn btn-default disabled">Action pending</span>
-            <% elsif !current_user.can_buy_for_company?(:defense, company) %>
-                <span class="btn btn-default disabled">Insufficent Funds</span>
-            <% else %>
-              <%= link_to(actions_path(type_id: Action::TYPE_COMPANY_DEFENSE_BUY, target_id: company.id), method: :post, class: "btn btn-primary") do %>
-                <span class="glyphicon glyphicon-usd" style="width: 83px;"> Buy&nbsp;</span>
-              <% end %>
-            <% end %>
+            <%= company_action_button_for(Action::TYPE_COMPANY_DEFENSE_BUY, company) %>
           </td>
         </tr>
       </table>

@@ -215,7 +215,7 @@ class Action < ActiveRecord::Base
 
       elsif action.type_id == Action::TYPE_COMPANY_INCOME_BUY
         target = Company.where(id: action.target_id).first
-        return if target.blank? || !user.can_buy_for_company?(:income, target)
+        return if target.blank? || !user.can_buy_for_company?(Action::TYPE_COMPANY_INCOME_BUY, target)
         target_type = "Company"
         DateTime.now
 
@@ -227,7 +227,7 @@ class Action < ActiveRecord::Base
 
       elsif action.type_id == Action::TYPE_COMPANY_DEFENSE_BUY
         target = Company.where(id: action.target_id).first
-        return if target.blank? || !user.can_buy_for_company?(:defense, target)
+        return if target.blank? || !user.can_buy_for_company?(Action::TYPE_COMPANY_DEFENSE_BUY, target)
         target_type = "Company"
         DateTime.now
 
