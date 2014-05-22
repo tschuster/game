@@ -163,16 +163,15 @@ class User < ActiveRecord::Base
         end
       else
 
-        # attack failed
-        Action.create(
-          type_id:      Action::TYPE_SYSTEM_CRASH,
-          user_id:      id,
-          completed_at: DateTime.now + (bootloader_active? ? 15.minutes : 60.minutes),
-          completed:    false
-        )
-
-        # Notifications
+        # attack failed, create notifications
         if type == :hack
+          Action.create(
+            type_id:      Action::TYPE_SYSTEM_CRASH,
+            user_id:      id,
+            completed_at: DateTime.now + (bootloader_active? ? 15.minutes : 60.minutes),
+            completed:    false
+          )
+
           Notification.create_for(:attack_failed_victim, target, attacker: self)
           Notification.create_for(:attack_failed_attacker, self, victim: target)
         elsif type == :ddos
@@ -238,7 +237,11 @@ class User < ActiveRecord::Base
 
   def time_to_attack(target, type = :hack)
     return unless can_attack?(target, type)
-    600/chance_of_success_against(target, type)*100
+    if type == :ddos
+      300/chance_of_success_against(target, type)*100
+    else
+      600/chance_of_success_against(target, type)*100
+    end
   end
 
   def can_attack?(target, type = :hack)
