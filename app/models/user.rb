@@ -288,9 +288,9 @@ class User < ActiveRecord::Base
   def to_strong_for(target, type = :hack)
     case type
     when :hack
-      target.defense_ratio < hacking_ratio * 0.1
+      (target.defense_ratio + target.botnet_ratio + target.hacking_ratio)/3.0 < hacking_ratio * 0.1
     when :ddos
-      target.defense_ratio < botnet_ratio * 0.1
+      (target.defense_ratio + target.botnet_ratio + target.hacking_ratio)/3.0 < botnet_ratio * 0.1
     end
   end
 
@@ -306,8 +306,7 @@ class User < ActiveRecord::Base
   def chance_of_success_against(target, type = :hack)
 
     # Gegner zu stark? oder zu schwach?
-    return 0 if to_strong_for(target, type)
-    return 0 if to_weak_for(target, type)
+    return 0 if to_strong_for(target, type) || to_weak_for(target, type)
 
     if type == :hack
       return 0 if hacking_ratio + target.defense_ratio == 0
